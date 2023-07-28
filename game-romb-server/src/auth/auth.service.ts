@@ -15,7 +15,7 @@ export class AuthService {
     login(userDto: CreateUserDto) { }
 
     async registration(userDto: CreateUserDto) {
-        const candidate = await this.userService.findOne(userDto.username);
+        const candidate = await this.userService.findOne(userDto.nickname);
         if (candidate) {
             throw new HttpException('Пользователь существует', HttpStatus.BAD_REQUEST);
         };
@@ -26,7 +26,7 @@ export class AuthService {
 
 
     private generateToken(user: User) {
-        const payload = { username: user.username, userId: user.userId };
+        const payload = { username: user.nickname, userId: user.userId };
         return {
             token: this.jwtService.sign(payload)
         }
