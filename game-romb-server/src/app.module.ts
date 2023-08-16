@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { AppGateway } from './app/app.gateway';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { GameModule } from './game/game.module';
 
 @Module({
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, GameModule],
   controllers: [],
   providers: [AppGateway],
   exports: [UsersModule]
