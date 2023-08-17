@@ -3,7 +3,8 @@ export type playerType = 'playerOne' | 'playerTwo' | 'playerThree' | 'playerFour
 export type side = 'left' | 'top';
 
 export enum EACTION_WEBSOCKET {
-    CREATE_GAME = 'create game'
+    CREATE_GAME = 'create game',
+    LIST_ROOM = 'list room'
 }
 
 export interface payloadSocket {

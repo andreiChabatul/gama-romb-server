@@ -7,7 +7,9 @@ import {
   WebSocketServer
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { rooms } from 'src/game/room';
 import { EACTION_WEBSOCKET, PayloadCreateGame, payloadSocket } from 'src/types';
+import WebSocket from "ws";
 
 
 @WebSocketGateway(3100, {
@@ -20,13 +22,19 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   server: Server;
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: string): string {
+  handleMessage(client: WebSocket, payload: string): string {
     const payloadSocket: payloadSocket = JSON.parse(payload)
     switch (payloadSocket.action) {
       case EACTION_WEBSOCKET.CREATE_GAME:
         const payloadGame = payloadSocket.payload as PayloadCreateGame;
+        console.log(payloadGame)
         break;
-
+      case EACTION_WEBSOCKET.LIST_ROOM:
+        const listRoom = rooms.getAllRoom();
+        client.send(JSON.stringify({
+          action: EACTION_WEBSOCKET.LIST_ROOM,
+          payload: listRoom
+        }))
       default:
         break;
     }

@@ -11,5 +11,10 @@ export class Rooms {
         this.rooms.push({ id: this.idRooms, room: newGame })
     }
 
+    getAllRoom (){
+        return this.rooms;
+    }
 
 }
+
+export const rooms = new Rooms()
