@@ -7,6 +7,7 @@ import {
   WebSocketServer
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { EACTION_WEBSOCKET, PayloadCreateGame, payloadSocket } from 'src/types';
 
 
 @WebSocketGateway(3100, {
@@ -18,11 +19,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @WebSocketServer()
   server: Server;
 
-
-
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    console.log(client.id, payload)
+  handleMessage(client: any, payload: string): string {
+    const payloadSocket: payloadSocket = JSON.parse(payload)
+    switch (payloadSocket.action) {
+      case EACTION_WEBSOCKET.CREATE_GAME:
+        const payloadGame = payloadSocket.payload as PayloadCreateGame;
+        break;
+
+      default:
+        break;
+    }
+
     return 'Hello world!';
   }
 

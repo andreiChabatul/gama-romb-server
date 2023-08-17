@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 export type User = {
     userId: number,
-    username: string,
+    nickname: string,
     password: string
 };
 
@@ -14,18 +14,18 @@ export class UsersService {
     private readonly users: User[] = [
         {
             userId: 1,
-            username: 'john',
+            nickname: 'john',
             password: 'changeme',
         },
         {
             userId: 2,
-            username: 'maria',
+            nickname: 'maria',
             password: 'guess',
         },
     ];
 
     async findOne(username: string): Promise<User | undefined> {
-        return this.users.find(user => user.username === username);
+        return this.users.find(user => user.nickname === username);
     }
 
 
