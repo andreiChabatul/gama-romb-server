@@ -20,10 +20,7 @@ export class Rooms {
         return this.rooms;
     }
 
-    getAllRooms() {
-        return this.rooms;
-    }
-
 }
 
 export const rooms = new Rooms()
+

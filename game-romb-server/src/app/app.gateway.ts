@@ -6,12 +6,10 @@ import {
   WebSocketServer
 } from '@nestjs/websockets';
 import WebSocket from "ws";
-import { Socket, Server } from 'socket.io';
+import { Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
 import { Rooms } from 'src/game/room';
-import { rooms } from 'src/game/room';
 import { EACTION_WEBSOCKET, payloadSocket } from 'src/types';
-import WebSocket from "ws";
 
 const sockets: WebSocket[] = [];
 const rooms = new Rooms();
