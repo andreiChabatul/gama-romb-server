@@ -1,50 +1,52 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer
 } from '@nestjs/websockets';
+import WebSocket from "ws";
 import { Socket, Server } from 'socket.io';
-import { EACTION_WEBSOCKET, PayloadCreateGame, payloadSocket } from 'src/types';
+import { GameCreateDto } from 'src/game/dto/game.create.dto';
+import { Rooms } from 'src/game/room';
+import { EACTION_WEBSOCKET, payloadSocket } from 'src/types';
 
+const sockets: WebSocket[] = [];
+const rooms = new Rooms();
 
 @WebSocketGateway(3100, {
   cors: {
     origin: '*',
   }
 })
-export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway {
   @WebSocketServer()
   server: Server;
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: string): string {
+  handleMessage(client: WebSocket, payload: string): void {
+    sockets.push(client);
     const payloadSocket: payloadSocket = JSON.parse(payload)
     switch (payloadSocket.action) {
       case EACTION_WEBSOCKET.CREATE_GAME:
-        const payloadGame = payloadSocket.payload as PayloadCreateGame;
+        const payloadGame = payloadSocket.payload as GameCreateDto;
+        rooms.addRoom(payloadGame);
+        sendRooms();
+        break;
+
+      case EACTION_WEBSOCKET.LIST_ROOM:
+        sendRooms();
         break;
 
       default:
         break;
     }
-
-    return 'Hello world!';
   }
+}
 
-  afterInit(server: Server) {
-    console.log('Init');
-  }
-
-  handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
-  }
-
-  handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Client connected: ${client.id}`);
-    client.send('hello')
-  }
-
+const sendRooms = () => {
+  const payload = rooms.getAllRooms();
+  sockets.map((client) =>
+    client.send(JSON.stringify({ action: EACTION_WEBSOCKET.LIST_ROOM, payload }))
+  );
 }

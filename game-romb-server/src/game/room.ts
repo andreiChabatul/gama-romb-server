@@ -1,15 +1,20 @@
 import { Room } from "src/types";
-import { Game } from "./gameBoard";
+import { Game } from "./game.board";
+import { GameCreateDto } from "./dto/game.create.dto";
 
 export class Rooms {
-    rooms: Room[];
+    rooms: Room[] = [];
     idRooms = 0;
 
-    addRoom() {
+    addRoom(gameCreateDto: GameCreateDto) {
         this.idRooms += 1;
-        const newGame = new Game(2);
-        this.rooms.push({ id: this.idRooms, room: newGame })
+        const newGame = new Game(gameCreateDto);
+        this.rooms.push({ id: this.idRooms, room: newGame, players: 1 })
     }
 
+
+    getAllRooms() {
+        return this.rooms;
+    }
 
 }
