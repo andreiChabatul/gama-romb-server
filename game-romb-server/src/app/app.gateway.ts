@@ -9,7 +9,9 @@ import WebSocket from "ws";
 import { Socket, Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
 import { Rooms } from 'src/game/room';
+import { rooms } from 'src/game/room';
 import { EACTION_WEBSOCKET, payloadSocket } from 'src/types';
+import WebSocket from "ws";
 
 const sockets: WebSocket[] = [];
 const rooms = new Rooms();
@@ -37,7 +39,12 @@ export class AppGateway {
       case EACTION_WEBSOCKET.LIST_ROOM:
         sendRooms();
         break;
-
+      case EACTION_WEBSOCKET.LIST_ROOM:
+        const listRoom = rooms.getAllRoom();
+        client.send(JSON.stringify({
+          action: EACTION_WEBSOCKET.LIST_ROOM,
+          payload: listRoom
+        }))
       default:
         break;
     }

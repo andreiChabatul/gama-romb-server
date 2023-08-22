@@ -12,9 +12,18 @@ export class Rooms {
         this.rooms.push({ id: this.idRooms, room: newGame, players: 1 })
     }
 
+    getAllRoom (){
+        return this.rooms;
+    }
+
+    getAllRooms() {
+        return this.rooms;
+    }
 
     getAllRooms() {
         return this.rooms;
     }
 
 }
+
+export const rooms = new Rooms()
