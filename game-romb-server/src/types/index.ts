@@ -5,6 +5,8 @@ export type side = 'left' | 'top';
 export enum EACTION_WEBSOCKET {
     CREATE_GAME = 'create game',
     LIST_ROOM = 'list room',
+    JOIN_GAME = 'join game',
+    MESSAGE_CHAT = 'message chat'
 }
 
 export interface payloadSocket {
@@ -20,11 +22,28 @@ export interface Cell {
 }
 
 export interface Room {
-    id: number;
-    room: GameBoard;
+    id: string;
+    game: GameBoard;
     players: number;
+    chat: ChatRoom;
+}
+
+export interface ChatMessage {
+    name: string;
+    playerType: playerType;
+    message: string;
 }
 
 export interface GameBoard {
 
+}
+
+export interface ChatRoom {
+
+}
+
+export interface MessageChatGamePayload {
+    idGame: string;
+    message: string;
+    idUser: string;
 }

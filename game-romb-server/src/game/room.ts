@@ -1,20 +1,26 @@
 import { Room } from "src/types";
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
+import { v4 as uuidv4 } from 'uuid'
+import { Chat } from "./chat.room";
+
 
 export class Rooms {
     rooms: Room[] = [];
-    idRooms = 0;
 
     addRoom(gameCreateDto: GameCreateDto) {
-        this.idRooms += 1;
         const newGame = new Game(gameCreateDto);
-        this.rooms.push({ id: this.idRooms, room: newGame, players: 1 })
+        const newChat = new Chat();
+        this.rooms.push(
+            {
+                id: uuidv4(),
+                game: newGame,
+                players: 1,
+                chat: newChat,
+            })
     }
 
-    getAllRoom (){
-        return this.rooms;
-    }
+ 
 
     getAllRooms() {
         return this.rooms;

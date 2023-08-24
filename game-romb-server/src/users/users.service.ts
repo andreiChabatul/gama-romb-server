@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { v4 as uuidv4 } from 'uuid'
 
 export type User = {
-    userId: number,
+    userId: string,
     nickname: string,
     password: string
 };
@@ -13,12 +14,12 @@ export class UsersService {
 
     private readonly users: User[] = [
         {
-            userId: 1,
+            userId: '1',
             nickname: 'john',
             password: 'changeme',
         },
         {
-            userId: 2,
+            userId: '2',
             nickname: 'maria',
             password: 'guess',
         },
@@ -30,7 +31,7 @@ export class UsersService {
 
 
     async createUser(userCreate: CreateUserDto): Promise<User> {
-        const user = { ...userCreate, userId: 213 }
+        const user = { ...userCreate, userId: uuidv4() }
         this.users.push(user);
         return user
     }
