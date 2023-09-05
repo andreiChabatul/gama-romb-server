@@ -1,13 +1,15 @@
-import { ChatMessage } from "src/types";
+import { ChatMessage, Player } from "src/types";
 
 export class Chat {
 
-    message: ChatMessage[];
+    messages: ChatMessage[] = [];
 
-
+    addMessage(message: string, player?: Player) {
+        this.messages.push({ message, player })
+    }
 
     returnAllMessage() {
-        return this.message;
+        return this.messages;
     }
 
 }

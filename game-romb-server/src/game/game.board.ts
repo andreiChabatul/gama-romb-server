@@ -1,25 +1,34 @@
-import { Cell, GameBoard, side, stateCell } from "src/types";
+import { GameBoard, gameCell } from "src/types";
 import { GameCreateDto } from "./dto/game.create.dto";
+import { defaultBoard } from "./defaultBoard/defaultBoard";
+import { PlayerDefault } from "./player";
 
 export class Game implements GameBoard {
-    size: number;
-    board: Cell[];
-    activePlayer: stateCell;
+
+    board: gameCell[];
+    players: PlayerDefault[];
+    activePlayer: number;
     gameSetting: GameCreateDto;
+    numberPLayer = 1;
 
     constructor(gameSetting: GameCreateDto) {
         this.gameSetting = gameSetting;
-        // this.createEmptyBoard();
-        // this.tempBoardGame();
-        this.activePlayer = 'playerTwo'
-        this.size = 4
+        this.activePlayer = 0;
+        this.board = defaultBoard;
+        this.players = [];
     }
 
 
 
-    // getBoard() {
-    //     return this.board;
-    // }
+    getBoard() {
+        return this.board;
+    }
+
+  
+    addPlayerGame(id: string) {
+        this.players.push(new PlayerDefault(id, this.numberPLayer));
+        this.numberPLayer += 1;
+    }
 
     // clickLine(side: side, indexCell: number, state: stateCell) {
     //     this.board.map((item, index) => {
@@ -74,22 +83,6 @@ export class Game implements GameBoard {
 
 
 
-    private tempBoardGame() {
-        this.board[51].left = 'border';
-        this.board[51].top = 'border';
-        this.board[37].left = 'border';
-        this.board[65].top = 'border';
-        this.board[65].left = 'border';
-        this.board[80].left = 'border';
-        this.board[95].top = 'border';
-        this.board[96].top = 'border';
-        this.board[97].top = 'border';
-        this.board[83].left = 'border';
-        this.board[68].left = 'border';
-        this.board[53].left = 'border';
-        this.board[38].left = 'border';
-        this.board[37].left = 'border';
-        this.board[37].top = 'border';
-    }
+
 
 }
