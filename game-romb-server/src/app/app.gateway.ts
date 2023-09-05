@@ -46,7 +46,7 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.JOIN_GAME:
         const joinGame = payloadSocket.payload as PayloadJoinGame;
-        rooms[joinGame.idRoom].addPlayer(joinGame.idUser, client);
+        rooms[joinGame.idRoomJoin].addPlayer(joinGame.idUser, client);
         break;
 
       case EACTION_WEBSOCKET.MESSAGE_CHAT:

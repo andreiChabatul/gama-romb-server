@@ -112,6 +112,6 @@ export type nameCompany =
 
 
 export interface PayloadJoinGame {
-    idRoom: string;
+    idRoomJoin: string;
     idUser: string;
 }
