@@ -1,7 +1,7 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { EACTION_WEBSOCKET, Player, RoomClass } from "src/types";
+import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 
@@ -11,7 +11,7 @@ export class Room implements RoomClass {
     maxPlayers: number;
     isVisiblity: boolean;
     roomName: string;
-    players: Player[] = [];
+    players: PlayersGame = {} as PlayersGame;
     webSocketRoom: WebSocket[] = [];
     game: Game;
     chat: Chat;
@@ -22,7 +22,7 @@ export class Room implements RoomClass {
         this.roomName = gameCreateDto.roomName;
         this.maxPlayers = gameCreateDto.players;
         this.chat = new Chat();
-        this.game = new Game(gameCreateDto);
+        this.game = new Game(gameCreateDto, this.players);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
@@ -30,24 +30,34 @@ export class Room implements RoomClass {
         this.webSocketRoom.push(client);
         const player = new PlayerDefault(id, this.numberPLayer);
         this.numberPLayer += 1;
-        this.players.push(player.returnPlayer());
-
+        this.players[id] = player;
+        this.game.startGame();
         this.checkStartGame();
+
     }
 
     private checkStartGame() {
         this.updateRoom();
     }
 
+
+    playerMove(idUser: string, value: number) {
+        this.game.playerMove(idUser, value);
+        this.updateRoom();
+    }
+
+
     addChatMessage(message: string, idUser: string) {
-        this.chat.addMessage(message);
+        const playerChat = this.returnInfoPlayers().find(player => player.id === idUser);
+        this.chat.addMessage(message, playerChat);
         this.updateRoom();
     }
 
     updateRoom() {
+        this.returnInfoPlayers();
         const payload = {
             idRoom: this.idRoom,
-            players: this.players,
+            players: this.returnInfoPlayers(),
             chat: this.chat.returnAllMessage(),
             board: this.game.getBoard()
         }
@@ -56,17 +66,20 @@ export class Room implements RoomClass {
         )
     }
 
-
-
-
     returnInfoRoom() {
         return {
             maxPLayers: this.maxPlayers,
-            players: this.players,
+            players: this.returnInfoPlayers(),
             idRoom: this.idRoom,
             isVisiblity: this.isVisiblity,
             roomName: this.roomName
         }
     }
+
+    private returnInfoPlayers(): Player[] {
+        return Object.keys(this.players).map((key) => this.players[key].returnPlayer(), []);
+    }
+
+
 
 }

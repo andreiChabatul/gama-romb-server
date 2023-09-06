@@ -5,7 +5,12 @@ export class Chat {
     messages: ChatMessage[] = [];
 
     addMessage(message: string, player?: Player) {
-        this.messages.push({ message, player })
+        this.messages.push(
+            {
+                message,
+                name: player?.name,
+                numberPlayer: player?.numberPlayer
+            });
     }
 
     returnAllMessage() {

@@ -9,31 +9,29 @@ export type User = {
 };
 
 
+export const users: User[] = [
+    {
+        userId: '1',
+        nickname: 'john',
+        password: 'changeme',
+    }
+];
+
+
 @Injectable()
 export class UsersService {
 
-    private readonly users: User[] = [
-        {
-            userId: '1',
-            nickname: 'john',
-            password: 'changeme',
-        },
-        {
-            userId: '2',
-            nickname: 'maria',
-            password: 'guess',
-        },
-    ];
+    
 
     async findOne(username: string): Promise<User | undefined> {
-        return this.users.find(user => user.nickname === username);
+        return users.find(user => user.nickname === username);
     }
 
 
     async createUser(userCreate: CreateUserDto): Promise<User> {
         const user = { ...userCreate, userId: uuidv4() }
-        this.users.push(user);
-        return user
+        users.push(user);
+        return user;
     }
 
 }

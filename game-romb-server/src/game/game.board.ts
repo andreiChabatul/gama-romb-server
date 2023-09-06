@@ -1,21 +1,37 @@
-import { GameBoard, gameCell } from "src/types";
+import { GameBoard, PlayersGame, gameCell } from "src/types";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { defaultBoard } from "./defaultBoard/defaultBoard";
 import { PlayerDefault } from "./player";
 
+
+
 export class Game implements GameBoard {
 
-    board: gameCell[];
-    players: PlayerDefault[];
-    activePlayer: number;
+    private board: gameCell[];
+    private indexActive: number;
     gameSetting: GameCreateDto;
-    numberPLayer = 1;
+    players: PlayersGame;
+    playersId: string[] = [];
 
-    constructor(gameSetting: GameCreateDto) {
+    constructor(gameSetting: GameCreateDto, players: PlayersGame) {
         this.gameSetting = gameSetting;
-        this.activePlayer = 0;
+        this.indexActive = 0;
         this.board = defaultBoard;
-        this.players = [];
+        this.players = players;
+    }
+
+
+    startGame() {
+        this.playersId = Object.keys(this.players).map((key) => this.players[key].returnPlayer().id);
+        const activePlayer = this.players[this.playersId[this.indexActive]];
+        activePlayer.turnPlayer();
+        this.updatePositionPlayers();
+    }
+
+
+    playerMove(idUser: string, value: number) {
+        this.players[idUser].setPosition(value);
+        this.updatePositionPlayers();
     }
 
 
@@ -24,11 +40,19 @@ export class Game implements GameBoard {
         return this.board;
     }
 
-  
-    addPlayerGame(id: string) {
-        this.players.push(new PlayerDefault(id, this.numberPLayer));
-        this.numberPLayer += 1;
+
+    private updatePositionPlayers(): void {
+        this.board.map((cell) => cell.players = []);
+        this.playersId.map((key) => {
+            const player = this.players[key];
+            this.board[player.returnCellPosition()].players.push(player.returnNumberPlayer())
+        }
+        );
+
     }
+
+
+
 
     // clickLine(side: side, indexCell: number, state: stateCell) {
     //     this.board.map((item, index) => {

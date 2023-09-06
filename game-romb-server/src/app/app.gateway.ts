@@ -6,7 +6,7 @@ import {
 import WebSocket from "ws";
 import { Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
-import { EACTION_WEBSOCKET, MessageChatGamePayload, PayloadJoinGame, Rooms, payloadSocket } from 'src/types';
+import { DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, PayloadJoinGame, Rooms, payloadSocket } from 'src/types';
 import { Room } from 'src/game/room';
 import { v4 as uuidv4 } from 'uuid'
 
@@ -52,6 +52,11 @@ export class AppGateway {
       case EACTION_WEBSOCKET.MESSAGE_CHAT:
         const messageChat = payloadSocket.payload as MessageChatGamePayload;
         rooms[messageChat.idRoom].addChatMessage(messageChat.message, messageChat.idUser);
+        break;
+
+      case EACTION_WEBSOCKET.DICE_ROLL:
+        const diceRoll = payloadSocket.payload as DiceRollGamePayload;
+        rooms[diceRoll.idRoom].playerMove(diceRoll.idUser, diceRoll.value);
         break;
 
       default:

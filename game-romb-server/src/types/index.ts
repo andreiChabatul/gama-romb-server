@@ -4,8 +4,22 @@ export interface Player {
     image: string;
     total: number;
     capital: number;
+    cellPosition: number;
     isTurn: boolean;
     numberPlayer: number;
+}
+
+export interface PlayersGame {
+    id: string;
+    player: PlayerDefault;
+}
+
+export interface PlayerDefault {
+    readonly player: Player;
+    turnPlayer(): void;
+    returnPlayer(): Player;
+    returnNumberPlayer(): number;
+    returnCellPosition(): number
 }
 
 
@@ -14,7 +28,8 @@ export enum EACTION_WEBSOCKET {
     LIST_ROOM = 'list room',
     JOIN_GAME = 'join game',
     MESSAGE_CHAT = 'message chat',
-    UPDATE_ROOM = 'update room'
+    UPDATE_ROOM = 'update room',
+    DICE_ROLL = 'dice roll'
 }
 
 export interface payloadSocket {
@@ -49,8 +64,9 @@ export interface Room {
 }
 
 export interface ChatMessage {
-    player?: Player;
     message: string;
+    name?: string;
+    numberPlayer?: number;
 }
 
 export interface GameBoard {
@@ -67,11 +83,17 @@ export interface MessageChatGamePayload {
     idUser: string;
 }
 
+export interface DiceRollGamePayload {
+    idRoom: string;
+    value: number;
+    idUser: string;
+}
+
 export interface gameCell {
     indexCell: number;
     gridArea: string;
     isPledge?: boolean;
-    players: string[];
+    players: number[];
     owned?: string;
     cellDirections: cellDirections;
     cellCompany?: GameCellCompanyInfo;
