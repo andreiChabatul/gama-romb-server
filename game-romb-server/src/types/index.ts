@@ -1,3 +1,5 @@
+import { CreateCellEmpty } from "src/game/dto/game.cell.empty.dto";
+
 export interface Player {
     id: string;
     name: string;
@@ -19,8 +21,28 @@ export interface PlayerDefault {
     turnPlayer(): void;
     returnPlayer(): Player;
     returnNumberPlayer(): number;
-    returnCellPosition(): number
+    getCellPosition(): number;
+    getTotalPlayer(): number;
+    setTotalPlayer(value: number): void;
+    getNamePlayer(): string;
 }
+
+export interface CellTaxI {
+    valueTax: number;
+    cellProcessing(player: PlayerDefault): void;
+}
+
+export interface CellCompanyI {
+    buyCompany(buyer: PlayerDefault): void
+    cellProcessing(player: PlayerDefault): void;
+}
+
+export type createCell = {
+    company?: CompanyInfo;
+    empty?: CreateCellEmpty
+}
+
+export type cells = CellTaxI | CellCompanyI;
 
 
 export enum EACTION_WEBSOCKET {
@@ -29,7 +51,8 @@ export enum EACTION_WEBSOCKET {
     JOIN_GAME = 'join game',
     MESSAGE_CHAT = 'message chat',
     UPDATE_ROOM = 'update room',
-    DICE_ROLL = 'dice roll'
+    DICE_ROLL = 'dice roll',
+    AUCTION_COMPANY = 'auction company'
 }
 
 export interface payloadSocket {
@@ -92,20 +115,17 @@ export interface DiceRollGamePayload {
 export interface gameCell {
     indexCell: number;
     gridArea: string;
-    isPledge?: boolean;
     players: number[];
-    owned?: string;
     cellDirections: cellDirections;
     cellCompany?: GameCellCompanyInfo;
     cellSquare?: GameCellSquare;
 }
 
 
-export interface GameCellCompanyInfo {
-    countryCompany: countryCompany;
-    nameCompany: nameCompany;
-    priceCompany: number;
+export interface GameCellCompanyInfo extends CompanyInfo {
     shares?: stockTypeCell[];
+    isPledge: boolean;
+    owned?: number;
 }
 
 export interface GameCellSquare {
@@ -136,4 +156,14 @@ export type nameCompany =
 export interface PayloadJoinGame {
     idRoomJoin: string;
     idUser: string;
+}
+
+export interface CompanyInfo {
+    countryCompany: countryCompany;
+    nameCompany: nameCompany;
+    priceCompany: number;
+}
+
+export interface CompanyInfoBuy extends CompanyInfo {
+    auction: boolean;
 }

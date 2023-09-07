@@ -28,7 +28,7 @@ export class AppGateway {
   handleMessage(client: WebSocket, payload: string): void {
     sockets.push(client);
     const payloadSocket: payloadSocket = JSON.parse(payload);
-    console.log(payloadSocket, 'payload')
+    // console.log(payloadSocket, 'payload')
     switch (payloadSocket.action) {
 
       case EACTION_WEBSOCKET.CREATE_GAME:

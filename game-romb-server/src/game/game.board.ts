@@ -1,9 +1,7 @@
-import { GameBoard, PlayersGame, gameCell } from "src/types";
+import { GameBoard, PlayersGame, cells, gameCell } from "src/types";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { defaultBoard } from "./defaultBoard/defaultBoard";
-import { PlayerDefault } from "./player";
-
-
+import { CellCompany } from "./cells/cell.company";
 
 export class Game implements GameBoard {
 
@@ -12,26 +10,33 @@ export class Game implements GameBoard {
     gameSetting: GameCreateDto;
     players: PlayersGame;
     playersId: string[] = [];
+    private cellsGame: cells[] = [];
 
-    constructor(gameSetting: GameCreateDto, players: PlayersGame) {
+
+    constructor(gameSetting: GameCreateDto, players: PlayersGame, cellsGame: cells[]) {
         this.gameSetting = gameSetting;
         this.indexActive = 0;
         this.board = defaultBoard;
         this.players = players;
+        this.cellsGame = cellsGame;
     }
-
 
     startGame() {
         this.playersId = Object.keys(this.players).map((key) => this.players[key].returnPlayer().id);
         const activePlayer = this.players[this.playersId[this.indexActive]];
         activePlayer.turnPlayer();
         this.updatePositionPlayers();
+        this.updateCompanyInfoBoard();
     }
-
 
     playerMove(idUser: string, value: number) {
         this.players[idUser].setPosition(value);
+
+        if (this.cellsGame[this.players[idUser].getCellPosition()]) {
+            this.cellsGame[this.players[idUser].getCellPosition()].cellProcessing(this.players[idUser])
+        }
         this.updatePositionPlayers();
+        this.updateCompanyInfoBoard();
     }
 
 
@@ -45,68 +50,17 @@ export class Game implements GameBoard {
         this.board.map((cell) => cell.players = []);
         this.playersId.map((key) => {
             const player = this.players[key];
-            this.board[player.returnCellPosition()].players.push(player.returnNumberPlayer())
+            this.board[player.getCellPosition()].players.push(player.returnNumberPlayer())
         }
         );
-
     }
 
-
-
-
-    // clickLine(side: side, indexCell: number, state: stateCell) {
-    //     this.board.map((item, index) => {
-    //         if (index === indexCell) {
-    //             item[side] = state;
-    //             this.checkOccupiedCell(index, side);
-    //             console.log(item)
-    //         }
-    //     })
-
-    // }
-
-    // private createEmptyBoard() {
-    //     this.board = new Array(Math.pow(this.size, 2));
-    //     for (let i = 0; i < this.board.length; i++) {
-    //         this.board[i] = this.createEmptyCell(i);
-    //     }
-    // }
-
-    // private createEmptyCell(indexCell: number): Cell {
-    //     return {
-    //         indexCell,
-    //         left: 'none',
-    //         top: 'none',
-    //         occupied: 'none'
-    //     }
-    // };
-
-    // private checkOccupiedCell(index: number, side: side) {
-    //     if (side === 'left') {
-    //         this.checkCell(index);
-    //         this.checkCell(index - 1);
-    //     } else {
-    //         this.checkCell(index);
-    //         this.checkCell(index - this.size);
-    //     }
-    // }
-
-    // private checkCell(index: number): void {
-    //     if (this.board[index].occupied === 'none') {
-    //         const topCheck = this.board[index + this.size];
-    //         const leftCheck = this.board[index + 1];
-    //         if (leftCheck.left && topCheck.top) {
-    //             const arr = [this.board[index].left, this.board[index].top, leftCheck.left, topCheck.top];
-    //             if (!arr.includes('none')) {
-    //                 this.board[index].occupied = this.activePlayer;
-    //             }
-    //         }
-    //     }
-
-    // }
-
-
-
-
+    private updateCompanyInfoBoard() {
+        this.cellsGame.map((cell, index) => {
+            if (cell instanceof CellCompany){
+                this.board[index].cellCompany = cell.getInfoCellCompany();
+            }
+        })
+    }
 
 }

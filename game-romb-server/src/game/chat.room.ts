@@ -2,7 +2,7 @@ import { ChatMessage, Player } from "src/types";
 
 export class Chat {
 
-    messages: ChatMessage[] = [];
+    private messages: ChatMessage[] = [];
 
     addMessage(message: string, player?: Player) {
         this.messages.push(
@@ -13,7 +13,7 @@ export class Chat {
             });
     }
 
-    returnAllMessage() {
+    getAllMessage() {
         return this.messages;
     }
 

@@ -1,9 +1,14 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass } from "src/types";
+import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, createCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
+import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
+import { CellTax } from "./cells/cell.tax";
+import { CellCompany } from "./cells/cell.company";
+import { defaultCell } from "./cells/defaultCell";
+
 
 export class Room implements RoomClass {
 
@@ -13,8 +18,9 @@ export class Room implements RoomClass {
     roomName: string;
     players: PlayersGame = {} as PlayersGame;
     webSocketRoom: WebSocket[] = [];
-    game: Game;
-    chat: Chat;
+    private cellsGame: cells[] = [];
+    private game: Game;
+    private chat: Chat;
     idRoom: string;
 
     constructor(gameCreateDto: GameCreateDto, idRoom: string) {
@@ -22,13 +28,15 @@ export class Room implements RoomClass {
         this.roomName = gameCreateDto.roomName;
         this.maxPlayers = gameCreateDto.players;
         this.chat = new Chat();
-        this.game = new Game(gameCreateDto, this.players);
+        this.game = new Game(gameCreateDto, this.players, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
+        this.fillCellsGame();
+
     }
 
     addPlayer(id: string, client: WebSocket) {
         this.webSocketRoom.push(client);
-        const player = new PlayerDefault(id, this.numberPLayer);
+        const player = new PlayerDefault(id, this.numberPLayer, this.chat);
         this.numberPLayer += 1;
         this.players[id] = player;
         this.game.startGame();
@@ -58,7 +66,7 @@ export class Room implements RoomClass {
         const payload = {
             idRoom: this.idRoom,
             players: this.returnInfoPlayers(),
-            chat: this.chat.returnAllMessage(),
+            chat: this.chat.getAllMessage(),
             board: this.game.getBoard()
         }
         this.webSocketRoom.map(
@@ -79,6 +87,20 @@ export class Room implements RoomClass {
     private returnInfoPlayers(): Player[] {
         return Object.keys(this.players).map((key) => this.players[key].returnPlayer(), []);
     }
+
+    private fillCellsGame() {
+
+        defaultCell.map((cell, index) => {
+            if (cell.company) {
+                this.cellsGame[index] = new CellCompany(cell.company, this.webSocketRoom, index)
+            }
+        })
+
+        this.cellsGame[16] = new CellTax(TAX_5, this.chat);
+        this.cellsGame[35] = new CellTax(TAX_10, this.chat);
+    }
+
+
 
 
 

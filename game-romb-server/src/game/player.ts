@@ -1,53 +1,83 @@
 import { Player } from "src/types";
 import { users } from "src/users/users.service";
 import { CIRCLE_REWARD, MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
+import { Chat } from "./chat.room";
 
 export class PlayerDefault implements PlayerDefault {
 
-    readonly player: Player;
+    private id: string;
+    private name: string;
+    private image: string;
+    private total: number;
+    private capital: number;
+    private cellPosition: number;
+    private isTurn: boolean;
+    private numberPlayer: number;
+    private chat: Chat;
 
-    constructor(id: string, numberPlayer: number) {
+    constructor(id: string, numberPlayer: number, chat: Chat) {
         const playerNew = users.find(user => user.userId === id);
-
-        this.player = {
-            id: id,
-            name: playerNew.nickname,
-            image: 'temp',
-            total: 0,
-            capital: 0,
-            cellPosition: 0,
-            isTurn: false,
-            numberPlayer: numberPlayer
-        }
+        this.id = id;
+        this.name = playerNew.nickname;
+        this.image = 'temp';
+        this.total = 1000;
+        this.capital = 0;
+        this.cellPosition = 0;
+        this.isTurn = false;
+        this.numberPlayer = numberPlayer;
+        this.chat = chat;
     }
 
-
     turnPlayer(): void {
-        this.player.isTurn = true;
+        this.isTurn = true;
     }
 
     setPosition(value: number) {
-        this.player.cellPosition = this.positioonCellCalc(value);
+        this.chat.addMessage(`${this.name} rolled ${value}`);
+        this.cellPosition = this.positionCellCalc(value);
     }
 
     returnNumberPlayer(): number {
-        return this.player.numberPlayer;
+        return this.numberPlayer;
     }
 
-    returnCellPosition(): number {
-        return this.player.cellPosition;
+    getCellPosition(): number {
+        return this.cellPosition;
+    }
+
+
+    getTotalPlayer(): number {
+        return this.total;
+    }
+
+    getNamePlayer(): string {
+        return this.name;
+    }
+
+    setTotalPlayer(value: number): void {
+        this.total = value;
     }
 
 
     returnPlayer(): Player {
-        return this.player;
+        return {
+            id: this.id,
+            name: this.name,
+            image: this.image,
+            total: this.total,
+            capital: this.capital,
+            cellPosition: this.cellPosition,
+            isTurn: this.isTurn,
+            numberPlayer: this.numberPlayer,
+        };
     }
 
 
-    private positioonCellCalc(value: number): number {
-        let resultPosition = this.player.cellPosition + value;
+    private positionCellCalc(value: number): number {
+        let resultPosition = this.cellPosition + value;
         if (resultPosition >= 38) {
-            this.player.total += CIRCLE_REWARD;
+            this.total += CIRCLE_REWARD;
+            this.chat.addMessage(`${this.name} receives ${CIRCLE_REWARD} for completing a circle`);
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
         }
         return resultPosition;
