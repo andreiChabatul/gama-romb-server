@@ -1,7 +1,7 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, createCell } from "src/types";
+import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, CellCompanyI, CellTaxI, cells } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
@@ -17,7 +17,6 @@ export class Room implements RoomClass {
     isVisiblity: boolean;
     roomName: string;
     players: PlayersGame = {} as PlayersGame;
-    webSocketRoom: WebSocket[] = [];
     private cellsGame: cells[] = [];
     private game: Game;
     private chat: Chat;
@@ -35,8 +34,7 @@ export class Room implements RoomClass {
     }
 
     addPlayer(id: string, client: WebSocket) {
-        this.webSocketRoom.push(client);
-        const player = new PlayerDefault(id, this.numberPLayer, this.chat);
+        const player = new PlayerDefault(id, this.numberPLayer, this.chat, client);
         this.numberPLayer += 1;
         this.players[id] = player;
         this.game.startGame();
@@ -51,6 +49,22 @@ export class Room implements RoomClass {
 
     playerMove(idUser: string, value: number) {
         this.game.playerMove(idUser, value);
+        this.updateRoom();
+    }
+
+    playerBuyCompany(idUser: string, indexCompany: number): void {
+        const company = this.cellsGame[indexCompany];
+        if (this.isCellCompany(company)) {
+            company.buyCompany(this.players[idUser]);
+        }
+        this.updateRoom();
+    }
+
+    playerCancelBuyCompany(idUser: string, indexCompany: number): void {
+        const company = this.cellsGame[indexCompany];
+        if (this.isCellCompany(company)) {
+            company.buyCompany(this.players[idUser]);
+        }
         this.updateRoom();
     }
 
@@ -69,9 +83,13 @@ export class Room implements RoomClass {
             chat: this.chat.getAllMessage(),
             board: this.game.getBoard()
         }
-        this.webSocketRoom.map(
-            (client) => client.send(JSON.stringify({ action: EACTION_WEBSOCKET.UPDATE_ROOM, payload }))
-        )
+
+        Object.keys(this.players).map((key) => this.players[key].webSocket.
+            send(JSON.stringify(
+                {
+                    action: EACTION_WEBSOCKET.UPDATE_ROOM,
+                    payload
+                })))
     }
 
     returnInfoRoom() {
@@ -92,12 +110,17 @@ export class Room implements RoomClass {
 
         defaultCell.map((cell, index) => {
             if (cell.company) {
-                this.cellsGame[index] = new CellCompany(cell.company, this.webSocketRoom, index)
+                this.cellsGame[index] = new CellCompany(cell.company, this.players, index, this.chat)
             }
         })
 
         this.cellsGame[16] = new CellTax(TAX_5, this.chat);
         this.cellsGame[35] = new CellTax(TAX_10, this.chat);
+    }
+
+
+    private isCellCompany = (cell: cells): cell is CellCompanyI => {
+        return 'buyCompany' in cell;
     }
 
 

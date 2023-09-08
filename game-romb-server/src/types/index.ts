@@ -25,6 +25,7 @@ export interface PlayerDefault {
     getTotalPlayer(): number;
     setTotalPlayer(value: number): void;
     getNamePlayer(): string;
+    getWebSocket(): WebSocket;
 }
 
 export interface CellTaxI {
@@ -35,6 +36,7 @@ export interface CellTaxI {
 export interface CellCompanyI {
     buyCompany(buyer: PlayerDefault): void
     cellProcessing(player: PlayerDefault): void;
+    cancelBuyCompany(): void
 }
 
 export type createCell = {
@@ -52,7 +54,10 @@ export enum EACTION_WEBSOCKET {
     MESSAGE_CHAT = 'message chat',
     UPDATE_ROOM = 'update room',
     DICE_ROLL = 'dice roll',
-    AUCTION_COMPANY = 'auction company'
+    SELL_COMPANY = 'sell company',
+    AUCTION_COMPANY = 'auction company',
+    BUY_COMPANY = 'buy company',
+    CANCEL_BUY = 'cancel buy',
 }
 
 export interface payloadSocket {
@@ -112,6 +117,12 @@ export interface DiceRollGamePayload {
     idUser: string;
 }
 
+export interface BuyCompanyPayload {
+    idRoom: string;
+    idUser: string;
+    indexCompany: number;
+}
+
 export interface gameCell {
     indexCell: number;
     gridArea: string;
@@ -165,5 +176,6 @@ export interface CompanyInfo {
 }
 
 export interface CompanyInfoBuy extends CompanyInfo {
-    auction: boolean;
+    indexCompany: number;
+    rentCompany: number;
 }

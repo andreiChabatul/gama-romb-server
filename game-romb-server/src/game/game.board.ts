@@ -35,13 +35,14 @@ export class Game implements GameBoard {
         if (this.cellsGame[this.players[idUser].getCellPosition()]) {
             this.cellsGame[this.players[idUser].getCellPosition()].cellProcessing(this.players[idUser])
         }
-        this.updatePositionPlayers();
-        this.updateCompanyInfoBoard();
+        
     }
 
 
 
     getBoard() {
+        this.updatePositionPlayers();
+        this.updateCompanyInfoBoard();
         return this.board;
     }
 

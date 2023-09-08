@@ -2,6 +2,7 @@ import { Player } from "src/types";
 import { users } from "src/users/users.service";
 import { CIRCLE_REWARD, MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chat.room";
+import { WebSocket } from "ws";
 
 export class PlayerDefault implements PlayerDefault {
 
@@ -14,8 +15,9 @@ export class PlayerDefault implements PlayerDefault {
     private isTurn: boolean;
     private numberPlayer: number;
     private chat: Chat;
+    private webSocket: WebSocket;
 
-    constructor(id: string, numberPlayer: number, chat: Chat) {
+    constructor(id: string, numberPlayer: number, chat: Chat, webSocket: WebSocket) {
         const playerNew = users.find(user => user.userId === id);
         this.id = id;
         this.name = playerNew.nickname;
@@ -26,6 +28,7 @@ export class PlayerDefault implements PlayerDefault {
         this.isTurn = false;
         this.numberPlayer = numberPlayer;
         this.chat = chat;
+        this.webSocket = webSocket;
     }
 
     turnPlayer(): void {
@@ -52,6 +55,10 @@ export class PlayerDefault implements PlayerDefault {
 
     getNamePlayer(): string {
         return this.name;
+    }
+
+    getWebSocket(): WebSocket {
+        return this.webSocket;
     }
 
     setTotalPlayer(value: number): void {
