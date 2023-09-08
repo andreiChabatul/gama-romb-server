@@ -54,16 +54,16 @@ export class Room implements RoomClass {
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
-        if (this.isCellCompany(company)) {
+        if ('buyCompany' in company) {
             company.buyCompany(this.players[idUser]);
         }
         this.updateRoom();
     }
 
-    playerCancelBuyCompany(idUser: string, indexCompany: number): void {
+    playerCancelBuyCompany(indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
-        if (this.isCellCompany(company)) {
-            company.buyCompany(this.players[idUser]);
+        if ('cancelBuyCompany' in company) {
+            company.cancelBuyCompany();
         }
         this.updateRoom();
     }
@@ -117,14 +117,5 @@ export class Room implements RoomClass {
         this.cellsGame[16] = new CellTax(TAX_5, this.chat);
         this.cellsGame[35] = new CellTax(TAX_10, this.chat);
     }
-
-
-    private isCellCompany = (cell: cells): cell is CellCompanyI => {
-        return 'buyCompany' in cell;
-    }
-
-
-
-
 
 }

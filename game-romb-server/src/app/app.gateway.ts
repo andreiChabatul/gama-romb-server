@@ -66,7 +66,7 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.SELL_COMPANY:
         const canselBuyPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[canselBuyPayload.idRoom].playerBuyCompany(canselBuyPayload.idUser, canselBuyPayload.indexCompany);
+        rooms[canselBuyPayload.idRoom].playerCancelBuyCompany(canselBuyPayload.indexCompany);
         break;
 
       default:
