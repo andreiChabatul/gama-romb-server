@@ -1,7 +1,7 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, CellCompanyI, CellTaxI, cells } from "src/types";
+import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
@@ -21,13 +21,15 @@ export class Room implements RoomClass {
     private game: Game;
     private chat: Chat;
     idRoom: string;
+    indexActive: number;
 
     constructor(gameCreateDto: GameCreateDto, idRoom: string) {
         this.idRoom = idRoom;
         this.roomName = gameCreateDto.roomName;
         this.maxPlayers = gameCreateDto.players;
         this.chat = new Chat();
-        this.game = new Game(gameCreateDto, this.players, this.cellsGame);
+        this.indexActive = 0;
+        this.game = new Game(this.players, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
         this.fillCellsGame();
 
@@ -43,14 +45,19 @@ export class Room implements RoomClass {
     }
 
     private checkStartGame() {
+
+
         this.updateRoom();
     }
 
 
     playerMove(idUser: string, value: number) {
         this.game.playerMove(idUser, value);
+        this.indexActive += 1;
         this.updateRoom();
     }
+
+
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
@@ -69,6 +76,15 @@ export class Room implements RoomClass {
     }
 
 
+    playerMakeBidAuction(idUser: string, indexCompany: number): void {
+        const company = this.cellsGame[indexCompany];
+        if ('auctionStep' in company) {
+            company.auctionStep(this.players[idUser]);
+        }
+        this.updateRoom();
+    }
+
+
     addChatMessage(message: string, idUser: string) {
         const playerChat = this.returnInfoPlayers().find(player => player.id === idUser);
         this.chat.addMessage(message, playerChat);
@@ -76,6 +92,8 @@ export class Room implements RoomClass {
     }
 
     updateRoom() {
+
+        this.updateTurnPlayer();
         this.returnInfoPlayers();
         const payload = {
             idRoom: this.idRoom,
@@ -116,6 +134,19 @@ export class Room implements RoomClass {
 
         this.cellsGame[16] = new CellTax(TAX_5, this.chat);
         this.cellsGame[35] = new CellTax(TAX_10, this.chat);
+    }
+
+
+    private updateTurnPlayer() {
+
+        Object.keys(this.players).map((id) => {
+            const player = this.players[id];
+            player.setTurnPlayer(false)
+            player.getNumberPlayer() === this.indexActive
+                ? player.setTurnPlayer(true)
+                : ''
+        })
+
     }
 
 }

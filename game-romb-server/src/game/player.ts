@@ -31,16 +31,12 @@ export class PlayerDefault implements PlayerDefault {
         this.webSocket = webSocket;
     }
 
-    turnPlayer(): void {
-        this.isTurn = true;
-    }
-
     setPosition(value: number) {
         this.chat.addMessage(`${this.name} rolled ${value}`);
         this.cellPosition = this.positionCellCalc(value);
     }
 
-    returnNumberPlayer(): number {
+    getNumberPlayer(): number {
         return this.numberPlayer;
     }
 
@@ -63,6 +59,10 @@ export class PlayerDefault implements PlayerDefault {
 
     setTotalPlayer(value: number): void {
         this.total = value;
+    }
+
+    setTurnPlayer(value: boolean) {
+        this.isTurn = value;
     }
 
 

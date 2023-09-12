@@ -19,8 +19,7 @@ export interface PlayersGame {
 export interface PlayerDefault {
     readonly player: Player;
     turnPlayer(): void;
-    returnPlayer(): Player;
-    returnNumberPlayer(): number;
+    getNumberPlayer(): number;
     getCellPosition(): number;
     getTotalPlayer(): number;
     setTotalPlayer(value: number): void;
@@ -36,7 +35,10 @@ export interface CellTaxI {
 export interface CellCompanyI {
     buyCompany(buyer: PlayerDefault): void
     cellProcessing(player: PlayerDefault): void;
-    cancelBuyCompany(): void
+    cancelBuyCompany(): void;
+    auctionStep(player: PlayerDefault): void;
+
+
 }
 
 export type createCell = {
@@ -55,9 +57,9 @@ export enum EACTION_WEBSOCKET {
     UPDATE_ROOM = 'update room',
     DICE_ROLL = 'dice roll',
     SELL_COMPANY = 'sell company',
-    AUCTION_COMPANY = 'auction company',
     BUY_COMPANY = 'buy company',
     CANCEL_BUY = 'cancel buy',
+    AUCTION_STEP = 'auction step',
 }
 
 export interface payloadSocket {

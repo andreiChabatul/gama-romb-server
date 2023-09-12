@@ -64,9 +64,14 @@ export class AppGateway {
         rooms[buyPayload.idRoom].playerBuyCompany(buyPayload.idUser, buyPayload.indexCompany);
         break;
 
-      case EACTION_WEBSOCKET.SELL_COMPANY:
+      case EACTION_WEBSOCKET.CANCEL_BUY:
         const canselBuyPayload = payloadSocket.payload as BuyCompanyPayload;
         rooms[canselBuyPayload.idRoom].playerCancelBuyCompany(canselBuyPayload.indexCompany);
+        break;
+
+      case EACTION_WEBSOCKET.AUCTION_STEP:
+        const AuctionStepPayload = payloadSocket.payload as BuyCompanyPayload;
+        rooms[AuctionStepPayload.idRoom].playerMakeBidAuction(AuctionStepPayload.idUser, AuctionStepPayload.indexCompany);
         break;
 
       default:
