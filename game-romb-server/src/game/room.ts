@@ -92,9 +92,7 @@ export class Room implements RoomClass {
     }
 
     updateRoom() {
-
         this.updateTurnPlayer();
-        this.returnInfoPlayers();
         const payload = {
             idRoom: this.idRoom,
             players: this.returnInfoPlayers(),
@@ -138,7 +136,6 @@ export class Room implements RoomClass {
 
 
     private updateTurnPlayer() {
-
         Object.keys(this.players).map((id) => {
             const player = this.players[id];
             player.setTurnPlayer(false)
@@ -146,7 +143,6 @@ export class Room implements RoomClass {
                 ? player.setTurnPlayer(true)
                 : ''
         })
-
     }
 
 }
