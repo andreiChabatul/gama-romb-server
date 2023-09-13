@@ -33,10 +33,11 @@ export interface CellTaxI {
 }
 
 export interface CellCompanyI {
-    buyCompany(buyer: PlayerDefault): void
+    buyCompany(buyer: PlayerDefault, price?: number): void
     cellProcessing(player: PlayerDefault): void;
     cancelBuyCompany(): void;
     auctionStep(player: PlayerDefault): void;
+    auctionEnd(): void;
 
 
 }
@@ -60,6 +61,7 @@ export enum EACTION_WEBSOCKET {
     BUY_COMPANY = 'buy company',
     CANCEL_BUY = 'cancel buy',
     AUCTION_STEP = 'auction step',
+    AUCTION_END = 'auction end'
 }
 
 export interface payloadSocket {
@@ -116,6 +118,7 @@ export interface MessageChatGamePayload {
 export interface DiceRollGamePayload {
     idRoom: string;
     value: number;
+    isDouble: boolean;
     idUser: string;
 }
 

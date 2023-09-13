@@ -28,7 +28,7 @@ export class AppGateway {
   handleMessage(client: WebSocket, payload: string): void {
     sockets.push(client);
     const payloadSocket: payloadSocket = JSON.parse(payload);
-    // console.log(payloadSocket, 'payload')
+    console.log(payloadSocket, 'payload')
     switch (payloadSocket.action) {
 
       case EACTION_WEBSOCKET.CREATE_GAME:
@@ -56,7 +56,7 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.DICE_ROLL:
         const diceRoll = payloadSocket.payload as DiceRollGamePayload;
-        rooms[diceRoll.idRoom].playerMove(diceRoll.idUser, diceRoll.value);
+        rooms[diceRoll.idRoom].playerMove(diceRoll.idUser, diceRoll.value, diceRoll.isDouble);
         break;
 
       case EACTION_WEBSOCKET.BUY_COMPANY:
@@ -72,6 +72,11 @@ export class AppGateway {
       case EACTION_WEBSOCKET.AUCTION_STEP:
         const AuctionStepPayload = payloadSocket.payload as BuyCompanyPayload;
         rooms[AuctionStepPayload.idRoom].playerMakeBidAuction(AuctionStepPayload.idUser, AuctionStepPayload.indexCompany);
+        break;
+
+      case EACTION_WEBSOCKET.AUCTION_END:
+        const AuctionEndPayload = payloadSocket.payload as BuyCompanyPayload;
+        rooms[AuctionEndPayload.idRoom].companyAuctionEnd(AuctionEndPayload.indexCompany);
         break;
 
       default:

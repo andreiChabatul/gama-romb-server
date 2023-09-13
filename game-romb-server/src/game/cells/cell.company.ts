@@ -23,12 +23,11 @@ export class CellCompany implements CellCompanyI {
         this.chat = chat;
     }
 
-    buyCompany(buyer: PlayerDefault): void {
+    buyCompany(buyer: PlayerDefault, price?: number): void {
         this.owned = buyer;
         this.chat.addMessage
-            (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${this.compnanyInfo.priceCompany}`)
+            (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`)
     }
-
 
     cancelBuyCompany(): void {
         this.chat.addMessage
@@ -38,6 +37,7 @@ export class CellCompany implements CellCompanyI {
 
 
     private auctionCompany() {
+        this.startAuction();
         this.auctionPrice
             ? this.auctionPrice *= AUCTION_STEP
             : this.auctionPrice = this.compnanyInfo.priceCompany * AUCTION_STEP;
@@ -55,16 +55,16 @@ export class CellCompany implements CellCompanyI {
         this.auctionCompany();
     }
 
-    auctionEnd() {
-        if (this.auctionWinner) {
-            //price final auction
-            this.buyCompany(this.auctionWinner)
-        } else {
-            this.chat.addMessage(`the auction for the company ${this.compnanyInfo.nameCompany} did not take place`);
+    auctionEnd(): void {
+        if (this.isAuction) {
+            if (this.auctionWinner) {
+                this.buyCompany(this.auctionWinner, Math.round(this.auctionPrice));
+            } else {
+                this.chat.addMessage(`the auction for the company ${this.compnanyInfo.nameCompany} did not take place`);
+            }
+            this.isAuction = false;
         }
     }
-
-
 
 
     cellProcessing(player: PlayerDefault): void {
@@ -75,11 +75,6 @@ export class CellCompany implements CellCompanyI {
         }
     }
 
-
-
-
-
-
     private sellCompany(player: PlayerDefault): void {
         player.getWebSocket().send(JSON.stringify(
             {
@@ -88,9 +83,18 @@ export class CellCompany implements CellCompanyI {
                     indexCompany: this.indexCompany,
                     rentCompany: this.rentCompany,
                     auctionPrice: Math.round(this.auctionPrice),
+                    isAuction: this.isAuction,
                     auctionWinner: this.auctionWinner ? this.auctionWinner.getNamePlayer() : '...'
                 }
             }))
+    }
+
+    private startAuction(): void {
+        if (!this.isAuction) {
+            this.auctionPrice = 0;
+            this.auctionWinner = undefined;
+            this.isAuction = true;
+        }
     }
 
 

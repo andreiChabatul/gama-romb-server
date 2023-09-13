@@ -45,19 +45,16 @@ export class Room implements RoomClass {
     }
 
     private checkStartGame() {
-
-
         this.updateRoom();
     }
 
 
-    playerMove(idUser: string, value: number) {
+    playerMove(idUser: string, value: number, isDouble: boolean) {
         this.game.playerMove(idUser, value);
-        this.indexActive += 1;
+
+        this.indexActive = this.calcIndexActive();
         this.updateRoom();
     }
-
-
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
@@ -80,6 +77,14 @@ export class Room implements RoomClass {
         const company = this.cellsGame[indexCompany];
         if ('auctionStep' in company) {
             company.auctionStep(this.players[idUser]);
+        }
+        this.updateRoom();
+    }
+
+    companyAuctionEnd(indexCompany: number): void {
+        const company = this.cellsGame[indexCompany];
+        if ('auctionEnd' in company) {
+            company.auctionEnd();
         }
         this.updateRoom();
     }
@@ -132,6 +137,13 @@ export class Room implements RoomClass {
 
         this.cellsGame[16] = new CellTax(TAX_5, this.chat);
         this.cellsGame[35] = new CellTax(TAX_10, this.chat);
+    }
+
+
+    private calcIndexActive(): number {
+        let futureIndexActive = this.indexActive + 1;
+        futureIndexActive >= this.maxPlayers ? futureIndexActive = 0 : '';
+        return futureIndexActive;
     }
 
 
