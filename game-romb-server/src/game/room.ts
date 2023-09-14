@@ -8,6 +8,7 @@ import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
 import { CellTax } from "./cells/cell.tax";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
+import { TIME_AUCTION_COMPANY, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
 
 
 export class Room implements RoomClass {
@@ -22,6 +23,8 @@ export class Room implements RoomClass {
     private chat: Chat;
     idRoom: string;
     indexActive: number;
+    timerTurn: number;
+    timer: NodeJS.Timeout;
 
     constructor(gameCreateDto: GameCreateDto, idRoom: string) {
         this.idRoom = idRoom;
@@ -32,7 +35,6 @@ export class Room implements RoomClass {
         this.game = new Game(this.players, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
         this.fillCellsGame();
-
     }
 
     addPlayer(id: string, client: WebSocket) {
@@ -48,12 +50,27 @@ export class Room implements RoomClass {
         this.updateRoom();
     }
 
-
     playerMove(idUser: string, value: number, isDouble: boolean) {
-        this.game.playerMove(idUser, value);
-
-        this.indexActive = this.calcIndexActive();
+        const player = this.players[idUser];
+        player.setPosition(value);
         this.updateRoom();
+        if (this.cellsGame[player.getCellPosition()]) {
+            this.timerTurn = this.cellsGame[player.getCellPosition()].cellProcessing(player);
+            this.updateTimerTurn();
+        } else {
+            this.indexActive = this.calcIndexActive();
+            this.updateRoom();
+        }
+
+    }
+
+    private updateTimerTurn(): void {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.indexActive = this.calcIndexActive();
+            this.updateRoom()
+        }, this.timerTurn);
+
     }
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
@@ -61,7 +78,8 @@ export class Room implements RoomClass {
         if ('buyCompany' in company) {
             company.buyCompany(this.players[idUser]);
         }
-        this.updateRoom();
+        this.timerTurn = 0;
+        this.updateTimerTurn();
     }
 
     playerCancelBuyCompany(indexCompany: number): void {
@@ -69,7 +87,9 @@ export class Room implements RoomClass {
         if ('cancelBuyCompany' in company) {
             company.cancelBuyCompany();
         }
+        this.timerTurn = TIME_AUCTION_COMPANY;
         this.updateRoom();
+        this.updateTimerTurn();
     }
 
 
@@ -78,7 +98,8 @@ export class Room implements RoomClass {
         if ('auctionStep' in company) {
             company.auctionStep(this.players[idUser]);
         }
-        this.updateRoom();
+        this.timerTurn = TIME_AUCTION_COMPANY;
+        this.updateTimerTurn();
     }
 
     companyAuctionEnd(indexCompany: number): void {
@@ -86,7 +107,8 @@ export class Room implements RoomClass {
         if ('auctionEnd' in company) {
             company.auctionEnd();
         }
-        this.updateRoom();
+        this.timerTurn = 0;
+        this.updateTimerTurn();
     }
 
 

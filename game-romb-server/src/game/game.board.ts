@@ -19,20 +19,11 @@ export class Game implements GameBoard {
         this.updateCompanyInfoBoard();
     }
 
-    playerMove(idUser: string, value: number) {
-        this.players[idUser].setPosition(value);
-        if (this.cellsGame[this.players[idUser].getCellPosition()]) {
-            this.cellsGame[this.players[idUser].getCellPosition()].cellProcessing(this.players[idUser])
-        }
-    }
-
-
-    getBoard() {
+       getBoard() {
         this.updatePositionPlayers();
         this.updateCompanyInfoBoard();
         return this.board;
     }
-
 
     private updatePositionPlayers(): void {
         this.board.map((cell) => cell.players = []);

@@ -1,6 +1,6 @@
 import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame } from "src/types";
 import { Chat } from "../chat.room";
-import { AUCTION_STEP } from "src/app/const";
+import { AUCTION_STEP, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellCompany implements CellCompanyI {
 
@@ -15,7 +15,7 @@ export class CellCompany implements CellCompanyI {
     private auctionPrice: number;
     private auctionWinner: PlayerDefault;
     private isAuction: boolean;
-
+  
     constructor(companyInfo: CompanyInfo, players: PlayersGame, indexCompany: number, chat: Chat) {
         this.compnanyInfo = companyInfo;
         this.indexCompany = indexCompany;
@@ -25,8 +25,9 @@ export class CellCompany implements CellCompanyI {
 
     buyCompany(buyer: PlayerDefault, price?: number): void {
         this.owned = buyer;
+        buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
         this.chat.addMessage
-            (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`)
+            (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
     }
 
     cancelBuyCompany(): void {
@@ -34,7 +35,6 @@ export class CellCompany implements CellCompanyI {
             (`The company ${this.compnanyInfo.nameCompany} is being put up for auction. Starting price: ${this.compnanyInfo.priceCompany}`);
         this.auctionCompany();
     }
-
 
     private auctionCompany() {
         this.startAuction();
@@ -67,12 +67,21 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    cellProcessing(player: PlayerDefault): void {
-        if (this.owned) {
-            console.log('rent');
-        } else {
-            this.sellCompany(player);
+    cellProcessing(player: PlayerDefault): number {
+        if (this.owned && this.owned !== player) {
+            this.owned.enrollRentCompany(this.rentCompany);
+            player.payRentCompany(this.rentCompany);
+            return TIME_TURN_DEFAULT;
         }
+        else if (this.owned === player) { return; }
+        else {
+            if (this.compnanyInfo.priceCompany >= player.getTotalPlayer()) {
+                this.auctionCompany();
+            } else {
+                this.sellCompany(player);
+            }
+        }
+        return TIME_BUY_COMPANY;
     }
 
     private sellCompany(player: PlayerDefault): void {
@@ -96,8 +105,6 @@ export class CellCompany implements CellCompanyI {
             this.isAuction = true;
         }
     }
-
-
 
     getInfoCellCompany(): GameCellCompanyInfo {
         return {

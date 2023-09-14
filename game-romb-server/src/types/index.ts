@@ -25,19 +25,23 @@ export interface PlayerDefault {
     setTotalPlayer(value: number): void;
     getNamePlayer(): string;
     getWebSocket(): WebSocket;
+    buyCompany(price: number): void;
+    payRentCompany(rent: number): void;
+    enrollRentCompany(rent: number): void;
 }
 
 export interface CellTaxI {
     valueTax: number;
-    cellProcessing(player: PlayerDefault): void;
+    cellProcessing(player: PlayerDefault): number;
 }
 
 export interface CellCompanyI {
     buyCompany(buyer: PlayerDefault, price?: number): void
-    cellProcessing(player: PlayerDefault): void;
+    cellProcessing(player: PlayerDefault): number;
     cancelBuyCompany(): void;
     auctionStep(player: PlayerDefault): void;
     auctionEnd(): void;
+    
 
 
 }
@@ -178,6 +182,7 @@ export interface CompanyInfo {
     countryCompany: countryCompany;
     nameCompany: nameCompany;
     priceCompany: number;
+    rentCompany: number;
 }
 
 export interface CompanyInfoBuy extends CompanyInfo {

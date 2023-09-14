@@ -65,6 +65,18 @@ export class PlayerDefault implements PlayerDefault {
         this.isTurn = value;
     }
 
+    buyCompany(price: number): void {
+        this.total -= price;
+    }
+
+    payRentCompany(rent: number): void {
+        this.total -= rent;
+    }
+
+    enrollRentCompany(rent: number): void {
+        this.total += rent;
+    }
+
 
     returnPlayer(): Player {
         return {
