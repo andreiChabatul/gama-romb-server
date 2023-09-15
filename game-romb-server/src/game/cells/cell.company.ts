@@ -15,7 +15,7 @@ export class CellCompany implements CellCompanyI {
     private auctionPrice: number;
     private auctionWinner: PlayerDefault;
     private isAuction: boolean;
-  
+
     constructor(companyInfo: CompanyInfo, players: PlayersGame, indexCompany: number, chat: Chat) {
         this.compnanyInfo = companyInfo;
         this.indexCompany = indexCompany;
@@ -68,6 +68,7 @@ export class CellCompany implements CellCompanyI {
 
 
     cellProcessing(player: PlayerDefault): number {
+       
         if (this.owned && this.owned !== player) {
             this.owned.enrollRentCompany(this.rentCompany);
             player.payRentCompany(this.rentCompany);
@@ -90,7 +91,6 @@ export class CellCompany implements CellCompanyI {
                 action: EACTION_WEBSOCKET.SELL_COMPANY, payload: {
                     ...this.compnanyInfo,
                     indexCompany: this.indexCompany,
-                    rentCompany: this.rentCompany,
                     auctionPrice: Math.round(this.auctionPrice),
                     isAuction: this.isAuction,
                     auctionWinner: this.auctionWinner ? this.auctionWinner.getNamePlayer() : '...'
@@ -111,7 +111,9 @@ export class CellCompany implements CellCompanyI {
             nameCompany: this.compnanyInfo.nameCompany,
             countryCompany: this.compnanyInfo.countryCompany,
             priceCompany: this.compnanyInfo.priceCompany,
+            rentCompany: this.compnanyInfo.rentCompany,
             isPledge: this.isPledge,
+            shares: ['stock', 'stock', 'stock', 'stock', 'stock'],
             owned: this.owned ? this.owned.getNumberPlayer() : undefined,
         }
     }

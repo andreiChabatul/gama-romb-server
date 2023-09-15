@@ -1,7 +1,7 @@
 import { gameCell } from "src/types";
 
 export const MAX_INDEX_CELL_BOARD = 38;
-export const CIRCLE_REWARD = 200;
+
 export const TAX_10 = 0.1;
 export const TAX_5 = 0.05;
 

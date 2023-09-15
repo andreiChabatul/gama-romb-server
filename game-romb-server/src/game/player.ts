@@ -1,8 +1,9 @@
 import { Player } from "src/types";
 import { users } from "src/users/users.service";
-import { CIRCLE_REWARD, MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
+import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chat.room";
 import { WebSocket } from "ws";
+import { CIRCLE_REWARD } from "src/app/const";
 
 export class PlayerDefault implements PlayerDefault {
 
@@ -22,7 +23,7 @@ export class PlayerDefault implements PlayerDefault {
         this.id = id;
         this.name = playerNew.nickname;
         this.image = 'temp';
-        this.total = 1000;
+        this.total = 1500000;
         this.capital = 0;
         this.cellPosition = 0;
         this.isTurn = false;
@@ -90,7 +91,6 @@ export class PlayerDefault implements PlayerDefault {
             numberPlayer: this.numberPlayer,
         };
     }
-
 
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;

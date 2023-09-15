@@ -187,5 +187,5 @@ export interface CompanyInfo {
 
 export interface CompanyInfoBuy extends CompanyInfo {
     indexCompany: number;
-    rentCompany: number;
+
 }
