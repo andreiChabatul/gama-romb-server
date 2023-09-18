@@ -74,6 +74,11 @@ export class PlayerDefault implements PlayerDefault {
         this.total -= rent;
     }
 
+    buyStock(value: number, nameCompany: string): void {
+        this.chat.addMessage(`${this.name} buys company shares ${nameCompany} for ${value}`);
+        this.total -= value;
+    }
+
     enrollRentCompany(rent: number): void {
         this.total += rent;
     }

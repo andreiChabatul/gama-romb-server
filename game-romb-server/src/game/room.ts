@@ -1,14 +1,14 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells } from "src/types";
+import { CellCompanyI, EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, countryCompanyMonopoly, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
 import { CellTax } from "./cells/cell.tax";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
-import { TIME_AUCTION_COMPANY, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
+import { TIME_AUCTION_COMPANY } from "src/app/const";
 
 
 export class Room implements RoomClass {
@@ -111,6 +111,13 @@ export class Room implements RoomClass {
         this.updateTimerTurn();
     }
 
+    playerBuyStock(idUser: string, indexCompany: number): void {
+        const company = this.cellsGame[indexCompany];
+        if ('buyStock' in company) {
+            company.buyStock(this.players[idUser]);
+        }
+        this.updateRoom();
+    }
 
     addChatMessage(message: string, idUser: string) {
         const playerChat = this.returnInfoPlayers().find(player => player.id === idUser);
@@ -120,6 +127,7 @@ export class Room implements RoomClass {
 
     updateRoom() {
         this.updateTurnPlayer();
+        this.updateMonopolyCompany();
         const payload = {
             idRoom: this.idRoom,
             players: this.returnInfoPlayers(),
@@ -178,5 +186,34 @@ export class Room implements RoomClass {
                 : ''
         })
     }
+
+
+    private updateMonopolyCompany() {
+        const countryCompany: countryCompanyMonopoly[] = ['germany', 'italia', 'britania', 'sweden', 'canada', 'kazah', 'china', 'usa'];
+
+        countryCompany.map((country) => {
+            const companyMonopoly = this.cellsGame.filter((cell) =>
+                'getCountryCompany' in cell && cell.getCountryCompany() === country
+            ) as CellCompanyI[];
+
+            checkMonopoly(companyMonopoly);
+        })
+
+        function checkMonopoly(country: CellCompanyI[]) {
+            let isMonopoly = true;
+            for (let index = 0; index < country.length - 1; index++) {
+                if (country[index].getOwned() === null
+                    || country[index].getOwned() !== country[index + 1].getOwned()) {
+                    isMonopoly = false;
+                    break;
+                }
+            }
+
+            country.forEach((country) => country.setMonopoly(isMonopoly));
+        }
+
+    }
+
+
 
 }

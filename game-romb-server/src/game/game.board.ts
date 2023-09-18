@@ -19,7 +19,7 @@ export class Game implements GameBoard {
         this.updateCompanyInfoBoard();
     }
 
-       getBoard() {
+    getBoard() {
         this.updatePositionPlayers();
         this.updateCompanyInfoBoard();
         return this.board;
