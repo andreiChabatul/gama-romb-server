@@ -1,15 +1,14 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chat.room";
-import { CellCompanyI, EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, countryCompanyMonopoly, gameCell } from "src/types";
+import { CellCompanyI, EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, companyCheckNoMonopoly } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { TAX_10, TAX_5 } from "./defaultBoard/defaultBoard";
 import { CellTax } from "./cells/cell.tax";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
-import { TIME_AUCTION_COMPANY } from "src/app/const";
-
+import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY, TIME_AUCTION_COMPANY } from "src/app/const";
 
 export class Room implements RoomClass {
 
@@ -22,9 +21,9 @@ export class Room implements RoomClass {
     private game: Game;
     private chat: Chat;
     idRoom: string;
-    indexActive: number;
-    timerTurn: number;
-    timer: NodeJS.Timeout;
+    private indexActive: number;
+    private isDouble: boolean;
+
 
     constructor(gameCreateDto: GameCreateDto, idRoom: string) {
         this.idRoom = idRoom;
@@ -51,12 +50,12 @@ export class Room implements RoomClass {
     }
 
     playerMove(idUser: string, value: number, isDouble: boolean) {
+        this.isDouble = isDouble;
         const player = this.players[idUser];
         player.setPosition(value);
         this.updateRoom();
         if (this.cellsGame[player.getCellPosition()]) {
-            this.timerTurn = this.cellsGame[player.getCellPosition()].cellProcessing(player);
-            this.updateTimerTurn();
+            this.cellsGame[player.getCellPosition()].cellProcessing(player, value);
         } else {
             this.indexActive = this.calcIndexActive();
             this.updateRoom();
@@ -64,22 +63,13 @@ export class Room implements RoomClass {
 
     }
 
-    private updateTimerTurn(): void {
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-            this.indexActive = this.calcIndexActive();
-            this.updateRoom()
-        }, this.timerTurn);
-
-    }
-
     playerBuyCompany(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
         if ('buyCompany' in company) {
             company.buyCompany(this.players[idUser]);
-        }
-        this.timerTurn = 0;
-        this.updateTimerTurn();
+        };
+        this.nextTurn();
+        this.updateRoom()
     }
 
     playerCancelBuyCompany(indexCompany: number): void {
@@ -87,19 +77,13 @@ export class Room implements RoomClass {
         if ('cancelBuyCompany' in company) {
             company.cancelBuyCompany();
         }
-        this.timerTurn = TIME_AUCTION_COMPANY;
-        this.updateRoom();
-        this.updateTimerTurn();
     }
-
 
     playerMakeBidAuction(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
         if ('auctionStep' in company) {
             company.auctionStep(this.players[idUser]);
         }
-        this.timerTurn = TIME_AUCTION_COMPANY;
-        this.updateTimerTurn();
     }
 
     companyAuctionEnd(indexCompany: number): void {
@@ -107,8 +91,7 @@ export class Room implements RoomClass {
         if ('auctionEnd' in company) {
             company.auctionEnd();
         }
-        this.timerTurn = 0;
-        this.updateTimerTurn();
+        this.nextTurn();
     }
 
     playerBuyStock(idUser: string, indexCompany: number): void {
@@ -128,6 +111,7 @@ export class Room implements RoomClass {
     updateRoom() {
         this.updateTurnPlayer();
         this.updateMonopolyCompany();
+        this.updateNoMonopolyCompany();
         const payload = {
             idRoom: this.idRoom,
             players: this.returnInfoPlayers(),
@@ -169,13 +153,20 @@ export class Room implements RoomClass {
         this.cellsGame[35] = new CellTax(TAX_10, this.chat);
     }
 
+    private nextTurn(): void {
+        if (this.isDouble) {
+
+        } else {
+            this.indexActive = this.calcIndexActive();
+        }
+    }
+
 
     private calcIndexActive(): number {
         let futureIndexActive = this.indexActive + 1;
         futureIndexActive >= this.maxPlayers ? futureIndexActive = 0 : '';
         return futureIndexActive;
     }
-
 
     private updateTurnPlayer() {
         Object.keys(this.players).map((id) => {
@@ -188,10 +179,8 @@ export class Room implements RoomClass {
     }
 
 
-    private updateMonopolyCompany() {
-        const countryCompany: countryCompanyMonopoly[] = ['germany', 'italia', 'britania', 'sweden', 'canada', 'kazah', 'china', 'usa'];
-
-        countryCompany.map((country) => {
+    private updateMonopolyCompany(): void {
+        MONOPOLY_COMPANY.map((country) => {
             const companyMonopoly = this.cellsGame.filter((cell) =>
                 'getCountryCompany' in cell && cell.getCountryCompany() === country
             ) as CellCompanyI[];
@@ -211,9 +200,35 @@ export class Room implements RoomClass {
 
             country.forEach((country) => country.setMonopoly(isMonopoly));
         }
-
     }
 
+    private updateNoMonopolyCompany(): void {
+        const cellResult: companyCheckNoMonopoly = {};
 
+        const companyNoMonopoly = this.cellsGame.filter((cell) =>
+            'getCountryCompany' in cell && cell.getCountryCompany() === NO_MONOPOY_COMPANY
+        ) as CellCompanyI[];
+
+        companyNoMonopoly.map((company) => {
+            const owned = company.getOwned();
+            const indexCompany = company.getIndexCompany();
+            if (company.getOwned() !== null) {
+                (cellResult[owned])
+                    ? cellResult[owned].push(indexCompany)
+                    : cellResult[owned] = new Array(1).fill(indexCompany);
+            }
+        }
+        )
+        Object.values(cellResult).map((indexs: number[]) => {
+            indexs.map((index) => {
+                const cell = this.cellsGame[index]
+                if ('setQuantityStock' in cell) {
+                    cell.setQuantityStock(indexs.length);
+                }
+            }
+            )
+        })
+
+    }
 
 }

@@ -3,7 +3,7 @@ import { users } from "src/users/users.service";
 import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chat.room";
 import { WebSocket } from "ws";
-import { CIRCLE_REWARD } from "src/app/const";
+import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
 
 export class PlayerDefault implements PlayerDefault {
 
@@ -23,7 +23,7 @@ export class PlayerDefault implements PlayerDefault {
         this.id = id;
         this.name = playerNew.nickname;
         this.image = 'temp';
-        this.total = 1500000;
+        this.total = INIT_TOTAL;
         this.capital = 0;
         this.cellPosition = 0;
         this.isTurn = false;
@@ -71,6 +71,7 @@ export class PlayerDefault implements PlayerDefault {
     }
 
     payRentCompany(rent: number): void {
+        this.chat.addMessage(`${this.name} pays rent in the amount ${rent}`);
         this.total -= rent;
     }
 
@@ -82,7 +83,6 @@ export class PlayerDefault implements PlayerDefault {
     enrollRentCompany(rent: number): void {
         this.total += rent;
     }
-
 
     returnPlayer(): Player {
         return {

@@ -46,8 +46,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'top',
     players: [],
     cellSquare: {
-      imageCell: 'chance',
-      textCell: 'Chance'
+      imageCell: 'profit',
+      textCell: 'Profit'
     }
   },
   {
@@ -62,8 +62,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'top',
     players: [],
     cellSquare: {
-      imageCell: 'mysteryBox',
-      textCell: 'Mystery'
+      imageCell: 'loss',
+      textCell: 'Loss'
     }
   },
   {
@@ -180,8 +180,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'bottom',
     players: [],
     cellSquare: {
-      imageCell: 'chance',
-      textCell: 'Chance'
+      imageCell: 'profit',
+      textCell: 'Profit'
     }
   },
   {
@@ -196,8 +196,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'bottom',
     players: [],
     cellSquare: {
-      imageCell: 'mysteryBox',
-      textCell: 'Mystery'
+      imageCell: 'loss',
+      textCell: 'Loss'
     }
   },
   {

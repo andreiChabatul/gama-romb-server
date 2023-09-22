@@ -22,13 +22,13 @@ export class CellCompany implements CellCompanyI {
         this.indexCompany = indexCompany;
         this.players = players;
         this.chat = chat;
-        this.rentIndex = 0;
         this.quantityStock = 0;
     }
 
     buyCompany(buyer: PlayerDefault, price?: number): void {
         this.owned = buyer;
         buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
+        this.compnanyInfo.countryCompany === 'ukraine' ? this.quantityStock = 1 : '';
         this.chat.addMessage
             (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
     }
@@ -70,11 +70,13 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    cellProcessing(player: PlayerDefault): number {
+    cellProcessing(player: PlayerDefault, valueRoll?: number): number {
 
         if (this.owned && this.owned !== player) {
-            this.owned.enrollRentCompany(this.compnanyInfo.rentCompanyInfo[this.rentIndex]);
-            player.payRentCompany(this.compnanyInfo.rentCompanyInfo[this.rentIndex]);
+            let resultRent = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
+            resultRent = (this.compnanyInfo.countryCompany === 'ukraine') ? resultRent * valueRoll : resultRent;
+            this.owned.enrollRentCompany(resultRent);
+            player.payRentCompany(resultRent);
             return TIME_TURN_DEFAULT;
         }
         else if (this.owned === player) { return; }
@@ -119,15 +121,20 @@ export class CellCompany implements CellCompanyI {
             isPledge: this.isPledge,
             priceStock: this.compnanyInfo.priceStock,
             isMonopoly: this.isMonopoly,
-            shares: [],
+            shares: this.quantityStock,
             owned: this.owned ? this.owned.getNumberPlayer() : undefined,
         }
     }
 
-
     private updateRentCompany() {
-        if (this.isMonopoly) { this.rentIndex = 1 }
-        this.rentIndex += this.quantityStock;
+        this.rentIndex = 0;
+        if (this.isMonopoly) {
+            this.rentIndex = 1;
+            (this.compnanyInfo.countryCompany === 'ukraine') ? this.quantityStock = 2 : '';
+        };
+        (this.compnanyInfo.countryCompany === 'ukraine')
+            ? this.rentIndex = this.quantityStock
+            : this.rentIndex += this.quantityStock;
     }
 
     buyStock(player: PlayerDefault): void {
@@ -147,8 +154,16 @@ export class CellCompany implements CellCompanyI {
         return this.compnanyInfo.countryCompany;
     }
 
+    getIndexCompany(): number {
+        return this.indexCompany;
+    }
+
     setMonopoly(value: boolean): void {
         this.isMonopoly = value;
+    }
+
+    setQuantityStock(value: number): void {
+        this.quantityStock = value;
     }
 
 }

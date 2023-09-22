@@ -33,12 +33,12 @@ export interface PlayerDefault {
 
 export interface CellTaxI {
     valueTax: number;
-    cellProcessing(player: PlayerDefault): number;
+    cellProcessing(player: PlayerDefault, valueRoll?: number): number;
 }
 
 export interface CellCompanyI {
     buyCompany(buyer: PlayerDefault, price?: number): void
-    cellProcessing(player: PlayerDefault): number;
+    cellProcessing(player: PlayerDefault, valueRoll?: number): number;
     cancelBuyCompany(): void;
     auctionStep(player: PlayerDefault): void;
     auctionEnd(): void;
@@ -46,9 +46,15 @@ export interface CellCompanyI {
     getOwned(): number | null;
     getCountryCompany(): countryCompany;
     buyStock(player: PlayerDefault): void;
+    getIndexCompany(): number;
+    setQuantityStock(value: number): void
 
 
 
+}
+
+export interface companyCheckNoMonopoly {
+    [key: number]: number[]
 }
 
 export type createCell = {
@@ -149,7 +155,7 @@ export interface gameCell {
 
 
 export interface GameCellCompanyInfo extends CompanyInfo {
-    shares?: stockTypeCell[];
+    shares: number;
     isPledge: boolean;
     owned?: number;
 }
@@ -159,12 +165,10 @@ export interface GameCellSquare {
     textCell: string;
 }
 
-
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
-export type stockTypeCell = 'stock' | 'stamp' | 'moneta';
-export type typeSquareImage = 'inJail' | 'parking' | 'security' | 'start' | 'chance' | 'mysteryBox' | 'tax';
-export type countryCompanyNoMonopoly = 'ukraine' | 'japan';
-export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa';
+export type typeSquareImage = 'inJail' | 'parking' | 'security' | 'start' | 'profit' | 'loss' | 'tax' | 'ukraine';
+export type countryCompanyNoMonopoly = 'japan';
+export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
 export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
 
 export type nameCompany =
