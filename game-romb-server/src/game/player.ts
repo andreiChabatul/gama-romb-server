@@ -1,7 +1,7 @@
 import { Player } from "src/types";
 import { users } from "src/users/users.service";
 import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
-import { Chat } from "./chat.room";
+import { Chat } from "./chatGame/chat.room";
 import { WebSocket } from "ws";
 import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
 

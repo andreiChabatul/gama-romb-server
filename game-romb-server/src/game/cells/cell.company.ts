@@ -1,15 +1,15 @@
-import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, countryCompanyMonopoly } from "src/types";
-import { Chat } from "../chat.room";
+import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, countryCompanyMonopoly, nameCompany } from "src/types";
+import { Chat } from "../chatGame/chat.room";
 import { AUCTION_STEP, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
 
-export class CellCompany implements CellCompanyI {
+export class CellCompany implements CellCompany {
 
     private isPledge: boolean;
     private indexCompany: number;
     private owned: PlayerDefault | null;
     players: PlayersGame;
     chat: Chat;
-    compnanyInfo: CompanyInfo;
+    private compnanyInfo: CompanyInfo;
     private auctionPrice: number;
     private auctionWinner: PlayerDefault;
     private isAuction: boolean;
@@ -152,6 +152,10 @@ export class CellCompany implements CellCompanyI {
 
     getCountryCompany(): countryCompany {
         return this.compnanyInfo.countryCompany;
+    }
+
+    getCompanyInfo(): CompanyInfo {
+        return this.compnanyInfo;
     }
 
     getIndexCompany(): number {

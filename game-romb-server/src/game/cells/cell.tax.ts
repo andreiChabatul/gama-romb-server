@@ -1,5 +1,5 @@
 import { CellTaxI, PlayerDefault } from "src/types";
-import { Chat } from "../chat.room";
+import { Chat } from "../chatGame/chat.room";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellTax implements CellTaxI {

@@ -47,7 +47,8 @@ export interface CellCompanyI {
     getCountryCompany(): countryCompany;
     buyStock(player: PlayerDefault): void;
     getIndexCompany(): number;
-    setQuantityStock(value: number): void
+    setQuantityStock(value: number): void;
+    getCompanyInfo(): CompanyInfo;
 
 
 
@@ -200,5 +201,15 @@ export interface CompanyInfo {
 
 export interface CompanyInfoBuy extends CompanyInfo {
     indexCompany: number;
-
 }
+
+export type language = 'en' | 'ru';
+export type chatMessageKey = 'startAuction'
+
+export type chatMessage = {
+    startAuction: string,
+}
+export type languageMessage = {
+    en: chatMessage,
+    ru: chatMessage
+};
