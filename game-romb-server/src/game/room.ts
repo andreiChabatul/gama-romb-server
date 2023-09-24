@@ -1,6 +1,6 @@
 import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
-import { Chat } from "./chat.room";
+import { Chat } from "./chatGame/chat.room";
 import { CellCompanyI, EACTION_WEBSOCKET, Player, PlayersGame, RoomClass, cells, companyCheckNoMonopoly } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
@@ -9,6 +9,7 @@ import { CellTax } from "./cells/cell.tax";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY, TIME_AUCTION_COMPANY } from "src/app/const";
+import { ActionCompany } from "./auctionCompany/auctionCompany";
 
 export class Room implements RoomClass {
 
@@ -42,17 +43,21 @@ export class Room implements RoomClass {
         this.players[id] = player;
         this.game.startGame();
         this.checkStartGame();
-
     }
 
     private checkStartGame() {
         this.updateRoom();
     }
 
+
+
     playerMove(idUser: string, value: number, isDouble: boolean) {
+
         this.isDouble = isDouble;
         const player = this.players[idUser];
         player.setPosition(value);
+
+
         this.updateRoom();
         if (this.cellsGame[player.getCellPosition()]) {
             this.cellsGame[player.getCellPosition()].cellProcessing(player, value);
@@ -60,7 +65,7 @@ export class Room implements RoomClass {
             this.indexActive = this.calcIndexActive();
             this.updateRoom();
         }
-
+        this.updateRoom();
     }
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
@@ -76,7 +81,9 @@ export class Room implements RoomClass {
         const company = this.cellsGame[indexCompany];
         if ('cancelBuyCompany' in company) {
             company.cancelBuyCompany();
+            const auction = new ActionCompany(company, this.chat, this.players)
         }
+
     }
 
     playerMakeBidAuction(idUser: string, indexCompany: number): void {
