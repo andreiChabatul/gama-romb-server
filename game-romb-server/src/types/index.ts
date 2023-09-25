@@ -31,15 +31,17 @@ export interface PlayerDefault {
     buyStock(value: number, nameCompany: string): void
 }
 
-export interface CellTaxI {
-    valueTax: number;
-    cellProcessing(player: PlayerDefault, valueRoll?: number): number;
+export interface CellI {
+    cellProcessing(player: PlayerDefault, valueRoll?: number): void;
 }
 
-export interface CellCompanyI {
+export interface CellTaxI extends CellI {
+    valueTax: number;
+
+}
+
+export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefault, price?: number): void
-    cellProcessing(player: PlayerDefault, valueRoll?: number): number;
-    cancelBuyCompany(): void;
     auctionStep(player: PlayerDefault): void;
     auctionEnd(): void;
     setMonopoly(value: boolean): void;
@@ -75,10 +77,11 @@ export enum EACTION_WEBSOCKET {
     DICE_ROLL = 'dice roll',
     SELL_COMPANY = 'sell company',
     BUY_COMPANY = 'buy company',
-    CANCEL_BUY = 'cancel buy',
+    START_AUCTION = 'Start auction',
     AUCTION_STEP = 'auction step',
     AUCTION_END = 'auction end',
-    BUY_STOCK = 'buy stock'
+    BUY_STOCK = 'buy stock',
+    INFO_CELL_TURN = 'info cell turn'
 }
 
 export interface payloadSocket {
@@ -213,3 +216,13 @@ export type languageMessage = {
     en: chatMessage,
     ru: chatMessage
 };
+
+export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none';
+
+export type infoCellTurn = {
+    nameCell: nameCompany | typeSquareImage;
+    titleCell: string;
+    description: string;
+    indexCompany: number;
+    buttons: infoCellButtons;
+}

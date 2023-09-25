@@ -1,6 +1,7 @@
-import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, countryCompanyMonopoly, nameCompany } from "src/types";
+import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, countryCompanyMonopoly, infoCellTurn, language, nameCompany } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { AUCTION_STEP, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
+import { DESCRIPTION_CELL } from "./description/cell.description";
 
 export class CellCompany implements CellCompany {
 
@@ -16,6 +17,7 @@ export class CellCompany implements CellCompany {
     private rentIndex: number;
     private isMonopoly: boolean;
     private quantityStock: number;
+    private language: language = 'ru';
 
     constructor(companyInfo: CompanyInfo, players: PlayersGame, indexCompany: number, chat: Chat) {
         this.compnanyInfo = companyInfo;
@@ -33,11 +35,7 @@ export class CellCompany implements CellCompany {
             (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
     }
 
-    cancelBuyCompany(): void {
-        this.chat.addMessage
-            (`The company ${this.compnanyInfo.nameCompany} is being put up for auction. Starting price: ${this.compnanyInfo.priceCompany}`);
-        this.auctionCompany();
-    }
+
 
     private auctionCompany() {
         this.startAuction();
@@ -70,24 +68,40 @@ export class CellCompany implements CellCompany {
     }
 
 
-    cellProcessing(player: PlayerDefault, valueRoll?: number): number {
+    cellProcessing(player: PlayerDefault, valueRoll?: number): void {
 
-        if (this.owned && this.owned !== player) {
-            let resultRent = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
-            resultRent = (this.compnanyInfo.countryCompany === 'ukraine') ? resultRent * valueRoll : resultRent;
-            this.owned.enrollRentCompany(resultRent);
-            player.payRentCompany(resultRent);
-            return TIME_TURN_DEFAULT;
+        const payload: infoCellTurn = {
+            nameCell: this.compnanyInfo.nameCompany,
+            titleCell: this.compnanyInfo.nameCompany,
+            description: DESCRIPTION_CELL[this.language].buyCompany
+                .replaceAll('PRICE', String(this.compnanyInfo.priceCompany)),
+            indexCompany: this.indexCompany,
+            buttons: 'buy'
         }
-        else if (this.owned === player) { return; }
-        else {
-            if (this.compnanyInfo.priceCompany >= player.getTotalPlayer()) {
-                this.auctionCompany();
-            } else {
-                this.sellCompany(player);
-            }
-        }
-        return TIME_BUY_COMPANY;
+
+
+
+        player.getWebSocket().send(JSON.stringify(
+            {
+                action: EACTION_WEBSOCKET.INFO_CELL_TURN, payload
+            }))
+
+        // if (this.owned && this.owned !== player) {
+        //     let resultRent = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
+        //     resultRent = (this.compnanyInfo.countryCompany === 'ukraine') ? resultRent * valueRoll : resultRent;
+        //     this.owned.enrollRentCompany(resultRent);
+        //     player.payRentCompany(resultRent);
+        //     return TIME_TURN_DEFAULT;
+        // }
+        // else if (this.owned === player) { return; }
+        // else {
+        //     if (this.compnanyInfo.priceCompany >= player.getTotalPlayer()) {
+        //         this.auctionCompany();
+        //     } else {
+        //         this.sellCompany(player);
+        //     }
+        // }
+        // return TIME_BUY_COMPANY;
     }
 
     private sellCompany(player: PlayerDefault): void {

@@ -9,7 +9,7 @@ import { CellTax } from "./cells/cell.tax";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY, TIME_AUCTION_COMPANY } from "src/app/const";
-import { ActionCompany } from "./auctionCompany/auctionCompany";
+import { AuctionCompany } from "./auctionCompany/auctionCompany";
 
 export class Room implements RoomClass {
 
@@ -24,6 +24,7 @@ export class Room implements RoomClass {
     idRoom: string;
     private indexActive: number;
     private isDouble: boolean;
+    private auction: AuctionCompany;
 
 
     constructor(gameCreateDto: GameCreateDto, idRoom: string) {
@@ -50,7 +51,6 @@ export class Room implements RoomClass {
     }
 
 
-
     playerMove(idUser: string, value: number, isDouble: boolean) {
 
         this.isDouble = isDouble;
@@ -58,7 +58,7 @@ export class Room implements RoomClass {
         player.setPosition(value);
 
 
-        this.updateRoom();
+
         if (this.cellsGame[player.getCellPosition()]) {
             this.cellsGame[player.getCellPosition()].cellProcessing(player, value);
         } else {
@@ -73,33 +73,33 @@ export class Room implements RoomClass {
         if ('buyCompany' in company) {
             company.buyCompany(this.players[idUser]);
         };
-        this.nextTurn();
-        this.updateRoom()
+        this.updateRoom();
     }
 
-    playerCancelBuyCompany(indexCompany: number): void {
+    startAuction(indexCompany: number) {
         const company = this.cellsGame[indexCompany];
-        if ('cancelBuyCompany' in company) {
-            company.cancelBuyCompany();
-            const auction = new ActionCompany(company, this.chat, this.players)
-        }
-
+        this.auction = new AuctionCompany(this.chat, this.players);
+        if ('buyCompany' in company) {
+            this.auction.startAuction(company);
+        };
+        this.updateRoom();
     }
 
-    playerMakeBidAuction(idUser: string, indexCompany: number): void {
-        const company = this.cellsGame[indexCompany];
-        if ('auctionStep' in company) {
-            company.auctionStep(this.players[idUser]);
-        }
-    }
 
-    companyAuctionEnd(indexCompany: number): void {
-        const company = this.cellsGame[indexCompany];
-        if ('auctionEnd' in company) {
-            company.auctionEnd();
-        }
-        this.nextTurn();
-    }
+    // playerMakeBidAuction(idUser: string, indexCompany: number): void {
+    //     const company = this.cellsGame[indexCompany];
+    //     if ('auctionStep' in company) {
+    //         company.auctionStep(this.players[idUser]);
+    //     }
+    // }
+
+    // companyAuctionEnd(indexCompany: number): void {
+    //     const company = this.cellsGame[indexCompany];
+    //     if ('auctionEnd' in company) {
+    //         company.auctionEnd();
+    //     }
+    //     this.nextTurn();
+    // }
 
     playerBuyStock(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
