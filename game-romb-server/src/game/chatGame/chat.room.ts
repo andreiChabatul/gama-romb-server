@@ -1,10 +1,13 @@
-import { ChatMessage, CompanyInfo, Player, chatMessage, chatMessageKey, language } from "src/types";
-import { CHAT_MESSAGE } from "./chat.message";
+import { ChatMessage, EACTION_WEBSOCKET, Player, PlayersGame } from "src/types";
 
 export class Chat {
 
     private messages: ChatMessage[] = [];
-    language: language = 'en';
+    players: PlayersGame;
+
+    constructor(players: PlayersGame) {
+        this.players = players;
+    }
 
     addMessage(message: string, player?: Player) {
         this.messages.push(
@@ -13,27 +16,18 @@ export class Chat {
                 name: player?.name,
                 numberPlayer: player?.numberPlayer
             });
+        this.updateChat();
     }
 
-    addInfoMessage(message: chatMessageKey, company?: CompanyInfo): void {
-        this.messages.push(
-            {
-                message: company
-                    ? this.changeString(CHAT_MESSAGE[this.language][message], company)
-                    : CHAT_MESSAGE[this.language][message]
-            }
-        )
-    }
-
-    getAllMessage() {
-        return this.messages;
-    }
-
-
-    private changeString(initalMessage: string, company?: CompanyInfo): string {
-        return initalMessage
-            .replaceAll('COMPANY', company.nameCompany.toUpperCase())
-            .replaceAll('PRICE', String(company.priceCompany));
+    private updateChat(): void {
+        Object.keys(this.players).map((key) => this.players[key].webSocket.
+            send(JSON.stringify(
+                {
+                    action: EACTION_WEBSOCKET.UPDATE_CHAT,
+                    payload: {
+                        chat: this.messages.slice(0, 35)
+                    },
+                })))
     }
 
 }

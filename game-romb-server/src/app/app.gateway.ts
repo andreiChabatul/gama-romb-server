@@ -66,17 +66,17 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.START_AUCTION:
         const auctionStartPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[auctionStartPayload.idRoom].startAuction(auctionStartPayload.indexCompany);
+        rooms[auctionStartPayload.idRoom].startAuction(auctionStartPayload.idUser, auctionStartPayload.indexCompany);
         break;
 
       case EACTION_WEBSOCKET.AUCTION_STEP:
         const AuctionStepPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[AuctionStepPayload.idRoom].playerMakeBidAuction(AuctionStepPayload.idUser, AuctionStepPayload.indexCompany);
+        rooms[AuctionStepPayload.idRoom].stepAuction(AuctionStepPayload.idUser);
         break;
 
-      case EACTION_WEBSOCKET.AUCTION_END:
-        const AuctionEndPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[AuctionEndPayload.idRoom].companyAuctionEnd(AuctionEndPayload.indexCompany);
+      case EACTION_WEBSOCKET.AUCTION_LEAVE:
+        const AuctionLeavePayload = payloadSocket.payload as BuyCompanyPayload;
+        rooms[AuctionLeavePayload.idRoom].leaveAuction(AuctionLeavePayload.idUser);
         break;
 
       case EACTION_WEBSOCKET.BUY_STOCK:

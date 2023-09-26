@@ -10,6 +10,7 @@ import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY, TIME_AUCTION_COMPANY } from "src/app/const";
 import { AuctionCompany } from "./auctionCompany/auctionCompany";
+import { CellProfitLoss } from "./cells/cell.profit.loss/cell";
 
 export class Room implements RoomClass {
 
@@ -31,9 +32,10 @@ export class Room implements RoomClass {
         this.idRoom = idRoom;
         this.roomName = gameCreateDto.roomName;
         this.maxPlayers = gameCreateDto.players;
-        this.chat = new Chat();
-        this.indexActive = 0;
+        this.chat = new Chat(this.players);
+        this.auction = new AuctionCompany(this.chat, this.players);
         this.game = new Game(this.players, this.cellsGame);
+        this.indexActive = 0;
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
         this.fillCellsGame();
     }
@@ -50,13 +52,11 @@ export class Room implements RoomClass {
         this.updateRoom();
     }
 
-
     playerMove(idUser: string, value: number, isDouble: boolean) {
 
         this.isDouble = isDouble;
         const player = this.players[idUser];
         player.setPosition(value);
-
 
 
         if (this.cellsGame[player.getCellPosition()]) {
@@ -76,30 +76,22 @@ export class Room implements RoomClass {
         this.updateRoom();
     }
 
-    startAuction(indexCompany: number) {
+    startAuction(idUser: string, indexCompany: number) {
         const company = this.cellsGame[indexCompany];
-        this.auction = new AuctionCompany(this.chat, this.players);
         if ('buyCompany' in company) {
-            this.auction.startAuction(company);
+            this.auction.startAuction(company, idUser);
         };
+    }
+
+    stepAuction(idUser: string): void {
+        this.auction.stepAuction(idUser);
         this.updateRoom();
     }
 
-
-    // playerMakeBidAuction(idUser: string, indexCompany: number): void {
-    //     const company = this.cellsGame[indexCompany];
-    //     if ('auctionStep' in company) {
-    //         company.auctionStep(this.players[idUser]);
-    //     }
-    // }
-
-    // companyAuctionEnd(indexCompany: number): void {
-    //     const company = this.cellsGame[indexCompany];
-    //     if ('auctionEnd' in company) {
-    //         company.auctionEnd();
-    //     }
-    //     this.nextTurn();
-    // }
+    leaveAuction(idUser: string): void {
+        this.auction.leaveAuction(idUser);
+        this.updateRoom();
+    }
 
     playerBuyStock(idUser: string, indexCompany: number): void {
         const company = this.cellsGame[indexCompany];
@@ -122,7 +114,6 @@ export class Room implements RoomClass {
         const payload = {
             idRoom: this.idRoom,
             players: this.returnInfoPlayers(),
-            chat: this.chat.getAllMessage(),
             board: this.game.getBoard()
         }
 
@@ -151,9 +142,18 @@ export class Room implements RoomClass {
     private fillCellsGame() {
 
         defaultCell.map((cell, index) => {
-            if (cell.company) {
-                this.cellsGame[index] = new CellCompany(cell.company, this.players, index, this.chat)
+            switch (cell.type) {
+                case 'company':
+                    this.cellsGame[index] = new CellCompany(cell.company, this.players, index, this.chat)
+                    break;
+                case 'lossProfit':
+                    this.cellsGame[index] = new CellProfitLoss(this.chat, cell.change);
+                    break;
+
+                default:
+                    break;
             }
+
         })
 
         this.cellsGame[16] = new CellTax(TAX_5, this.chat);

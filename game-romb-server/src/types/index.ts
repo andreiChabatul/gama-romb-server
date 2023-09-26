@@ -37,13 +37,10 @@ export interface CellI {
 
 export interface CellTaxI extends CellI {
     valueTax: number;
-
 }
 
 export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefault, price?: number): void
-    auctionStep(player: PlayerDefault): void;
-    auctionEnd(): void;
     setMonopoly(value: boolean): void;
     getOwned(): number | null;
     getCountryCompany(): countryCompany;
@@ -51,8 +48,9 @@ export interface CellCompanyI extends CellI {
     getIndexCompany(): number;
     setQuantityStock(value: number): void;
     getCompanyInfo(): CompanyInfo;
+}
 
-
+export interface CellProfitLossI extends CellI {
 
 }
 
@@ -61,11 +59,25 @@ export interface companyCheckNoMonopoly {
 }
 
 export type createCell = {
+    type: 'company' | 'lossProfit' | ''
     company?: CompanyInfo;
+    change?: changeCell;
     empty?: CreateCellEmpty
 }
 
-export type cells = CellTaxI | CellCompanyI;
+export type dataChange = {
+    en: changeData[],
+    ru: changeData[],
+}
+
+export type changeData = {
+    description: string,
+    value: number
+}
+
+export type changeCell = 'loss' | 'profit' | 'tax5' | 'tax10';
+
+export type cells = CellTaxI | CellCompanyI | CellProfitLossI;
 
 
 export enum EACTION_WEBSOCKET {
@@ -74,12 +86,12 @@ export enum EACTION_WEBSOCKET {
     JOIN_GAME = 'join game',
     MESSAGE_CHAT = 'message chat',
     UPDATE_ROOM = 'update room',
+    UPDATE_CHAT = 'update chat',
     DICE_ROLL = 'dice roll',
-    SELL_COMPANY = 'sell company',
     BUY_COMPANY = 'buy company',
-    START_AUCTION = 'Start auction',
+    START_AUCTION = 'start auction',
     AUCTION_STEP = 'auction step',
-    AUCTION_END = 'auction end',
+    AUCTION_LEAVE = 'auction leave',
     BUY_STOCK = 'buy stock',
     INFO_CELL_TURN = 'info cell turn'
 }

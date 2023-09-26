@@ -1,9 +1,8 @@
 import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, countryCompanyMonopoly, infoCellTurn, language, nameCompany } from "src/types";
 import { Chat } from "../chatGame/chat.room";
-import { AUCTION_STEP, TIME_BUY_COMPANY, TIME_TURN_DEFAULT } from "src/app/const";
 import { DESCRIPTION_CELL } from "./description/cell.description";
 
-export class CellCompany implements CellCompany {
+export class CellCompany implements CellCompanyI {
 
     private isPledge: boolean;
     private indexCompany: number;
@@ -11,9 +10,6 @@ export class CellCompany implements CellCompany {
     players: PlayersGame;
     chat: Chat;
     private compnanyInfo: CompanyInfo;
-    private auctionPrice: number;
-    private auctionWinner: PlayerDefault;
-    private isAuction: boolean;
     private rentIndex: number;
     private isMonopoly: boolean;
     private quantityStock: number;
@@ -34,39 +30,6 @@ export class CellCompany implements CellCompany {
         this.chat.addMessage
             (`${buyer.getNamePlayer()} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
     }
-
-
-
-    private auctionCompany() {
-        this.startAuction();
-        this.auctionPrice
-            ? this.auctionPrice *= AUCTION_STEP
-            : this.auctionPrice = this.compnanyInfo.priceCompany * AUCTION_STEP;
-
-        Object.keys(this.players).map((key) => {
-            const player = this.players[key];
-            if (player.getTotalPlayer() >= this.auctionPrice) {
-                this.sellCompany(player);
-            }
-        })
-    }
-
-    auctionStep(player: PlayerDefault) {
-        this.auctionWinner = player;
-        this.auctionCompany();
-    }
-
-    auctionEnd(): void {
-        if (this.isAuction) {
-            if (this.auctionWinner) {
-                this.buyCompany(this.auctionWinner, Math.round(this.auctionPrice));
-            } else {
-                this.chat.addMessage(`the auction for the company ${this.compnanyInfo.nameCompany} did not take place`);
-            }
-            this.isAuction = false;
-        }
-    }
-
 
     cellProcessing(player: PlayerDefault, valueRoll?: number): void {
 
@@ -104,27 +67,7 @@ export class CellCompany implements CellCompany {
         // return TIME_BUY_COMPANY;
     }
 
-    private sellCompany(player: PlayerDefault): void {
-        player.getWebSocket().send(JSON.stringify(
-            {
-                action: EACTION_WEBSOCKET.SELL_COMPANY, payload: {
-                    ...this.compnanyInfo,
-                    indexCompany: this.indexCompany,
-                    auctionPrice: Math.round(this.auctionPrice),
-                    isAuction: this.isAuction,
-                    auctionWinner: this.auctionWinner ? this.auctionWinner.getNamePlayer() : '...'
-                }
-            }))
-    }
-
-    private startAuction(): void {
-        if (!this.isAuction) {
-            this.auctionPrice = 0;
-            this.auctionWinner = undefined;
-            this.isAuction = true;
-        }
-    }
-
+   
     getInfoCellCompany(): GameCellCompanyInfo {
         this.updateRentCompany();
         return {
