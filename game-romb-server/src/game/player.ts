@@ -1,4 +1,4 @@
-import { Player } from "src/types";
+import { Player, PlayerDefaultI } from "src/types";
 import { users } from "src/users/users.service";
 import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chatGame/chat.room";
@@ -6,7 +6,7 @@ import { WebSocket } from "ws";
 import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 
-export class PlayerDefault implements PlayerDefault {
+export class PlayerDefault implements PlayerDefaultI {
 
     private _name: string;
     private image: string;
@@ -110,6 +110,10 @@ export class PlayerDefault implements PlayerDefault {
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
         }
         return resultPosition;
+    }
+
+    private updatePlayer(): void {
+
     }
 
 }

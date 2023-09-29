@@ -119,8 +119,8 @@ export class AuctionCompany {
 
     private endAuction(): void {
         this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.priceAuction) : '';
-        Object.keys(this.players).map((key) => {
-            this.players[key].sendMessage(
+        Object.values(this.players).map((player) => {
+            player.sendMessage(
                 EACTION_WEBSOCKET.INFO_CELL_TURN,
                 {
                     ...this.sendWaitingPLayer(),

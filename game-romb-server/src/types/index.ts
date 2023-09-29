@@ -11,11 +11,10 @@ export interface Player {
 }
 
 export interface PlayersGame {
-    id: string;
-    player: PlayerDefault;
+    [id: string]: PlayerDefaultI;
 }
 
-export interface PlayerDefault {
+export interface PlayerDefaultI {
     get position(): number;
     get total(): number;
     get name(): string;
@@ -29,19 +28,19 @@ export interface PlayerDefault {
     buyCompany(price: number): void;
     enrollRentCompany(rent: number): void;
     buyStock(value: number, nameCompany: string): void;
-    payRentCompany(rent: number, player: PlayerDefault): void;
+    payRentCompany(rent: number, player: PlayerDefaultI): void;
     payDebt(debt: number): void;
     addTotal(value: number): void;
 }
 
 export interface CellI {
-    cellProcessing(player: PlayerDefault, valueRoll?: number): void;
+    cellProcessing(player: PlayerDefaultI, valueRoll?: number): void;
 }
 
 
 export interface CellCompanyI extends CellI {
-    buyCompany(buyer: PlayerDefault, price?: number): void
-    buyStock(player: PlayerDefault): void;
+    buyCompany(buyer: PlayerDefaultI, price?: number): void
+    buyStock(player: PlayerDefaultI): void;
     get index(): number;
     get owned(): number | null
     get info(): CompanyInfo;
@@ -98,10 +97,17 @@ export interface InfoRoom {
 
 export type UpdateRoom = {
     idRoom: string;
-    players: Player[];
+    players: updatePlayer;
     board: gameCell[];
     turnId: string;
 }
+
+export type updatePlayer = {
+    [key: string]: Player
+}
+
+
+
 
 export interface ChatMessage {
     message: string;

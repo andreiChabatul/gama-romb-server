@@ -17,7 +17,7 @@ export class Room implements RoomClass {
     playerCount: number;
     isVisiblity: boolean;
     roomName: string;
-    players: PlayersGame = {} as PlayersGame;
+    players: PlayersGame = {};
     private cellsGame: cells[] = [];
     private game: Game;
     private chat: Chat;
@@ -46,7 +46,7 @@ export class Room implements RoomClass {
     }
 
     playerMove(idUser: string, value: number, isDouble: boolean) {
-        this.turnService.turn(this.players[idUser], value, isDouble);
+        this.turnService.turn(idUser, value, isDouble);
     }
 
     playerBuyCompany(idUser: string, indexCompany: number): void {
@@ -88,7 +88,7 @@ export class Room implements RoomClass {
     }
 
     addChatMessage(message: string, idUser: string): void {
-        this.chat.addMessage(message, this.players[idUser]);
+        this.chat.addMessage(message, idUser);
     }
 
     returnInfoRoom() {

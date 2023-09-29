@@ -1,7 +1,6 @@
-import { CompanyInfo } from "src/types";
-import { PlayerDefault } from "../player";
+import { CompanyInfo, PlayerDefaultI } from "src/types";
 
-export function changeMessage(message: string, cellInfo?: CompanyInfo, player?: PlayerDefault): string {
+export function changeMessage(message: string, cellInfo?: CompanyInfo, player?: PlayerDefaultI): string {
     let result = message;
     result = cellInfo
         ? message.replaceAll('COMPANY', cellInfo.nameCompany.toUpperCase())

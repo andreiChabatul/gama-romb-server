@@ -1,4 +1,4 @@
-import { CellEmptyI, PlayerDefault, changeData, emptyCell, infoCellTurn, language } from "src/types";
+import { CellEmptyI, PlayerDefaultI, emptyCell, infoCellTurn, language } from "src/types";
 import { Chat } from "src/game/chatGame/chat.room";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service/turn.service";
@@ -7,14 +7,14 @@ import { DESCRIPTION_CELL_EMPTY } from "./description/description";
 export class CellEmpty implements CellEmptyI {
 
     language: language = 'ru';
-    player: PlayerDefault;
+    player: PlayerDefaultI;
 
     constructor(
         private chat: Chat,
         private turnService: TurnService,
         private type: emptyCell) { }
 
-    cellProcessing(player: PlayerDefault): void {
+    cellProcessing(player: PlayerDefaultI): void {
         this.player = player;
         this.sendInfoPLayer();
     }

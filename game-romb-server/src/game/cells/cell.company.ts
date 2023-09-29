@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, GameCellCompanyInfo, PlayerDefault, PlayersGame, countryCompany, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, GameCellCompanyInfo, PlayerDefaultI, infoCellTurn, language } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
@@ -6,7 +6,7 @@ import { EACTION_WEBSOCKET } from "src/types/websocket";
 export class CellCompany implements CellCompanyI {
 
     private isPledge: boolean;
-    private _owned: PlayerDefault | null;
+    private _owned: PlayerDefaultI | null;
     private rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
@@ -19,7 +19,7 @@ export class CellCompany implements CellCompanyI {
         this._quantityStock = 0;
     }
 
-    buyCompany(buyer: PlayerDefault, price?: number): void {
+    buyCompany(buyer: PlayerDefaultI, price?: number): void {
         this._owned = buyer;
         buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
         this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
@@ -27,7 +27,7 @@ export class CellCompany implements CellCompanyI {
             (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
     }
 
-    cellProcessing(player: PlayerDefault, valueRoll?: number): void {
+    cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
 
         const payload: infoCellTurn = {
             nameCell: this.compnanyInfo.nameCompany,
@@ -84,7 +84,7 @@ export class CellCompany implements CellCompanyI {
             : this.rentIndex += this._quantityStock;
     }
 
-    buyStock(player: PlayerDefault): void {
+    buyStock(player: PlayerDefaultI): void {
         this._quantityStock += 1;
         player.buyStock(this.compnanyInfo.priceStock, this.compnanyInfo.nameCompany);
     }

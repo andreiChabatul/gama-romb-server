@@ -1,4 +1,4 @@
-import { CellProfitLossI, PlayerDefault, changeCell, changeData, infoCellTurn, language } from "src/types";
+import { CellProfitLossI, PlayerDefaultI, changeCell, changeData, infoCellTurn, language } from "src/types";
 import { DATA_PROFIT } from "./data/data.profit";
 import { Chat } from "src/game/chatGame/chat.room";
 import { DESCRIPTION_CELL } from "./description/description";
@@ -13,7 +13,7 @@ export class CellProfitLoss implements CellProfitLossI {
     changeData: changeData[];
     language: language = 'ru';
     data: changeData;
-    player: PlayerDefault;
+    player: PlayerDefaultI;
 
     constructor(
         private chat: Chat,
@@ -21,7 +21,7 @@ export class CellProfitLoss implements CellProfitLossI {
         private change: changeCell,) {
     }
 
-    cellProcessing(player: PlayerDefault): void {
+    cellProcessing(player: PlayerDefaultI): void {
         this.choiseData();
         this.player = player;
         this.data = this.changeData[this.randomIndex()];

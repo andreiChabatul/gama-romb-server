@@ -1,7 +1,6 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, Player, PlayersGame, UpdateRoom, cells, companyCheckNoMonopoly } from "src/types";
+import { CellCompanyI, PlayersGame, UpdateRoom, cells, companyCheckNoMonopoly, updatePlayer } from "src/types";
 import { Game } from "../game.board";
-import { PlayerDefault } from "../player";
 import { Chat } from "../chatGame/chat.room";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 
@@ -21,22 +20,23 @@ export class TurnService {
     firstTurn(): void {
         this.game.startGame();
         this.indexActive = Math.floor(Math.random() * this.playerCount);
-        this.updateRoom();
+        this.initalRoom();
     }
 
-    turn(player: PlayerDefault, value: number, isDouble: boolean): void {
+    turn(idUser: string, value: number, isDouble: boolean): void {
         this.isDouble = isDouble;
+        const player = this.players[idUser];
         player.position = value;
         if (this.cellsGame[player.position]) {
             this.cellsGame[player.position].cellProcessing(player, value);
         };
-        this.updateRoom();
+        this.initalRoom();
     }
 
 
     private nextTurn(): void {
-        Object.keys(this.players).forEach((key) => {
-            this.players[key].sendMessage(EACTION_WEBSOCKET.END_TURN);
+        Object.values(this.players).forEach((player) => {
+            player.sendMessage(EACTION_WEBSOCKET.END_TURN);
         });
 
         if (this.isDouble) {
@@ -46,17 +46,17 @@ export class TurnService {
             this.indexActive = this.calcIndexActive();
             this.chat.addMessage('Ходит')
         }
-        this.updateRoom();
+        this.initalRoom();
     }
 
 
     endTurn(): void {
-        this.updateRoom();
+        this.initalRoom();
         this.nextTurn();
         this.sendAllPlayer(EACTION_WEBSOCKET.END_TURN);
     }
 
-    private updateRoom(): void {
+    private initalRoom(): void {
         this.updateMonopolyCompany();
         this.updateNoMonopolyCompany();
         const payload: UpdateRoom = {
@@ -66,14 +66,12 @@ export class TurnService {
             turnId: Object.keys(this.players)[this.indexActive]
         }
         this.sendAllPlayer(EACTION_WEBSOCKET.UPDATE_ROOM, payload);
-
     }
 
     private sendAllPlayer(action: EACTION_WEBSOCKET, payload?: {}): void {
-        Object.keys(this.players).forEach((key) =>
-            this.players[key].sendMessage(action, payload));
+        Object.values(this.players).forEach((player) =>
+            player.sendMessage(action, payload));
     }
-
 
 
     private updateMonopolyCompany(): void {
@@ -118,6 +116,7 @@ export class TurnService {
             }
         }
         )
+
         Object.values(cellResult).map((indexs: number[]) => {
             indexs.map((index) => {
                 const cell = this.cellsGame[index]
@@ -130,8 +129,10 @@ export class TurnService {
     }
 
 
-    private returnInfoPlayers(): Player[] {
-        return Object.keys(this.players).map((key) => this.players[key].player);
+    private returnInfoPlayers(): updatePlayer {
+        const infoPlayer: updatePlayer = {};
+        Object.keys(this.players).map((key) => infoPlayer[key] = this.players[key].player);
+        return infoPlayer;
     }
 
 
