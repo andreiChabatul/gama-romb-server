@@ -4,95 +4,100 @@ import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chatGame/chat.room";
 import { WebSocket } from "ws";
 import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class PlayerDefault implements PlayerDefault {
 
-    private id: string;
-    private name: string;
+    private _name: string;
     private image: string;
-    private total: number;
+    private _total: number;
     private capital: number;
     private cellPosition: number;
-    private isTurn: boolean;
-    private numberPlayer: number;
-    private chat: Chat;
-    private webSocket: WebSocket;
 
-    constructor(id: string, numberPlayer: number, chat: Chat, webSocket: WebSocket) {
+    constructor(
+        private id: string,
+        private numberPlayer: number,
+        private chat: Chat,
+        private webSocket: WebSocket) {
         const playerNew = users.find(user => user.userId === id);
-        this.id = id;
-        this.name = playerNew.nickname;
+        this._name = playerNew.nickname;
         this.image = 'temp';
-        this.total = INIT_TOTAL;
+        this._total = INIT_TOTAL;
         this.capital = 0;
         this.cellPosition = 0;
-        this.isTurn = false;
-        this.numberPlayer = numberPlayer;
-        this.chat = chat;
-        this.webSocket = webSocket;
     }
 
-    setPosition(value: number) {
-        this.chat.addMessage(`${this.name} rolled ${value}`);
+    set position(value: number) {
+        this.chat.addMessage(`${this._name} rolled ${value}`);
         this.cellPosition = this.positionCellCalc(value);
     }
 
-    getNumberPlayer(): number {
+    get playerNumber(): number {
         return this.numberPlayer;
     }
 
-    getCellPosition(): number {
+    get position(): number {
         return this.cellPosition;
     }
 
-
-    getTotalPlayer(): number {
-        return this.total;
+    get total(): number {
+        return this._total;
     }
 
-    getNamePlayer(): string {
-        return this.name;
+    get name(): string {
+        return this._name;
     }
 
-    getWebSocket(): WebSocket {
-        return this.webSocket;
-    }
+    sendMessage(action: EACTION_WEBSOCKET, payload?: {}): void {
+        this.webSocket.send(JSON.stringify(
+            {
+                action,
+                payload
+            }
+        ))
+    };
 
     setTotalPlayer(value: number): void {
-        this.total = value;
-    }
-
-    setTurnPlayer(value: boolean) {
-        this.isTurn = value;
+        this._total = value;
     }
 
     buyCompany(price: number): void {
-        this.total -= price;
+        this._total -= price;
     }
 
-    payRentCompany(rent: number): void {
-        this.chat.addMessage(`${this.name} pays rent in the amount ${rent}`);
-        this.total -= rent;
+    payRentCompany(rent: number, player: PlayerDefault): void {
+        this.chat.addMessage(`${this._name} pays rent in the amount ${rent}`);
+        this._total -= rent;
+        console.log('12')
+    }
+
+    payDebt(debt: number): void {
+        this.chat.addMessage(`${this._name} выплачивает долг в размере: $${debt}`);
+        this._total -= debt;
+    }
+
+    addTotal(value: number): void {
+        this.chat.addMessage(`${this._name} получает: $${value}`);
+        this._total += value;
     }
 
     buyStock(value: number, nameCompany: string): void {
-        this.chat.addMessage(`${this.name} buys company shares ${nameCompany} for ${value}`);
-        this.total -= value;
+        this.chat.addMessage(`${this._name} buys company shares ${nameCompany} for ${value}`);
+        this._total -= value;
     }
 
     enrollRentCompany(rent: number): void {
-        this.total += rent;
+        this._total += rent;
     }
 
-    returnPlayer(): Player {
+    get player(): Player {
         return {
             id: this.id,
-            name: this.name,
+            name: this._name,
             image: this.image,
-            total: this.total,
+            total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
-            isTurn: this.isTurn,
             numberPlayer: this.numberPlayer,
         };
     }
@@ -100,8 +105,8 @@ export class PlayerDefault implements PlayerDefault {
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
         if (resultPosition >= 38) {
-            this.total += CIRCLE_REWARD;
-            this.chat.addMessage(`${this.name} receives ${CIRCLE_REWARD} for completing a circle`);
+            this._total += CIRCLE_REWARD;
+            this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
         }
         return resultPosition;

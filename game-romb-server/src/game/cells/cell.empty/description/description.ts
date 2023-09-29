@@ -1,4 +1,4 @@
-export const DESCRIPTION_CELL = {
+export const DESCRIPTION_CELL_EMPTY = {
     en: {
         title: "Вы попали на ячейку ",
         tax: "You must pay tax in the amount of TAX$ (VALUETAX of your capital)",

@@ -1,13 +1,11 @@
-import { ChatMessage, EACTION_WEBSOCKET, Player, PlayersGame } from "src/types";
+import { ChatMessage, Player, PlayersGame } from "src/types";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class Chat {
 
     private messages: ChatMessage[] = [];
-    players: PlayersGame;
 
-    constructor(players: PlayersGame) {
-        this.players = players;
-    }
+    constructor(private players: PlayersGame) { }
 
     addMessage(message: string, player?: Player) {
         this.messages.push(

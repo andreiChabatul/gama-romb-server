@@ -1,4 +1,4 @@
-import { CreateCellEmpty } from "src/game/dto/game.cell.empty.dto";
+import { EACTION_WEBSOCKET } from "./websocket";
 
 export interface Player {
     id: string;
@@ -7,7 +7,6 @@ export interface Player {
     total: number;
     capital: number;
     cellPosition: number;
-    isTurn: boolean;
     numberPlayer: number;
 }
 
@@ -17,40 +16,44 @@ export interface PlayersGame {
 }
 
 export interface PlayerDefault {
-    readonly player: Player;
-    turnPlayer(): void;
-    getNumberPlayer(): number;
-    getCellPosition(): number;
-    getTotalPlayer(): number;
+    get position(): number;
+    get total(): number;
+    get name(): string;
+    get playerNumber(): number;
+    get player(): Player;
+    set position(value: number);
+
     setTotalPlayer(value: number): void;
-    getNamePlayer(): string;
-    getWebSocket(): WebSocket;
+
+    sendMessage(action: EACTION_WEBSOCKET, payload?: {}): void;
     buyCompany(price: number): void;
-    payRentCompany(rent: number): void;
     enrollRentCompany(rent: number): void;
-    buyStock(value: number, nameCompany: string): void
+    buyStock(value: number, nameCompany: string): void;
+    payRentCompany(rent: number, player: PlayerDefault): void;
+    payDebt(debt: number): void;
+    addTotal(value: number): void;
 }
 
 export interface CellI {
     cellProcessing(player: PlayerDefault, valueRoll?: number): void;
 }
 
-export interface CellTaxI extends CellI {
-    valueTax: number;
-}
 
 export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefault, price?: number): void
-    setMonopoly(value: boolean): void;
-    getOwned(): number | null;
-    getCountryCompany(): countryCompany;
     buyStock(player: PlayerDefault): void;
-    getIndexCompany(): number;
-    setQuantityStock(value: number): void;
-    getCompanyInfo(): CompanyInfo;
+    get index(): number;
+    get owned(): number | null
+    get info(): CompanyInfo;
+    set monopoly(value: boolean);
+    set quantityStock(value: number);
 }
 
 export interface CellProfitLossI extends CellI {
+
+}
+
+export interface CellEmptyI extends CellI {
 
 }
 
@@ -59,10 +62,10 @@ export interface companyCheckNoMonopoly {
 }
 
 export type createCell = {
-    type: 'company' | 'lossProfit' | ''
+    type: 'company' | 'lossProfit' | 'empty' | ''
     company?: CompanyInfo;
     change?: changeCell;
-    empty?: CreateCellEmpty
+    empty?: emptyCell;
 }
 
 export type dataChange = {
@@ -75,35 +78,10 @@ export type changeData = {
     value: number
 }
 
-export type changeCell = 'loss' | 'profit' | 'tax5' | 'tax10';
-
-export type cells = CellTaxI | CellCompanyI | CellProfitLossI;
-
-
-export enum EACTION_WEBSOCKET {
-    CREATE_GAME = 'create game',
-    LIST_ROOM = 'list room',
-    JOIN_GAME = 'join game',
-    MESSAGE_CHAT = 'message chat',
-    UPDATE_ROOM = 'update room',
-    UPDATE_CHAT = 'update chat',
-    DICE_ROLL = 'dice roll',
-    BUY_COMPANY = 'buy company',
-    START_AUCTION = 'start auction',
-    AUCTION_STEP = 'auction step',
-    AUCTION_LEAVE = 'auction leave',
-    BUY_STOCK = 'buy stock',
-    INFO_CELL_TURN = 'info cell turn'
-}
-
-export interface payloadSocket {
-    action: EACTION_WEBSOCKET,
-    payload: {}
-}
-
+export type cells = CellEmptyI | CellCompanyI | CellProfitLossI;
 export interface Rooms {
     id: string;
-    room: Room;
+    room: RoomClass;
 }
 
 export interface RoomClass {
@@ -113,18 +91,16 @@ export interface RoomClass {
 
 export interface InfoRoom {
     maxPLayers: number,
-    players: Player[],
     idRoom: string,
     isVisiblity: boolean,
     roomName: string
 }
 
-
-export interface Room {
-    id: string;
-    game: GameBoard;
-    players: number;
-    chat: ChatRoom;
+export type UpdateRoom = {
+    idRoom: string;
+    players: Player[];
+    board: gameCell[];
+    turnId: string;
 }
 
 export interface ChatMessage {
@@ -133,32 +109,7 @@ export interface ChatMessage {
     numberPlayer?: number;
 }
 
-export interface GameBoard {
 
-}
-
-export interface ChatRoom {
-
-}
-
-export interface MessageChatGamePayload {
-    idRoom: string;
-    message: string;
-    idUser: string;
-}
-
-export interface DiceRollGamePayload {
-    idRoom: string;
-    value: number;
-    isDouble: boolean;
-    idUser: string;
-}
-
-export interface BuyCompanyPayload {
-    idRoom: string;
-    idUser: string;
-    indexCompany: number;
-}
 
 export interface gameCell {
     indexCell: number;
@@ -177,12 +128,12 @@ export interface GameCellCompanyInfo extends CompanyInfo {
 }
 
 export interface GameCellSquare {
-    imageCell: typeSquareImage;
+    imageCell: typeSquareImage | changeCell | emptyCell;
     textCell: string;
 }
 
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
-export type typeSquareImage = 'inJail' | 'parking' | 'security' | 'start' | 'profit' | 'loss' | 'tax' | 'ukraine';
+export type typeSquareImage = 'security' | 'tax';
 export type countryCompanyNoMonopoly = 'japan';
 export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
 export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
@@ -199,10 +150,9 @@ export type nameCompany =
     | 'volvo' | 'essity' | 'ericsson'
     | 'hsbc' | 'rr' | 'bp';
 
-export interface PayloadJoinGame {
-    idRoomJoin: string;
-    idUser: string;
-}
+
+export type changeCell = 'loss' | 'profit' | 'tax5' | 'tax10';
+export type emptyCell = 'inJail' | 'parking' | 'start';
 
 export interface CompanyInfo {
     countryCompany: countryCompany;
@@ -232,9 +182,11 @@ export type languageMessage = {
 export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none';
 
 export type infoCellTurn = {
-    nameCell: nameCompany | typeSquareImage;
+    nameCell: nameCompany | typeSquareImage | changeCell | emptyCell;
     titleCell: string;
     description: string;
-    indexCompany: number;
+    descriptionTwo?: string;
+    indexCompany?: number;
     buttons: infoCellButtons;
+    dept?: number;
 }

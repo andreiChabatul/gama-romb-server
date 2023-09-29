@@ -1,14 +1,14 @@
-import { CellCompanyI, CompanyInfo, EACTION_WEBSOCKET, PlayersGame, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayersGame, infoCellTurn, language } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { AUCTION_DESCRIPTION } from "./auction.description";
 import { changeMessage } from "../services/change.message";
 import { AUCTION_STEP } from "src/app/const";
+import { TurnService } from "../turn.service/turn.service";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class AuctionCompany {
 
     cell: CellCompanyI;
-    chat: Chat;
-    players: PlayersGame;
     language: language = 'ru';
     priceAuction: number;
     private auctionWinner: string;
@@ -17,15 +17,15 @@ export class AuctionCompany {
     activePlayers: string[] = [];
     indexActive: number;
 
-    constructor(chat: Chat, players: PlayersGame) {
-        this.chat = chat;
-        this.players = players;
-    }
+    constructor(
+        private chat: Chat,
+        private players: PlayersGame,
+        private turnService: TurnService) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.cell = cell;
         this.indexActive = 0;
-        this.companyInfo = this.cell.getCompanyInfo();
+        this.companyInfo = this.cell.info;
         this.priceAuction = this.companyInfo.priceCompany;
         this.chat.addMessage(changeMessage(
             AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
@@ -57,22 +57,13 @@ export class AuctionCompany {
 
     private sendAuctionInfo(): void {
         this.filterPlayers();
-        this.activePlayers.map((key, index) => {
+        this.activePlayers.forEach((key, index) => {
             const payload = (index === this.indexActive) ? this.sendActivePLayer() : this.sendWaitingPLayer();
-            this.players[key].getWebSocket().send(JSON.stringify(
-                {
-                    action: EACTION_WEBSOCKET.INFO_CELL_TURN,
-                    payload
-                }))
+            this.players[key].sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
         }); //отправка сообщения активным участникам аукциона
 
-
-        this.inactivePlayers.map((key) => {
-            this.players[key].getWebSocket().send(JSON.stringify(
-                {
-                    action: EACTION_WEBSOCKET.INFO_CELL_TURN,
-                    payload: this.sendInactivePLayer()
-                }))
+        this.inactivePlayers.forEach((key) => {
+            this.players[key].sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, this.sendInactivePLayer());
         }); //отправка сообщения неактивным участникам аукциона
     }
 
@@ -80,7 +71,7 @@ export class AuctionCompany {
         this.activePlayers = [];
         Object.keys(this.players).map((key) => {
             if (!this.inactivePlayers.includes(key)) {
-                if (this.players[key].getTotalPlayer() < (this.priceAuction * AUCTION_STEP)) {
+                if (this.players[key].total < (this.priceAuction * AUCTION_STEP)) {
                     this.inactivePlayers.push(key);
                 }
             }
@@ -110,7 +101,7 @@ export class AuctionCompany {
         return {
             nameCell: this.companyInfo.nameCompany,
             titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionTitle, this.companyInfo),
-            indexCompany: this.cell.getIndexCompany(),
+            indexCompany: this.cell.index,
             buttons: 'auction',
             description: changeMessage(AUCTION_DESCRIPTION[this.language].auctionDescBuyer + this.priceAuction),
         }
@@ -129,17 +120,17 @@ export class AuctionCompany {
     private endAuction(): void {
         this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.priceAuction) : '';
         Object.keys(this.players).map((key) => {
-            this.players[key].getWebSocket().send(JSON.stringify(
+            this.players[key].sendMessage(
+                EACTION_WEBSOCKET.INFO_CELL_TURN,
                 {
-                    action: EACTION_WEBSOCKET.INFO_CELL_TURN,
-                    payload: {
-                        ...this.sendWaitingPLayer(),
-                        titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
-                        description:
-                            changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
-                                + `${this.auctionWinner ? this.players[this.auctionWinner].getNamePlayer() : 'No'}`),
-                    }
-                }))
-        })
+                    ...this.sendWaitingPLayer(),
+                    titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
+                    description:
+                        changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
+                            + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
+                });
+        });
+
+        setTimeout(() => { this.turnService.endTurn() }, 1000);
     }
 }

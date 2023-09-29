@@ -74,13 +74,13 @@ export const defaultBoard: gameCell[] = [
   },
   {
     indexCell: 9,
-    gridArea: '1/12/3/13',
+    gridArea: '1/11/3/12',
     cellDirections: 'top',
     players: []
   },
   {
     indexCell: 10,
-    gridArea: '1/11/3/12',
+    gridArea: '1/12/3/13',
     cellDirections: 'top',
     players: []
   },
@@ -96,8 +96,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'top',
     players: [],
     cellSquare: {
-      imageCell: 'security',
-      textCell: 'Go to jail'
+      imageCell: 'inJail',
+      textCell: 'In jail'
     }
   },
   {
@@ -230,8 +230,8 @@ export const defaultBoard: gameCell[] = [
     cellDirections: 'bottom',
     players: [],
     cellSquare: {
-      imageCell: 'inJail',
-      textCell: 'In jail'
+      imageCell: 'security',
+      textCell: 'Go to jail'
     }
   },
   {
@@ -269,7 +269,7 @@ export const defaultBoard: gameCell[] = [
     players: []
   },
   {
-    indexCell: 38,
+    indexCell: 37,
     gridArea: '3/1/3/3',
     cellDirections: 'left',
     players: []

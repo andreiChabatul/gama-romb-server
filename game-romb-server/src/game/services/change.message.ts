@@ -8,7 +8,7 @@ export function changeMessage(message: string, cellInfo?: CompanyInfo, player?: 
             .replaceAll('PRICE', String(cellInfo.priceCompany))
         : result;
     result = player
-        ? message.replaceAll('PLAYER', player.getNamePlayer())
+        ? message.replaceAll('PLAYER', player.name)
         : result;
     return result;
 }

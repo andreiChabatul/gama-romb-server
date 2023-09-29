@@ -1,4 +1,4 @@
-export const DESCRIPTION_CELL = {
+export const DESCRIPTION_CELL_COMPANY = {
     en: {
         tax: "You must pay tax in the amount of TAX$ (VALUETAX of your capital)",
         buyCompany: "You can purchase this company for PRICE"

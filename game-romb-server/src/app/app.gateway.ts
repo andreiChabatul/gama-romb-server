@@ -6,9 +6,10 @@ import {
 import WebSocket from "ws";
 import { Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
-import { BuyCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, PayloadJoinGame, Rooms, payloadSocket } from 'src/types';
+import { Rooms } from 'src/types';
 import { Room } from 'src/game/room';
 import { v4 as uuidv4 } from 'uuid'
+import { BuyCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, PayDebtPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
 
 const sockets: WebSocket[] = [];
 const rooms: Rooms = {} as Rooms;
@@ -82,6 +83,11 @@ export class AppGateway {
       case EACTION_WEBSOCKET.BUY_STOCK:
         const buyStockPayload = payloadSocket.payload as BuyCompanyPayload;
         rooms[buyStockPayload.idRoom].playerBuyStock(buyStockPayload.idUser, buyStockPayload.indexCompany);
+        break;
+
+      case EACTION_WEBSOCKET.PAY_DEBT:
+        const payDebtPayload = payloadSocket.payload as PayDebtPayload;
+        rooms[payDebtPayload.idRoom].playerPayDebt(payDebtPayload.idUser, payDebtPayload.debtValue, payDebtPayload.receiverId);
         break;
 
       default:
