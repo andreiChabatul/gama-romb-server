@@ -1,4 +1,4 @@
-import { CellProfitLossI, PlayerDefaultI, changeCell, changeData, infoCellTurn, language } from "src/types";
+import { CellProfitLossI, PlayerDefaultI, changeCell, changeData, gameCell, infoCellTurn, language } from "src/types";
 import { DATA_PROFIT } from "./data/data.profit";
 import { Chat } from "src/game/chatGame/chat.room";
 import { DESCRIPTION_CELL } from "./description/description";
@@ -7,6 +7,8 @@ import { DATA_TAX5 } from "./data/data.tax5";
 import { DATA_TAX10 } from "./data/data.tax10";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service/turn.service";
+import { PlayersGame } from "src/types";
+import { CELL_TEXT } from "./description/cell.text";
 
 export class CellProfitLoss implements CellProfitLossI {
 
@@ -16,9 +18,12 @@ export class CellProfitLoss implements CellProfitLossI {
     player: PlayerDefaultI;
 
     constructor(
+        private players: PlayersGame,
         private chat: Chat,
         private turnService: TurnService,
-        private change: changeCell,) {
+        private change: changeCell,
+        private indexCompany: number) {
+        this.sendInfoCellCompany();
     }
 
     cellProcessing(player: PlayerDefaultI): void {
@@ -93,6 +98,24 @@ export class CellProfitLoss implements CellProfitLossI {
         } else {
             return DESCRIPTION_CELL[this.language].enoughtMoney;
         }
+    }
+
+    sendInfoCellCompany(): void {
+
+        const payload: gameCell = {
+            indexCell: this.indexCompany,
+            cellSquare: {
+                imageCell: (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change,
+                textCell: CELL_TEXT[this.language][this.change]
+            },
+            players: []
+        }
+
+        Object.values(this.players).forEach(player => {
+
+            player.sendMessage(EACTION_WEBSOCKET.UPDATE_CELL, payload)
+        });
+
     }
 
 }

@@ -25,6 +25,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total = INIT_TOTAL;
         this.capital = 0;
         this.cellPosition = 0;
+        this.sendInitPlayer();
     }
 
     set position(value: number) {
@@ -90,17 +91,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total += rent;
     }
 
-    get player(): Player {
-        return {
-            id: this.id,
-            name: this._name,
-            image: this.image,
-            total: this._total,
-            capital: this.capital,
-            cellPosition: this.cellPosition,
-            numberPlayer: this.numberPlayer,
-        };
-    }
+
 
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
@@ -112,8 +103,18 @@ export class PlayerDefault implements PlayerDefaultI {
         return resultPosition;
     }
 
-    private updatePlayer(): void {
+    private sendInitPlayer(): void {
+        const payload = {
+            id: this.id,
+            name: this._name,
+            image: this.image,
+            total: this._total,
+            capital: this.capital,
+            cellPosition: this.cellPosition,
+            numberPlayer: this.numberPlayer,
+        };
 
+        this.sendMessage(EACTION_WEBSOCKET.INIT_PLAYER, payload)
     }
 
 }

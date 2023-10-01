@@ -19,7 +19,6 @@ export interface PlayerDefaultI {
     get total(): number;
     get name(): string;
     get playerNumber(): number;
-    get player(): Player;
     set position(value: number);
 
     setTotalPlayer(value: number): void;
@@ -41,6 +40,7 @@ export interface CellI {
 export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefaultI, price?: number): void
     buyStock(player: PlayerDefaultI): void;
+    sendInfoCellCompany(): void;
     get index(): number;
     get owned(): number | null
     get info(): CompanyInfo;
@@ -61,7 +61,7 @@ export interface companyCheckNoMonopoly {
 }
 
 export type createCell = {
-    type: 'company' | 'lossProfit' | 'empty' | ''
+    type: 'company' | 'lossProfit' | 'empty' | '';
     company?: CompanyInfo;
     change?: changeCell;
     empty?: emptyCell;
@@ -97,17 +97,8 @@ export interface InfoRoom {
 
 export type UpdateRoom = {
     idRoom: string;
-    players: updatePlayer;
-    board: gameCell[];
     turnId: string;
 }
-
-export type updatePlayer = {
-    [key: string]: Player
-}
-
-
-
 
 export interface ChatMessage {
     message: string;
@@ -115,13 +106,9 @@ export interface ChatMessage {
     numberPlayer?: number;
 }
 
-
-
 export interface gameCell {
     indexCell: number;
-    gridArea: string;
     players: number[];
-    cellDirections: cellDirections;
     cellCompany?: GameCellCompanyInfo;
     cellSquare?: GameCellSquare;
 }

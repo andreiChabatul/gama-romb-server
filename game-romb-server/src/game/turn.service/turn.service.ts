@@ -1,6 +1,5 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, PlayersGame, UpdateRoom, cells, companyCheckNoMonopoly, updatePlayer } from "src/types";
-import { Game } from "../game.board";
+import { CellCompanyI, PlayersGame,  cells, companyCheckNoMonopoly } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 
@@ -11,16 +10,13 @@ export class TurnService {
 
     constructor(
         private idRoom: string,
-        private game: Game,
         private players: PlayersGame,
         private playerCount: number,
         private cellsGame: cells[],
         private chat: Chat) { }
 
     firstTurn(): void {
-        this.game.startGame();
         this.indexActive = Math.floor(Math.random() * this.playerCount);
-        this.initalRoom();
     }
 
     turn(idUser: string, value: number, isDouble: boolean): void {
@@ -30,7 +26,6 @@ export class TurnService {
         if (this.cellsGame[player.position]) {
             this.cellsGame[player.position].cellProcessing(player, value);
         };
-        this.initalRoom();
     }
 
 
@@ -46,27 +41,25 @@ export class TurnService {
             this.indexActive = this.calcIndexActive();
             this.chat.addMessage('Ходит')
         }
-        this.initalRoom();
     }
 
 
     endTurn(): void {
-        this.initalRoom();
         this.nextTurn();
         this.sendAllPlayer(EACTION_WEBSOCKET.END_TURN);
     }
 
-    private initalRoom(): void {
-        this.updateMonopolyCompany();
-        this.updateNoMonopolyCompany();
-        const payload: UpdateRoom = {
-            idRoom: this.idRoom,
-            players: this.returnInfoPlayers(),
-            board: this.game.board,
-            turnId: Object.keys(this.players)[this.indexActive]
-        }
-        this.sendAllPlayer(EACTION_WEBSOCKET.UPDATE_ROOM, payload);
-    }
+    // private initalRoom(): void {
+    //     this.updateMonopolyCompany();
+    //     this.updateNoMonopolyCompany();
+    //     const payload: UpdateRoom = {
+    //         idRoom: this.idRoom,
+    //         players: this.returnInfoPlayers(),
+       
+    //         turnId: Object.keys(this.players)[this.indexActive]
+    //     }
+    //     this.sendAllPlayer(EACTION_WEBSOCKET.UPDATE_ROOM, payload);
+    // }
 
     private sendAllPlayer(action: EACTION_WEBSOCKET, payload?: {}): void {
         Object.values(this.players).forEach((player) =>
@@ -127,14 +120,6 @@ export class TurnService {
             )
         })
     }
-
-
-    private returnInfoPlayers(): updatePlayer {
-        const infoPlayer: updatePlayer = {};
-        Object.keys(this.players).map((key) => infoPlayer[key] = this.players[key].player);
-        return infoPlayer;
-    }
-
 
     private calcIndexActive(): number {
 

@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, GameCellCompanyInfo, PlayerDefaultI, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, gameCell, infoCellTurn, language } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
@@ -13,10 +13,13 @@ export class CellCompany implements CellCompanyI {
     private language: language = 'ru';
 
     constructor(
+        private players: PlayersGame,
         private chat: Chat,
         private compnanyInfo: CompanyInfo,
-        private indexCompany: number) {
+        private indexCompany: number,
+    ) {
         this._quantityStock = 0;
+        this.sendInfoCellCompany();
     }
 
     buyCompany(buyer: PlayerDefaultI, price?: number): void {
@@ -58,19 +61,30 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    getInfoCellCompany(): GameCellCompanyInfo {
+    sendInfoCellCompany(): void {
         this.updateRentCompany();
-        return {
-            nameCompany: this.compnanyInfo.nameCompany,
-            countryCompany: this.compnanyInfo.countryCompany,
-            priceCompany: this.compnanyInfo.priceCompany,
-            rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
-            isPledge: this.isPledge,
-            priceStock: this.compnanyInfo.priceStock,
-            isMonopoly: this._monopoly,
-            shares: this._quantityStock,
-            owned: this.owned,
+
+        const payload: gameCell = {
+            indexCell: this.indexCompany,
+            cellCompany: {
+                nameCompany: this.compnanyInfo.nameCompany,
+                countryCompany: this.compnanyInfo.countryCompany,
+                priceCompany: this.compnanyInfo.priceCompany,
+                rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
+                isPledge: this.isPledge,
+                priceStock: this.compnanyInfo.priceStock,
+                isMonopoly: this._monopoly,
+                shares: this._quantityStock,
+                owned: this.owned,
+            },
+            players: []
         }
+
+        Object.values(this.players).forEach(player => {
+           
+            player.sendMessage(EACTION_WEBSOCKET.UPDATE_CELL, payload)
+        });
+
     }
 
     private updateRentCompany() {

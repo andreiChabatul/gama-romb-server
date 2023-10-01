@@ -3,7 +3,7 @@ export enum EACTION_WEBSOCKET {
     LIST_ROOM = 'list room',
     JOIN_GAME = 'join game',
     MESSAGE_CHAT = 'message chat',
-    UPDATE_ROOM = 'update room',
+    UPDATE_PLAYER = 'update player',
     UPDATE_CHAT = 'update chat',
     DICE_ROLL = 'dice roll',
     BUY_COMPANY = 'buy company',
@@ -13,7 +13,10 @@ export enum EACTION_WEBSOCKET {
     BUY_STOCK = 'buy stock',
     INFO_CELL_TURN = 'info cell turn',
     END_TURN = 'end turn',
-    PAY_DEBT = 'pay debt'
+    PAY_DEBT = 'pay debt',
+    UPDATE_CELL = 'update cell',
+    START_GAME = 'start game',
+    INIT_PLAYER = 'init player',
 }
 
 export interface payloadSocket {

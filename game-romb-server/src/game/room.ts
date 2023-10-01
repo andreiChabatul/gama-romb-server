@@ -1,4 +1,3 @@
-import { Game } from "./game.board";
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame/chat.room";
 import { PlayersGame, RoomClass, cells } from "src/types";
@@ -10,6 +9,7 @@ import { AuctionCompany } from "./auctionCompany/auctionCompany";
 import { CellProfitLoss } from "./cells/cell.profit.loss/cell";
 import { TurnService } from "./turn.service/turn.service";
 import { CellEmpty } from "./cells/cell.empty/cell";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class Room implements RoomClass {
 
@@ -19,7 +19,6 @@ export class Room implements RoomClass {
     roomName: string;
     players: PlayersGame = {};
     private cellsGame: cells[] = [];
-    private game: Game;
     private chat: Chat;
     private auction: AuctionCompany;
     private turnService: TurnService;
@@ -28,10 +27,9 @@ export class Room implements RoomClass {
         this.roomName = gameCreateDto.roomName;
         this.playerCount = gameCreateDto.players;
         this.chat = new Chat(this.players);
-        this.game = new Game(this.players, this.cellsGame);
-        this.turnService = new TurnService(idRoom, this.game, this.players, this.playerCount, this.cellsGame, this.chat);
+        this.turnService = new TurnService(idRoom, this.players, this.playerCount, this.cellsGame, this.chat);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
-        this.fillCellsGame();
+
     }
 
     addPlayer(id: string, client: WebSocket) {
@@ -39,9 +37,13 @@ export class Room implements RoomClass {
         this.numberPLayer += 1;
         this.players[id] = player;
         this.checkStartGame();
+        this.fillCellsGame();
     }
 
     private checkStartGame() {
+        Object.values(this.players).forEach((player) =>
+            player.sendMessage(EACTION_WEBSOCKET.START_GAME, { idRoom: this.idRoom }))
+
         this.turnService.firstTurn();
     }
 
@@ -105,10 +107,10 @@ export class Room implements RoomClass {
         defaultCell.map((cell, index) => {
             switch (cell.type) {
                 case 'company':
-                    this.cellsGame[index] = new CellCompany(this.chat, cell.company, index)
+                    this.cellsGame[index] = new CellCompany(this.players, this.chat, cell.company, index)
                     break;
                 case 'lossProfit':
-                    this.cellsGame[index] = new CellProfitLoss(this.chat, this.turnService, cell.change);
+                    this.cellsGame[index] = new CellProfitLoss(this.players, this.chat, this.turnService, cell.change, index);
                     break;
                 case 'empty':
                     this.cellsGame[index] = new CellEmpty(this.chat, this.turnService, cell.empty);
