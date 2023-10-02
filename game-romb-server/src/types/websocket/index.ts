@@ -1,3 +1,5 @@
+import { WebSocket } from "ws";
+
 export enum EACTION_WEBSOCKET {
     CREATE_GAME = 'create game',
     LIST_ROOM = 'list room',
@@ -17,6 +19,7 @@ export enum EACTION_WEBSOCKET {
     UPDATE_CELL = 'update cell',
     START_GAME = 'start game',
     INIT_PLAYER = 'init player',
+    UPDATE_TURN = 'update turn'
 }
 
 export interface payloadSocket {
@@ -49,4 +52,12 @@ export interface BuyCompanyPayload extends DefaultPayload {
 export interface PayDebtPayload extends DefaultPayload {
     debtValue: number;
     receiverId?: string;
+}
+
+
+export interface Room_WS {
+    webSockets: { [id: string]: WebSocket };
+    addWebSocket(is: string, webSocket: WebSocket): void;
+    sendAllPlayers(action: EACTION_WEBSOCKET, payload?: {}): void;
+    sendOnePlayer(id: string, action: EACTION_WEBSOCKET, payload?: {}): void;
 }

@@ -1,71 +1,65 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, PlayersGame,  cells, companyCheckNoMonopoly } from "src/types";
+import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly, language } from "src/types";
 import { Chat } from "../chatGame/chat.room";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { DESCRIPTION_TURN } from "./description/description";
+import { changeMessage } from "../services/change.message";
 
 export class TurnService {
 
     private indexActive: number;
     private isDouble: boolean;
+    private language: language = 'ru';
+    private doubleCounter: number = 0;
 
     constructor(
-        private idRoom: string,
+        private roomWS: Room_WS,
         private players: PlayersGame,
-        private playerCount: number,
         private cellsGame: cells[],
         private chat: Chat) { }
 
     firstTurn(): void {
-        this.indexActive = Math.floor(Math.random() * this.playerCount);
+        this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
+        this.chat.addMessage(
+            DESCRIPTION_TURN[this.language].firstTurn
+            + this.players[Object.keys(this.players)[this.indexActive]].name);
+        this.updateTurn();
     }
 
-    turn(idUser: string, value: number, isDouble: boolean): void {
+    turn(player: PlayerDefaultI, value: number, isDouble: boolean): void {
         this.isDouble = isDouble;
-        const player = this.players[idUser];
         player.position = value;
         if (this.cellsGame[player.position]) {
             this.cellsGame[player.position].cellProcessing(player, value);
         };
     }
 
-
     private nextTurn(): void {
-        Object.values(this.players).forEach((player) => {
-            player.sendMessage(EACTION_WEBSOCKET.END_TURN);
-        });
-
         if (this.isDouble) {
-            this.chat.addMessage('Дубль')
-
+            this.doubleCounter++;
+            this.checkDouble();
+            this.chat.addMessage(changeMessage(DESCRIPTION_TURN[this.language].doubleTurn, null, this.activePlayer()));
         } else {
+            this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            this.chat.addMessage('Ходит')
+            this.chat.addMessage(changeMessage(DESCRIPTION_TURN[this.language].turn, null, this.activePlayer()));
         }
+        this.updateTurn();
     }
-
 
     endTurn(): void {
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_TURN);
         this.nextTurn();
-        this.sendAllPlayer(EACTION_WEBSOCKET.END_TURN);
+    };
+
+    private updateTurn(): void {
+        this.updateMonopolyCompany();
+        this.updateNoMonopolyCompany();
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN,
+            {
+                turnId: this.activePlayer().userId
+            });
     }
-
-    // private initalRoom(): void {
-    //     this.updateMonopolyCompany();
-    //     this.updateNoMonopolyCompany();
-    //     const payload: UpdateRoom = {
-    //         idRoom: this.idRoom,
-    //         players: this.returnInfoPlayers(),
-       
-    //         turnId: Object.keys(this.players)[this.indexActive]
-    //     }
-    //     this.sendAllPlayer(EACTION_WEBSOCKET.UPDATE_ROOM, payload);
-    // }
-
-    private sendAllPlayer(action: EACTION_WEBSOCKET, payload?: {}): void {
-        Object.values(this.players).forEach((player) =>
-            player.sendMessage(action, payload));
-    }
-
 
     private updateMonopolyCompany(): void {
         MONOPOLY_COMPANY.map((country) => {
@@ -89,8 +83,6 @@ export class TurnService {
             country.forEach((country) => country.monopoly = isMonopoly);
         }
     }
-
-
 
     private updateNoMonopolyCompany(): void {
         const cellResult: companyCheckNoMonopoly = {};
@@ -121,10 +113,21 @@ export class TurnService {
         })
     }
 
-    private calcIndexActive(): number {
+    private activePlayer(): PlayerDefaultI {
+        return this.players[Object.keys(this.players)[this.indexActive]];
+    }
 
+    private calcIndexActive(): number {
         let futureIndexActive = this.indexActive + 1;
-        futureIndexActive >= this.playerCount ? futureIndexActive = 0 : '';
+        futureIndexActive >= Object.keys(this.players).length ? futureIndexActive = 0 : '';
         return futureIndexActive;
+    }
+
+    private checkDouble(): void {
+        if (this.doubleCounter === 3) {
+            console.log(this.activePlayer().name, 'jail');
+            this.doubleCounter = 0;
+            this.indexActive = this.calcIndexActive();
+        }
     }
 }

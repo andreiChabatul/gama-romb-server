@@ -1,17 +1,27 @@
 import { EACTION_WEBSOCKET } from "./websocket";
 
-export interface Player {
-    id: string;
+export interface Player extends UpdatePlayer {
     name: string;
     image: string;
+    numberPlayer: number;
+}
+
+export interface UpdatePlayer {
+    id: string;
     total: number;
     capital: number;
     cellPosition: number;
-    numberPlayer: number;
 }
 
 export interface PlayersGame {
     [id: string]: PlayerDefaultI;
+}
+
+
+export interface ChatI {
+    readonly messages: ChatMessage[];
+    addMessage(message: string, player?: PlayerDefaultI): void;
+    updateChat(): void;
 }
 
 export interface PlayerDefaultI {
@@ -20,10 +30,10 @@ export interface PlayerDefaultI {
     get name(): string;
     get playerNumber(): number;
     set position(value: number);
+    get userId(): string;
+    get player(): Player;
 
     setTotalPlayer(value: number): void;
-
-    sendMessage(action: EACTION_WEBSOCKET, payload?: {}): void;
     buyCompany(price: number): void;
     enrollRentCompany(rent: number): void;
     buyStock(value: number, nameCompany: string): void;
@@ -34,13 +44,13 @@ export interface PlayerDefaultI {
 
 export interface CellI {
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void;
+    sendInfoCell(): void;
 }
 
 
 export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefaultI, price?: number): void
     buyStock(player: PlayerDefaultI): void;
-    sendInfoCellCompany(): void;
     get index(): number;
     get owned(): number | null
     get info(): CompanyInfo;
@@ -108,7 +118,6 @@ export interface ChatMessage {
 
 export interface gameCell {
     indexCell: number;
-    players: number[];
     cellCompany?: GameCellCompanyInfo;
     cellSquare?: GameCellSquare;
 }

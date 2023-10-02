@@ -1,15 +1,13 @@
-import { ChatMessage, Player, PlayersGame } from "src/types";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
-import { PlayerDefault } from "../player";
+import { ChatI, ChatMessage, PlayerDefaultI } from "src/types";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
-export class Chat {
+export class Chat implements ChatI {
 
-    private messages: ChatMessage[] = [];
+    readonly messages: ChatMessage[] = [];
 
-    constructor(private players: PlayersGame) { }
+    constructor(private roomWS: Room_WS) { }
 
-    addMessage(message: string, idUser?: string) {
-        const player = this.players[idUser];
+    addMessage(message: string, player?: PlayerDefaultI): void {
         this.messages.push(
             {
                 message,
@@ -19,10 +17,9 @@ export class Chat {
         this.updateChat();
     }
 
-    private updateChat(): void {
-        Object.keys(this.players).map(
-            (key) => this.players[key].sendMessage(EACTION_WEBSOCKET.UPDATE_CHAT, {
-                chat: this.messages.slice(0, 35)
-            }))
+    updateChat(): void {
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CHAT, {
+            chat: this.messages.slice(0, 35)
+        });
     }
 }

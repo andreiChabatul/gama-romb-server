@@ -2,9 +2,9 @@ import { Player, PlayerDefaultI } from "src/types";
 import { users } from "src/users/users.service";
 import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chatGame/chat.room";
-import { WebSocket } from "ws";
 import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+
 
 export class PlayerDefault implements PlayerDefaultI {
 
@@ -15,22 +15,21 @@ export class PlayerDefault implements PlayerDefaultI {
     private cellPosition: number;
 
     constructor(
+        private roomWS: Room_WS,
         private id: string,
         private numberPlayer: number,
-        private chat: Chat,
-        private webSocket: WebSocket) {
+        private chat: Chat) {
         const playerNew = users.find(user => user.userId === id);
         this._name = playerNew.nickname;
         this.image = 'temp';
         this._total = INIT_TOTAL;
         this.capital = 0;
         this.cellPosition = 0;
-        this.sendInitPlayer();
     }
 
     set position(value: number) {
-        this.chat.addMessage(`${this._name} rolled ${value}`);
         this.cellPosition = this.positionCellCalc(value);
+        this.updatePlayer();
     }
 
     get playerNumber(): number {
@@ -49,14 +48,9 @@ export class PlayerDefault implements PlayerDefaultI {
         return this._name;
     }
 
-    sendMessage(action: EACTION_WEBSOCKET, payload?: {}): void {
-        this.webSocket.send(JSON.stringify(
-            {
-                action,
-                payload
-            }
-        ))
-    };
+    get userId(): string {
+        return this.id;
+    }
 
     setTotalPlayer(value: number): void {
         this._total = value;
@@ -64,6 +58,7 @@ export class PlayerDefault implements PlayerDefaultI {
 
     buyCompany(price: number): void {
         this._total -= price;
+        this.updatePlayer();
     }
 
     payRentCompany(rent: number, player: PlayerDefault): void {
@@ -91,8 +86,6 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total += rent;
     }
 
-
-
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
         if (resultPosition >= 38) {
@@ -103,8 +96,8 @@ export class PlayerDefault implements PlayerDefaultI {
         return resultPosition;
     }
 
-    private sendInitPlayer(): void {
-        const payload = {
+    get player(): Player {
+        return {
             id: this.id,
             name: this._name,
             image: this.image,
@@ -113,8 +106,14 @@ export class PlayerDefault implements PlayerDefaultI {
             cellPosition: this.cellPosition,
             numberPlayer: this.numberPlayer,
         };
-
-        this.sendMessage(EACTION_WEBSOCKET.INIT_PLAYER, payload)
     }
 
+    updatePlayer(): void {
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, {
+            id: this.id,
+            total: this._total,
+            capital: this.capital,
+            cellPosition: this.cellPosition,
+        })
+    }
 }

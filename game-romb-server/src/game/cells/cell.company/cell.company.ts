@@ -1,7 +1,8 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, gameCell, infoCellTurn, language } from "src/types";
-import { Chat } from "../chatGame/chat.room";
+import { Chat } from "../../chatGame/chat.room";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { changeMessage } from "src/game/services/change.message";
 
 export class CellCompany implements CellCompanyI {
 
@@ -13,25 +14,30 @@ export class CellCompany implements CellCompanyI {
     private language: language = 'ru';
 
     constructor(
-        private players: PlayersGame,
+        private roomWS: Room_WS,
         private chat: Chat,
         private compnanyInfo: CompanyInfo,
         private indexCompany: number,
     ) {
         this._quantityStock = 0;
-        this.sendInfoCellCompany();
     }
 
     buyCompany(buyer: PlayerDefaultI, price?: number): void {
         this._owned = buyer;
         buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
+        this.sendInfoCell();
         this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
         this.chat.addMessage
             (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
+
     }
 
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
-
+        this.chat.addMessage(changeMessage(
+            DESCRIPTION_CELL_COMPANY[this.language].titleTurn,
+            this.compnanyInfo,
+            player,
+            valueRoll));
         const payload: infoCellTurn = {
             nameCell: this.compnanyInfo.nameCompany,
             titleCell: this.compnanyInfo.nameCompany,
@@ -41,7 +47,8 @@ export class CellCompany implements CellCompanyI {
             buttons: 'buy'
         }
 
-        player.sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+
         // if (this.owned && this.owned !== player) {
         //     let resultRent = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
         //     resultRent = (this.compnanyInfo.countryCompany === 'ukraine') ? resultRent * valueRoll : resultRent;
@@ -61,7 +68,7 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    sendInfoCellCompany(): void {
+    sendInfoCell(): void {
         this.updateRentCompany();
 
         const payload: gameCell = {
@@ -76,15 +83,10 @@ export class CellCompany implements CellCompanyI {
                 isMonopoly: this._monopoly,
                 shares: this._quantityStock,
                 owned: this.owned,
-            },
-            players: []
+            }
         }
 
-        Object.values(this.players).forEach(player => {
-           
-            player.sendMessage(EACTION_WEBSOCKET.UPDATE_CELL, payload)
-        });
-
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
     private updateRentCompany() {

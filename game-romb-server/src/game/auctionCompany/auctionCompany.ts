@@ -1,10 +1,10 @@
-import { CellCompanyI, CompanyInfo, PlayersGame, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn, language } from "src/types";
 import { Chat } from "../chatGame/chat.room";
 import { AUCTION_DESCRIPTION } from "./auction.description";
 import { changeMessage } from "../services/change.message";
 import { AUCTION_STEP } from "src/app/const";
 import { TurnService } from "../turn.service/turn.service";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class AuctionCompany {
 
@@ -18,8 +18,9 @@ export class AuctionCompany {
     indexActive: number;
 
     constructor(
-        private chat: Chat,
         private players: PlayersGame,
+        private roomWS: Room_WS,
+        private chat: Chat,
         private turnService: TurnService) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
@@ -34,36 +35,37 @@ export class AuctionCompany {
         this.nextBind();
     }
 
-    stepAuction(idUser: string): void {
-        this.auctionWinner = idUser;
+    stepAuction(player: PlayerDefaultI): void {
+        this.auctionWinner = player.userId;
         this.priceAuction = Math.floor(this.priceAuction * AUCTION_STEP);
         this.chat.addMessage(changeMessage(
             AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
             this.companyInfo,
-            this.players[idUser]
+            player
         ))
         this.nextBind();
     }
 
-    leaveAuction(idUser: string): void {
+    leaveAuction(player: PlayerDefaultI): void {
         this.chat.addMessage(changeMessage(
             AUCTION_DESCRIPTION[this.language].auctionLeave,
             null,
-            this.players[idUser]
+            player
         ));
-        this.inactivePlayers.push(idUser);
+        this.inactivePlayers.push(player.userId);
         this.nextBind();
     }
 
     private sendAuctionInfo(): void {
         this.filterPlayers();
-        this.activePlayers.forEach((key, index) => {
+        this.activePlayers.forEach((userId, index) => {
             const payload = (index === this.indexActive) ? this.sendActivePLayer() : this.sendWaitingPLayer();
-            this.players[key].sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+            this.roomWS.sendOnePlayer(userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+
         }); //отправка сообщения активным участникам аукциона
 
-        this.inactivePlayers.forEach((key) => {
-            this.players[key].sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, this.sendInactivePLayer());
+        this.inactivePlayers.forEach((userId) => {
+            this.roomWS.sendOnePlayer(userId, EACTION_WEBSOCKET.INFO_CELL_TURN, this.sendInactivePLayer())
         }); //отправка сообщения неактивным участникам аукциона
     }
 
@@ -119,17 +121,15 @@ export class AuctionCompany {
 
     private endAuction(): void {
         this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.priceAuction) : '';
-        Object.values(this.players).map((player) => {
-            player.sendMessage(
-                EACTION_WEBSOCKET.INFO_CELL_TURN,
-                {
-                    ...this.sendWaitingPLayer(),
-                    titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
-                    description:
-                        changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
-                            + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
-                });
-        });
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INFO_CELL_TURN,
+            {
+                ...this.sendWaitingPLayer(),
+                titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
+                description:
+                    changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
+                        + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
+            });
+        ;
 
         setTimeout(() => { this.turnService.endTurn() }, 1000);
     }

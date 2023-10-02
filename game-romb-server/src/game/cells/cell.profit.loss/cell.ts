@@ -5,9 +5,8 @@ import { DESCRIPTION_CELL } from "./description/description";
 import { DATA_LOSS } from "./data/data.loss";
 import { DATA_TAX5 } from "./data/data.tax5";
 import { DATA_TAX10 } from "./data/data.tax10";
-import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service/turn.service";
-import { PlayersGame } from "src/types";
 import { CELL_TEXT } from "./description/cell.text";
 
 export class CellProfitLoss implements CellProfitLossI {
@@ -18,13 +17,11 @@ export class CellProfitLoss implements CellProfitLossI {
     player: PlayerDefaultI;
 
     constructor(
-        private players: PlayersGame,
+        private roomWS: Room_WS,
         private chat: Chat,
         private turnService: TurnService,
         private change: changeCell,
-        private indexCompany: number) {
-        this.sendInfoCellCompany();
-    }
+        private indexCompany: number) { }
 
     cellProcessing(player: PlayerDefaultI): void {
         this.choiseData();
@@ -69,8 +66,7 @@ export class CellProfitLoss implements CellProfitLossI {
                 ? this.player.total * this.data.value
                 : this.data.value
         }
-
-        this.player.sendMessage(EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     private randomIndex(): number {
@@ -100,22 +96,16 @@ export class CellProfitLoss implements CellProfitLossI {
         }
     }
 
-    sendInfoCellCompany(): void {
+    sendInfoCell(): void {
 
         const payload: gameCell = {
             indexCell: this.indexCompany,
             cellSquare: {
                 imageCell: (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change,
                 textCell: CELL_TEXT[this.language][this.change]
-            },
-            players: []
+            }
         }
-
-        Object.values(this.players).forEach(player => {
-
-            player.sendMessage(EACTION_WEBSOCKET.UPDATE_CELL, payload)
-        });
-
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
 }
