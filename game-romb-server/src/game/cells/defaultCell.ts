@@ -4,9 +4,17 @@ export const defaultCell: createCell[] = [
     {
         type: 'empty',
         empty: 'start',
+        location: {
+            gridArea: '1/1/3/3',
+            cellDirections: 'top'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/3/3/4',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'hsbc',
             countryCompany: 'britania',
@@ -17,6 +25,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/4/3/5',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'fujitsu',
             countryCompany: 'japan',
@@ -26,6 +38,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/5/3/6',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'rr',
             countryCompany: 'britania',
@@ -36,6 +52,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/6/3/7',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'bp',
             countryCompany: 'britania',
@@ -46,10 +66,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'profit'
+        change: 'profit',
+        location: {
+            gridArea: '1/7/3/8',
+            cellDirections: 'top'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/8/3/9',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'uia',
             countryCompany: 'ukraine',
@@ -59,10 +87,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'loss'
+        change: 'loss',
+        location: {
+            gridArea: '1/9/3/10',
+            cellDirections: 'top'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/10/3/11',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'ericsson',
             countryCompany: 'sweden',
@@ -73,6 +109,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/11/3/12',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'volvo',
             countryCompany: 'sweden',
@@ -83,6 +123,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/12/3/13',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'mitsubishi',
             countryCompany: 'japan',
@@ -92,6 +136,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '1/13/3/14',
+            cellDirections: 'top'
+        },
         company: {
             nameCompany: 'essity',
             countryCompany: 'sweden',
@@ -102,10 +150,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'empty',
-        empty: 'inJail'
+        empty: 'inJail',
+        location: {
+            gridArea: '1/14/3/15',
+            cellDirections: 'top'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '3/14/4/15',
+            cellDirections: 'right'
+        },
         company: {
             nameCompany: 'rbc',
             countryCompany: 'canada',
@@ -116,6 +172,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '4/14/5/15',
+            cellDirections: 'right'
+        },
         company: {
             nameCompany: 'telus',
             countryCompany: 'canada',
@@ -126,6 +186,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '5/14/6/15',
+            cellDirections: 'right'
+        },
         company: {
             nameCompany: 'ttc',
             countryCompany: 'kazah',
@@ -136,10 +200,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'tax5'
+        change: 'tax5',
+        location: {
+            gridArea: '6/14/7/15',
+            cellDirections: 'right'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '7/14/8/15',
+            cellDirections: 'right'
+        },
         company: {
             nameCompany: 'kaz',
             countryCompany: 'kazah',
@@ -150,6 +222,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '8/14/9/15',
+            cellDirections: 'right'
+        },
         company: {
             nameCompany: 'kazAzot',
             countryCompany: 'kazah',
@@ -160,10 +236,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'empty',
-        empty: 'parking'
+        empty: 'parking',
+        location: {
+            gridArea: '9/14/11/15',
+            cellDirections: 'bottom'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/13/11/14',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'ferrari',
             countryCompany: 'italia',
@@ -174,6 +258,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/12/11/13',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'canon',
             countryCompany: 'japan',
@@ -183,6 +271,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/11/11/12',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'uniCredit',
             countryCompany: 'italia',
@@ -193,6 +285,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/10/11/11',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'posteItaliane',
             countryCompany: 'italia',
@@ -203,10 +299,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'profit'
+        change: 'profit',
+        location: {
+            gridArea: '9/9/11/10',
+            cellDirections: 'bottom'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/8/11/9',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'ukranafta',
             countryCompany: 'ukraine',
@@ -216,10 +320,19 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'loss'
+        change: 'loss',
+        location: {
+            gridArea: '9/7/11/8',
+            cellDirections: 'bottom'
+
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/6/11/7',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'volkswagen',
             countryCompany: 'germany',
@@ -230,6 +343,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/5/11/6',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'allianz',
             countryCompany: 'germany',
@@ -240,6 +357,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/4/11/5',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'honda',
             countryCompany: 'japan',
@@ -249,6 +370,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/3/11/4',
+            cellDirections: 'bottom'
+        },
         company: {
             nameCompany: 'continental',
             countryCompany: 'germany',
@@ -259,9 +384,17 @@ export const defaultCell: createCell[] = [
     },
     {
         type: '',
+        location: {
+            gridArea: '9/3/11/1',
+            cellDirections: 'bottom'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '9/1/8/3',
+            cellDirections: 'left'
+        },
         company: {
             nameCompany: 'aliexpress',
             countryCompany: 'china',
@@ -272,6 +405,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '8/1/7/3',
+            cellDirections: 'left'
+        },
         company: {
             nameCompany: 'xiaomi',
             countryCompany: 'china',
@@ -282,6 +419,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '7/1/6/3',
+            cellDirections: 'left'
+        },
         company: {
             nameCompany: 'google',
             countryCompany: 'usa',
@@ -292,10 +433,18 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'lossProfit',
-        change: 'tax10'
+        change: 'tax10',
+        location: {
+            gridArea: '6/1/5/3',
+            cellDirections: 'left'
+        }
     },
     {
         type: 'company',
+        location: {
+            gridArea: '5/1/4/3',
+            cellDirections: 'left'
+        },
         company: {
             nameCompany: 'WD',
             countryCompany: 'usa',
@@ -306,6 +455,10 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        location: {
+            gridArea: '3/1/3/3',
+            cellDirections: 'left'
+        },
         company: {
             nameCompany: 'ibm',
             countryCompany: 'usa',

@@ -26,7 +26,7 @@ export class AuctionCompany {
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.cell = cell;
         this.indexActive = 0;
-        this.companyInfo = this.cell.info;
+        this.companyInfo = this.cell.infoCompany;
         this.priceAuction = this.companyInfo.priceCompany;
         this.chat.addMessage(changeMessage(
             AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
@@ -132,5 +132,8 @@ export class AuctionCompany {
         ;
 
         setTimeout(() => { this.turnService.endTurn() }, 1000);
+        this.activePlayers = [];
+        this.inactivePlayers = [];
+        this.auctionWinner = '';
     }
 }

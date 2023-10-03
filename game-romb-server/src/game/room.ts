@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame/chat.room";
-import { PlayersGame, RoomClass, cells } from "src/types";
+import { PlayersGame, RoomClass, cells, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company/cell.company";
@@ -11,13 +11,14 @@ import { TurnService } from "./turn.service/turn.service";
 import { CellEmpty } from "./cells/cell.empty/cell";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { ROOM_WS } from "./roomWS";
+import { COLORS_PLAYER } from "src/app/const";
 
 export class Room implements RoomClass {
 
-    numberPLayer = 0;
     playerCount: number;
     isVisiblity: boolean;
     roomName: string;
+    numberPlayer: number;
     players: PlayersGame = {};
     private cellsGame: cells[] = [];
     private chat: Chat;
@@ -28,16 +29,18 @@ export class Room implements RoomClass {
     constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
         this.roomName = gameCreateDto.roomName;
         this.playerCount = gameCreateDto.players;
+        this.numberPlayer = 0;
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
+        this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
     addPlayer(id: string, client: WebSocket) {
         this.roomWS.addWebSocket(id, client);
-        const player = new PlayerDefault(this.roomWS, id, this.numberPLayer, this.chat);
-        this.numberPLayer += 1;
+        const player = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat);
+        this.numberPlayer++;
         this.players[id] = player;
         this.checkStartGame();
         this.fillCellsGame();
@@ -45,8 +48,6 @@ export class Room implements RoomClass {
         Object.values(this.players).forEach((player) => {
             this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_PLAYER, player.player);
         })//перенести в старт game
-
-
     }
 
     private checkStartGame() {
@@ -67,7 +68,6 @@ export class Room implements RoomClass {
     }
 
     startAuction(idUser: string, indexCompany: number) {
-        this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
         const company = this.cellsGame[indexCompany];
         if ('buyCompany' in company) {
             this.auction.startAuction(company, idUser);
@@ -110,23 +110,30 @@ export class Room implements RoomClass {
     }
 
     private fillCellsGame() {
-
-        defaultCell.map((cell, index) => {
+        const infoCell: gameCell[] = [];
+        defaultCell.map((cell, indexCell) => {
             switch (cell.type) {
                 case 'company':
-                    this.cellsGame[index] = new CellCompany(this.roomWS, this.chat, cell.company, index)
+                    this.cellsGame[indexCell] = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell)
+                    infoCell[indexCell] = { indexCell, location: cell.location }
                     break;
                 case 'lossProfit':
-                    this.cellsGame[index] = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.change, index);
+                    const newCellProfit = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.change);
+                    this.cellsGame[indexCell] = newCellProfit;
+                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellProfit.info }
                     break;
                 case 'empty':
-                    this.cellsGame[index] = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty, index);
+                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty);
+                    this.cellsGame[indexCell] = newCellEmpty;
+                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellEmpty.info }
                     break;
-
+                case '':
+                    infoCell[indexCell] = { indexCell, location: cell.location }
+                    break;
                 default:
                     break;
             }
-            this.cellsGame.forEach((cell) => cell.sendInfoCell());
+            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
         })
     }
 }

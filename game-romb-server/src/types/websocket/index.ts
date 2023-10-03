@@ -19,6 +19,7 @@ export enum EACTION_WEBSOCKET {
     UPDATE_CELL = 'update cell',
     START_GAME = 'start game',
     INIT_PLAYER = 'init player',
+    INIT_BOARD = 'init board',
     UPDATE_TURN = 'update turn'
 }
 
@@ -53,7 +54,6 @@ export interface PayDebtPayload extends DefaultPayload {
     debtValue: number;
     receiverId?: string;
 }
-
 
 export interface Room_WS {
     webSockets: { [id: string]: WebSocket };

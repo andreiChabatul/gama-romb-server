@@ -1,8 +1,7 @@
 import { Player, PlayerDefaultI } from "src/types";
 import { users } from "src/users/users.service";
-import { MAX_INDEX_CELL_BOARD } from "./defaultBoard/defaultBoard";
 import { Chat } from "./chatGame/chat.room";
-import { CIRCLE_REWARD, INIT_TOTAL } from "src/app/const";
+import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 
@@ -17,7 +16,7 @@ export class PlayerDefault implements PlayerDefaultI {
     constructor(
         private roomWS: Room_WS,
         private id: string,
-        private numberPlayer: number,
+        private _color: string,
         private chat: Chat) {
         const playerNew = users.find(user => user.userId === id);
         this._name = playerNew.nickname;
@@ -30,10 +29,6 @@ export class PlayerDefault implements PlayerDefaultI {
     set position(value: number) {
         this.cellPosition = this.positionCellCalc(value);
         this.updatePlayer();
-    }
-
-    get playerNumber(): number {
-        return this.numberPlayer;
     }
 
     get position(): number {
@@ -64,7 +59,6 @@ export class PlayerDefault implements PlayerDefaultI {
     payRentCompany(rent: number, player: PlayerDefault): void {
         this.chat.addMessage(`${this._name} pays rent in the amount ${rent}`);
         this._total -= rent;
-        console.log('12')
     }
 
     payDebt(debt: number): void {
@@ -99,13 +93,17 @@ export class PlayerDefault implements PlayerDefaultI {
     get player(): Player {
         return {
             id: this.id,
+            color: this._color,
             name: this._name,
             image: this.image,
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
-            numberPlayer: this.numberPlayer,
         };
+    }
+    
+    get color(): string {
+        return this._color;
     }
 
     updatePlayer(): void {

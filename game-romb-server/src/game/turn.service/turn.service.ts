@@ -64,7 +64,7 @@ export class TurnService {
     private updateMonopolyCompany(): void {
         MONOPOLY_COMPANY.map((country) => {
             const companyMonopoly = this.cellsGame.filter((cell) =>
-                'info' in cell && cell.info.countryCompany === country
+                'infoCompany' in cell && cell.infoCompany.countryCompany === country
             ) as CellCompanyI[];
 
             checkMonopoly(companyMonopoly);
@@ -88,7 +88,7 @@ export class TurnService {
         const cellResult: companyCheckNoMonopoly = {};
 
         const companyNoMonopoly = this.cellsGame.filter((cell) =>
-            'info' in cell && cell.info.countryCompany === NO_MONOPOY_COMPANY
+            'infoCompany' in cell && cell.infoCompany.countryCompany === NO_MONOPOY_COMPANY
         ) as CellCompanyI[];
 
         companyNoMonopoly.map((company) => {

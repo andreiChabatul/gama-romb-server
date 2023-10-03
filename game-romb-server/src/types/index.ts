@@ -3,7 +3,7 @@ import { EACTION_WEBSOCKET } from "./websocket";
 export interface Player extends UpdatePlayer {
     name: string;
     image: string;
-    numberPlayer: number;
+    color: string;
 }
 
 export interface UpdatePlayer {
@@ -28,11 +28,10 @@ export interface PlayerDefaultI {
     get position(): number;
     get total(): number;
     get name(): string;
-    get playerNumber(): number;
     set position(value: number);
     get userId(): string;
     get player(): Player;
-
+    get color(): string;
     setTotalPlayer(value: number): void;
     buyCompany(price: number): void;
     enrollRentCompany(rent: number): void;
@@ -44,7 +43,6 @@ export interface PlayerDefaultI {
 
 export interface CellI {
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void;
-    sendInfoCell(): void;
 }
 
 
@@ -52,8 +50,8 @@ export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefaultI, price?: number): void
     buyStock(player: PlayerDefaultI): void;
     get index(): number;
-    get owned(): number | null
-    get info(): CompanyInfo;
+    get owned(): string | null
+    get infoCompany(): CompanyInfo;
     set monopoly(value: boolean);
     set quantityStock(value: number);
 }
@@ -63,7 +61,7 @@ export interface CellProfitLossI extends CellI {
 }
 
 export interface CellEmptyI extends CellI {
-
+    get info(): GameCellSquare
 }
 
 export interface companyCheckNoMonopoly {
@@ -71,10 +69,16 @@ export interface companyCheckNoMonopoly {
 }
 
 export type createCell = {
+    location: location;
     type: 'company' | 'lossProfit' | 'empty' | '';
     company?: CompanyInfo;
     change?: changeCell;
     empty?: emptyCell;
+}
+
+export type location = {
+    gridArea: string,
+    cellDirections: cellDirections,
 }
 
 export type dataChange = {
@@ -113,10 +117,11 @@ export type UpdateRoom = {
 export interface ChatMessage {
     message: string;
     name?: string;
-    numberPlayer?: number;
+    color?: string;
 }
 
-export interface gameCell {
+export type gameCell = {
+    location: location;
     indexCell: number;
     cellCompany?: GameCellCompanyInfo;
     cellSquare?: GameCellSquare;
@@ -126,7 +131,7 @@ export interface gameCell {
 export interface GameCellCompanyInfo extends CompanyInfo {
     shares: number;
     isPledge: boolean;
-    owned?: number;
+    owned?: string;
 }
 
 export interface GameCellSquare {
@@ -191,4 +196,5 @@ export type infoCellTurn = {
     indexCompany?: number;
     buttons: infoCellButtons;
     dept?: number;
+    receiverId?: string;
 }

@@ -1,4 +1,4 @@
-import { CellProfitLossI, PlayerDefaultI, changeCell, changeData, gameCell, infoCellTurn, language } from "src/types";
+import { CellProfitLossI, GameCellSquare, PlayerDefaultI, changeCell, changeData, infoCellTurn, language } from "src/types";
 import { DATA_PROFIT } from "./data/data.profit";
 import { Chat } from "src/game/chatGame/chat.room";
 import { DESCRIPTION_CELL } from "./description/description";
@@ -8,6 +8,7 @@ import { DATA_TAX10 } from "./data/data.tax10";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service/turn.service";
 import { CELL_TEXT } from "./description/cell.text";
+import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellProfitLoss implements CellProfitLossI {
 
@@ -20,8 +21,7 @@ export class CellProfitLoss implements CellProfitLossI {
         private roomWS: Room_WS,
         private chat: Chat,
         private turnService: TurnService,
-        private change: changeCell,
-        private indexCompany: number) { }
+        private change: changeCell) { }
 
     cellProcessing(player: PlayerDefaultI): void {
         this.choiseData();
@@ -41,14 +41,12 @@ export class CellProfitLoss implements CellProfitLossI {
             case 'loss':
                 this.changeData = DATA_LOSS[this.language];
                 break;
-            case 'tax5': {
+            case 'tax5':
                 this.changeData = DATA_TAX5[this.language];
                 break;
-            }
-            case 'tax10': {
+            case 'tax10':
                 this.changeData = DATA_TAX10[this.language];
                 break;
-            }
             default:
                 break;
         };
@@ -65,7 +63,8 @@ export class CellProfitLoss implements CellProfitLossI {
             dept: (this.change === 'tax5' || this.change === 'tax10')
                 ? this.player.total * this.data.value
                 : this.data.value
-        }
+        };
+
         this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
@@ -81,7 +80,7 @@ export class CellProfitLoss implements CellProfitLossI {
 
     private addProfit(): void {
         this.player.addTotal(this.data.value);
-        setTimeout(() => this.turnService.endTurn(), 2000);
+        setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
     }
 
     private generateDesc(): string {
@@ -96,16 +95,14 @@ export class CellProfitLoss implements CellProfitLossI {
         }
     }
 
-    sendInfoCell(): void {
 
-        const payload: gameCell = {
-            indexCell: this.indexCompany,
-            cellSquare: {
-                imageCell: (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change,
-                textCell: CELL_TEXT[this.language][this.change]
-            }
+
+    get info(): GameCellSquare {
+
+        return {
+            imageCell: (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change,
+            textCell: CELL_TEXT[this.language][this.change]
         }
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
 }

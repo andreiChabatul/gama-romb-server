@@ -1,11 +1,18 @@
 export const DESCRIPTION_CELL_COMPANY = {
     en: {
-        titleTurn: "You must pay tax in the amount of TAX$ (VALUETAX of your capital)",
-        buyCompany: "You can purchase this company for PRICE"
+        titleTurn: "PLAYER выбрасывает VALUE и попадает на ячейку компании COMPANY",
+        buyCompany: "Вы можете приобрести данную компанию за PRICE",
+        pledgeCompany: "Компания была заложена владельцем. Вы не несете затрат",
+        ownedCompany: "Вам необходимо уплатить аренду игроку PLAYER, в размере VALUE",
+        auctionCompany: "У вас неостаточно средст дл приобретения. Компания будет выставлена на аукцион",
+        owned: "Вы владелец компании. Вы не несете затрат.",
     },
     ru: {
-        titleTurn: "PLAYER выбрасывает VALUE и попадает на ячейку компании COMPANY",
-        tax: "Необходимо заплатить налог в размере TAX$ (VALUETAX от вашего капитала)",
-        buyCompany: "Вы можете приобрести данную компанию за PRICE"
+        titleTurn: "PLAYER выбрасывает VALUE и попадает на ячейку компании COMPANY.",
+        buyCompany: "Вы можете приобрести данную компанию за PRICE.",
+        pledgeCompany: "Компания была заложена владельцем. Вы не несете затрат.",
+        ownedCompany: "Вам необходимо уплатить аренду игроку PLAYER, в размере VALUE.",
+        auctionCompany: "У вас недостаточно средст для приобретения. Компания будет выставлена на аукцион.",
+        owned: "Вы владелец компании. Вы не несете затрат.",
     }
 }

@@ -1,10 +1,11 @@
-import { CellEmptyI, PlayerDefaultI, emptyCell, gameCell, infoCellTurn, language } from "src/types";
+import { CellEmptyI, GameCellSquare, PlayerDefaultI, emptyCell, infoCellTurn, language } from "src/types";
 import { Chat } from "src/game/chatGame/chat.room";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service/turn.service";
 import { DESCRIPTION_CELL_EMPTY } from "./description/description";
 import { CELL_TEXT_EMPTY } from "./description/cell.text";
 import { changeMessage } from "src/game/services/change.message";
+import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellEmpty implements CellEmptyI {
 
@@ -15,8 +16,7 @@ export class CellEmpty implements CellEmptyI {
         private roomWS: Room_WS,
         private chat: Chat,
         private turnService: TurnService,
-        private type: emptyCell,
-        private indexCompany: number) {
+        private type: emptyCell) {
     }
 
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
@@ -27,7 +27,7 @@ export class CellEmpty implements CellEmptyI {
             valueRoll) + this.type.toUpperCase());
         this.player = player;
         this.sendInfoPLayer();
-        setTimeout(() => this.turnService.endTurn(), 2000);
+        setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
     }
 
     sendInfoPLayer(): void {
@@ -40,14 +40,11 @@ export class CellEmpty implements CellEmptyI {
         this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
-    sendInfoCell(): void {
-        const payload: gameCell = {
-            indexCell: this.indexCompany,
-            cellSquare: {
-                imageCell: this.type,
-                textCell: CELL_TEXT_EMPTY[this.language][this.type]
-            }
+    get info(): GameCellSquare {
+
+        return {
+            imageCell: this.type,
+            textCell: CELL_TEXT_EMPTY[this.language][this.type]
         }
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 }

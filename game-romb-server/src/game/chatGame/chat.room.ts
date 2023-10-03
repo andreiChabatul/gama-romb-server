@@ -12,7 +12,7 @@ export class Chat implements ChatI {
             {
                 message,
                 name: player?.name,
-                numberPlayer: player?.playerNumber
+                color: player?.color
             });
         this.updateChat();
     }
