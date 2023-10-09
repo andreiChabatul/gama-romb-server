@@ -114,18 +114,19 @@ export class Room implements RoomClass {
         defaultCell.map((cell, indexCell) => {
             switch (cell.type) {
                 case 'company':
-                    this.cellsGame[indexCell] = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell)
-                    infoCell[indexCell] = { indexCell, location: cell.location }
+                    const newCellCompany = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell);
+                    this.cellsGame[indexCell] = newCellCompany
+                    infoCell[indexCell] = { indexCell, location: cell.location, cellCompany: newCellCompany.info };
                     break;
                 case 'lossProfit':
                     const newCellProfit = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.change);
                     this.cellsGame[indexCell] = newCellProfit;
-                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellProfit.info }
+                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellProfit.info };
                     break;
                 case 'empty':
                     const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty);
                     this.cellsGame[indexCell] = newCellEmpty;
-                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellEmpty.info }
+                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellEmpty.info };
                     break;
                 case '':
                     infoCell[indexCell] = { indexCell, location: cell.location }
@@ -133,7 +134,7 @@ export class Room implements RoomClass {
                 default:
                     break;
             }
-            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
         })
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
     }
 }

@@ -50,14 +50,15 @@ export interface CellCompanyI extends CellI {
     buyCompany(buyer: PlayerDefaultI, price?: number): void
     buyStock(player: PlayerDefaultI): void;
     get index(): number;
-    get owned(): string | null
+    get owned(): string | null;
+    get info(): GameCellCompanyInfo;
     get infoCompany(): CompanyInfo;
     set monopoly(value: boolean);
     set quantityStock(value: number);
 }
 
 export interface CellProfitLossI extends CellI {
-
+    get info(): GameCellSquare
 }
 
 export interface CellEmptyI extends CellI {

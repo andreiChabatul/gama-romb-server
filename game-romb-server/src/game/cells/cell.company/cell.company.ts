@@ -6,13 +6,14 @@ import { changeMessage } from "src/game/services/change.message";
 import { AuctionCompany } from "src/game/auctionCompany/auctionCompany";
 import { TurnService } from "src/game/turn.service/turn.service";
 import { TIME_TURN_DEFAULT } from "src/app/const";
+import { GameCellCompanyInfo } from "src/types";
 
 export class CellCompany implements CellCompanyI {
 
     private _pledge: boolean;
     private _owned: string | null;
     private rentIndex: number;
-    private _monopoly: boolean = true;
+    private _monopoly: boolean;
     private _quantityStock: number;
     private language: language = 'ru';
 
@@ -25,12 +26,13 @@ export class CellCompany implements CellCompanyI {
         private indexCompany: number,
     ) {
         this._quantityStock = 0;
+        this._monopoly = false;
     }
 
     buyCompany(buyer: PlayerDefaultI, price?: number): void {
         this._owned = buyer.userId;
         buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
-        this.sendInfoCell();
+        this.updateInfoCompany();
         this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
         this.chat.addMessage
             (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
@@ -82,18 +84,14 @@ export class CellCompany implements CellCompanyI {
         endTurn ? setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT) : '';
     }
 
-    sendInfoCell(): void {
+    updateInfoCompany(): void {
         this.updateRentCompany();
 
         const payload = {
             indexCell: this.indexCompany,
             cellCompany: {
-                nameCompany: this.compnanyInfo.nameCompany,
-                countryCompany: this.compnanyInfo.countryCompany,
-                priceCompany: this.compnanyInfo.priceCompany,
                 rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
                 isPledge: this._pledge,
-                priceStock: this.compnanyInfo.priceStock,
                 isMonopoly: this._monopoly,
                 shares: this._quantityStock,
                 owned: this.owned,
@@ -101,6 +99,20 @@ export class CellCompany implements CellCompanyI {
         };
 
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
+    }
+
+    get info(): GameCellCompanyInfo {
+        return {
+            nameCompany: this.compnanyInfo.nameCompany,
+            countryCompany: this.compnanyInfo.countryCompany,
+            priceCompany: this.compnanyInfo.priceCompany,
+            rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
+            isPledge: this._pledge,
+            priceStock: this.compnanyInfo.priceStock,
+            isMonopoly: this._monopoly,
+            shares: this._quantityStock,
+            owned: this.owned,
+        }
     }
 
     private updateRentCompany() {
@@ -117,6 +129,7 @@ export class CellCompany implements CellCompanyI {
     buyStock(player: PlayerDefaultI): void {
         this._quantityStock += 1;
         player.buyStock(this.compnanyInfo.priceStock, this.compnanyInfo.nameCompany);
+        this.updateInfoCompany();
     }
 
     sellStock(): void {
@@ -136,13 +149,15 @@ export class CellCompany implements CellCompanyI {
     }
 
     set monopoly(value: boolean) {
-        this._monopoly = value;
-        this.sendInfoCell();
+        if (value !== this._monopoly) {
+            this._monopoly = value;
+            this.updateInfoCompany();
+        };
     }
 
     set quantityStock(value: number) {
         this._quantityStock = value;
-        this.sendInfoCell();
+        this.updateInfoCompany();
     }
 
 }
