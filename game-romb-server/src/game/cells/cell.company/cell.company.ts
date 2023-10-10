@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, Player, PlayerDefaultI, controlCompany, infoCellTurn, language } from "src/types";
 import { Chat } from "../../chatGame/chat.room";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -7,6 +7,7 @@ import { AuctionCompany } from "src/game/auctionCompany/auctionCompany";
 import { TurnService } from "src/game/turn.service/turn.service";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 import { GameCellCompanyInfo } from "src/types";
+import { PlayerDefault } from "src/game/player";
 
 export class CellCompany implements CellCompanyI {
 
@@ -106,8 +107,10 @@ export class CellCompany implements CellCompanyI {
             nameCompany: this.compnanyInfo.nameCompany,
             countryCompany: this.compnanyInfo.countryCompany,
             priceCompany: this.compnanyInfo.priceCompany,
+            collateralCompany: this.compnanyInfo.collateralCompany,
             rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
             isPledge: this._pledge,
+            buyBackCompany: this.compnanyInfo.buyBackCompany,
             priceStock: this.compnanyInfo.priceStock,
             isMonopoly: this._monopoly,
             shares: this._quantityStock,
@@ -126,15 +129,6 @@ export class CellCompany implements CellCompanyI {
             : this.rentIndex += this._quantityStock;
     }
 
-    buyStock(player: PlayerDefaultI): void {
-        this._quantityStock += 1;
-        player.buyStock(this.compnanyInfo.priceStock, this.compnanyInfo.nameCompany);
-        this.updateInfoCompany();
-    }
-
-    sellStock(): void {
-        this._quantityStock -= 1;
-    }
 
     get owned(): string | null {
         return this._owned ? this._owned : null;
@@ -157,6 +151,32 @@ export class CellCompany implements CellCompanyI {
 
     set quantityStock(value: number) {
         this._quantityStock = value;
+        this.updateInfoCompany();
+    }
+
+
+    controlCompany(action: controlCompany, player: PlayerDefaultI): void {
+
+        switch (action) {
+            case 'buyStock':
+                this._quantityStock += 1;
+                player.minusTotal = this.compnanyInfo.priceStock;
+                break;
+            case 'sellStock':
+                this._quantityStock -= 1;
+                player.addTotal = this.compnanyInfo.priceStock;
+                break;
+            case 'pledgeCompany':
+                this._pledge = true;
+                player.addTotal = this.compnanyInfo.collateralCompany;
+                break;
+            case 'buyOutCompany':
+                this._pledge = false;
+                player.minusTotal = this.compnanyInfo.collateralCompany;
+                break;
+            default:
+                break;
+        };
         this.updateInfoCompany();
     }
 

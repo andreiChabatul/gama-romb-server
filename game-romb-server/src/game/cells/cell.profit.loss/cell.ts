@@ -79,7 +79,7 @@ export class CellProfitLoss implements CellProfitLossI {
     }
 
     private addProfit(): void {
-        this.player.addTotal(this.data.value);
+        this.player.addTotal = this.data.value;
         setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
     }
 

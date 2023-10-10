@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame/chat.room";
-import { PlayersGame, RoomClass, cells, gameCell } from "src/types";
+import { PlayersGame, RoomClass, cells, controlCompany, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company/cell.company";
@@ -89,11 +89,11 @@ export class Room implements RoomClass {
         this.turnService.endTurn();
     }
 
-    playerBuyStock(idUser: string, indexCompany: number): void {
+    controlCompany(idUser: string, indexCompany: number, action: controlCompany) {
         const company = this.cellsGame[indexCompany];
-        if ('buyStock' in company) {
-            company.buyStock(this.players[idUser]);
-        }
+        if ('controlCompany' in company) {
+            company.controlCompany(action, this.players[idUser]);
+        };
     }
 
     addChatMessage(message: string, idUser: string): void {

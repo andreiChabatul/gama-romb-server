@@ -66,17 +66,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total -= debt;
     }
 
-    addTotal(value: number): void {
-        this.chat.addMessage(`${this._name} получает: $${value}`);
-        this._total += value;
-    }
-
-    buyStock(value: number, nameCompany: string): void {
-        this.chat.addMessage(`${this._name} buys company shares ${nameCompany} for ${value}`);
-        this._total -= value;
-    }
-
-    enrollRentCompany(rent: number): void {
+     enrollRentCompany(rent: number): void {
         this._total += rent;
     }
 
@@ -101,7 +91,7 @@ export class PlayerDefault implements PlayerDefaultI {
             cellPosition: this.cellPosition,
         };
     }
-    
+
     get color(): string {
         return this._color;
     }
@@ -114,4 +104,16 @@ export class PlayerDefault implements PlayerDefaultI {
             cellPosition: this.cellPosition,
         })
     }
+
+    set addTotal(value: number) {
+        this._total += value;
+        this.updatePlayer();
+    }
+
+    set minusTotal(value: number) {
+        this._total -= value;
+        this.updatePlayer();
+    }
+
+
 }
