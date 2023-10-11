@@ -9,7 +9,7 @@ import { GameCreateDto } from 'src/game/dto/game.create.dto';
 import { Rooms } from 'src/types';
 import { Room } from 'src/game/room';
 import { v4 as uuidv4 } from 'uuid'
-import { BuyCompanyPayload, ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, PayDebtPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
+import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, PayDebtPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
 
 const sockets: WebSocket[] = [];
 const rooms: Rooms = {} as Rooms;
@@ -59,27 +59,20 @@ export class AppGateway {
         const diceRoll = payloadSocket.payload as DiceRollGamePayload;
         rooms[diceRoll.idRoom].playerMove(diceRoll.idUser, diceRoll.value, diceRoll.isDouble);
         break;
+      // case EACTION_WEBSOCKET.START_AUCTION:
+      //   const auctionStartPayload = payloadSocket.payload as BuyCompanyPayload;
+      //   rooms[auctionStartPayload.idRoom].startAuction(auctionStartPayload.idUser, auctionStartPayload.indexCompany);
+      //   break;
 
-      case EACTION_WEBSOCKET.BUY_COMPANY:
-        const buyPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[buyPayload.idRoom].playerBuyCompany(buyPayload.idUser, buyPayload.indexCompany);
-        break;
+      // case EACTION_WEBSOCKET.AUCTION_STEP:
+      //   const AuctionStepPayload = payloadSocket.payload;
+      //   rooms[AuctionStepPayload.idRoom].stepAuction(AuctionStepPayload.idUser);
+      //   break;
 
-      case EACTION_WEBSOCKET.START_AUCTION:
-        const auctionStartPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[auctionStartPayload.idRoom].startAuction(auctionStartPayload.idUser, auctionStartPayload.indexCompany);
-        break;
-
-      case EACTION_WEBSOCKET.AUCTION_STEP:
-        const AuctionStepPayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[AuctionStepPayload.idRoom].stepAuction(AuctionStepPayload.idUser);
-        break;
-
-      case EACTION_WEBSOCKET.AUCTION_LEAVE:
-        const AuctionLeavePayload = payloadSocket.payload as BuyCompanyPayload;
-        rooms[AuctionLeavePayload.idRoom].leaveAuction(AuctionLeavePayload.idUser);
-        break;
-
+      // case EACTION_WEBSOCKET.AUCTION_LEAVE:
+      //   const AuctionLeavePayload = payloadSocket.payload as BuyCompanyPayload;
+      //   rooms[AuctionLeavePayload.idRoom].leaveAuction(AuctionLeavePayload.idUser);
+      //   break;
       case EACTION_WEBSOCKET.PAY_DEBT:
         const payDebtPayload = payloadSocket.payload as PayDebtPayload;
         rooms[payDebtPayload.idRoom].playerPayDebt(payDebtPayload.idUser, payDebtPayload.debtValue, payDebtPayload.receiverId);
@@ -87,7 +80,11 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.CONTROL_COMPANY:
         const controlCompanyPayload = payloadSocket.payload as ContorolCompanyPayload;
-        rooms[controlCompanyPayload.idRoom].controlCompany(controlCompanyPayload.idUser, controlCompanyPayload.indexCompany, controlCompanyPayload.action);
+        rooms[controlCompanyPayload.idRoom].controlCompany(
+          controlCompanyPayload.idUser,
+          controlCompanyPayload.indexCompany,
+          controlCompanyPayload.action
+        );
         break;
 
       default:

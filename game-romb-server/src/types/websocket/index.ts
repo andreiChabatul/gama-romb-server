@@ -9,10 +9,6 @@ export enum EACTION_WEBSOCKET {
     UPDATE_PLAYER = 'update player',
     UPDATE_CHAT = 'update chat',
     DICE_ROLL = 'dice roll',
-    BUY_COMPANY = 'buy company',
-    START_AUCTION = 'start auction',
-    AUCTION_STEP = 'auction step',
-    AUCTION_LEAVE = 'auction leave',
     INFO_CELL_TURN = 'info cell turn',
     END_TURN = 'end turn',
     PAY_DEBT = 'pay debt',
@@ -45,10 +41,6 @@ export interface MessageChatGamePayload extends DefaultPayload {
 export interface DiceRollGamePayload extends DefaultPayload {
     value: number;
     isDouble: boolean;
-}
-
-export interface BuyCompanyPayload extends DefaultPayload {
-    indexCompany: number;
 }
 
 export interface ContorolCompanyPayload extends DefaultPayload {

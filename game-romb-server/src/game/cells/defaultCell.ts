@@ -429,7 +429,8 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: '',
+        type: 'empty',
+        empty: 'goJail',
         location: {
             gridArea: '9/3/11/1',
             cellDirections: 'bottom'

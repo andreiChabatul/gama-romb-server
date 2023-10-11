@@ -59,29 +59,6 @@ export class Room implements RoomClass {
         this.turnService.turn(this.players[idUser], value, isDouble);
     }
 
-    playerBuyCompany(idUser: string, indexCompany: number): void {
-        const company = this.cellsGame[indexCompany];
-        if ('buyCompany' in company) {
-            company.buyCompany(this.players[idUser]);
-        };
-        this.turnService.endTurn();
-    }
-
-    startAuction(idUser: string, indexCompany: number) {
-        const company = this.cellsGame[indexCompany];
-        if ('buyCompany' in company) {
-            this.auction.startAuction(company, idUser);
-        };
-    }
-
-    stepAuction(idUser: string): void {
-        this.auction.stepAuction(this.players[idUser]);
-    }
-
-    leaveAuction(idUser: string): void {
-        this.auction.leaveAuction(this.players[idUser]);
-    }
-
     playerPayDebt(idUser: string, debtValue: number, receiverId?: string) {
         (receiverId)
             ? this.players[idUser].payRentCompany(debtValue, this.players[receiverId])

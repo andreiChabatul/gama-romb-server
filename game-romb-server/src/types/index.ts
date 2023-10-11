@@ -39,6 +39,7 @@ export interface PlayerDefaultI {
     payDebt(debt: number): void;
     set addTotal(value: number);
     set minusTotal(value: number);
+    goJail(): void
 }
 
 export interface CellI {
@@ -47,8 +48,7 @@ export interface CellI {
 
 
 export interface CellCompanyI extends CellI {
-    buyCompany(buyer: PlayerDefaultI, price?: number): void;
-    controlCompany(action: controlCompany, player: PlayerDefaultI): void;
+    controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void;
     get index(): number;
     get owned(): string | null;
     get info(): GameCellCompanyInfo;
@@ -160,7 +160,7 @@ export type nameCompany =
 
 
 export type changeCell = 'loss' | 'profit' | 'tax5' | 'tax10';
-export type emptyCell = 'inJail' | 'parking' | 'start';
+export type emptyCell = 'inJail' | 'parking' | 'start' | 'goJail';
 
 export interface CompanyInfo {
     countryCompany: countryCompany;
@@ -190,7 +190,7 @@ export type languageMessage = {
 };
 
 export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none';
-export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
+export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | 'buyCompany' | 'startAuction' | 'leaveAuction' | 'stepAuction';
 
 export type infoCellTurn = {
     nameCell: nameCompany | typeSquareImage | changeCell | emptyCell;

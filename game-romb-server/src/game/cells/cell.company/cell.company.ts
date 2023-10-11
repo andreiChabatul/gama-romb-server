@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, Player, PlayerDefaultI, controlCompany, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellTurn, language } from "src/types";
 import { Chat } from "../../chatGame/chat.room";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -7,7 +7,6 @@ import { AuctionCompany } from "src/game/auctionCompany/auctionCompany";
 import { TurnService } from "src/game/turn.service/turn.service";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 import { GameCellCompanyInfo } from "src/types";
-import { PlayerDefault } from "src/game/player";
 
 export class CellCompany implements CellCompanyI {
 
@@ -30,14 +29,15 @@ export class CellCompany implements CellCompanyI {
         this._monopoly = false;
     }
 
-    buyCompany(buyer: PlayerDefaultI, price?: number): void {
-        this._owned = buyer.userId;
-        buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
-        this.updateInfoCompany();
-        this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
-        this.chat.addMessage
-            (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
-    }
+    // buyCompany(buyer: PlayerDefaultI, price?: number): void {
+    //     this._owned = buyer.userId;
+    //     buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
+
+    //     this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
+    //     this.chat.addMessage
+    //         (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
+    //     this.updateInfoCompany();
+    // }
 
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
 
@@ -155,7 +155,7 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    controlCompany(action: controlCompany, player: PlayerDefaultI): void {
+    controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void {
 
         switch (action) {
             case 'buyStock':
@@ -173,6 +173,21 @@ export class CellCompany implements CellCompanyI {
             case 'buyOutCompany':
                 this._pledge = false;
                 player.minusTotal = this.compnanyInfo.collateralCompany;
+                break;
+            case 'buyCompany':
+                this._owned = player.userId;
+                player.minusTotal = (price ? price : this.compnanyInfo.priceCompany);
+                this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
+                this.turnService.endTurn();
+                break;
+            case 'startAuction':
+                this.auction.startAuction(this, player.userId);
+                break;
+            case 'stepAuction':
+                this.auction.stepAuction(player);
+                break;
+            case 'leaveAuction':
+                this.auction.leaveAuction(player);
                 break;
             default:
                 break;

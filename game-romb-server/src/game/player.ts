@@ -26,6 +26,11 @@ export class PlayerDefault implements PlayerDefaultI {
         this.cellPosition = 0;
     }
 
+    goJail(): void {
+        this.cellPosition = 12;
+        this.updatePlayer();
+    }
+
     set position(value: number) {
         this.cellPosition = this.positionCellCalc(value);
         this.updatePlayer();
@@ -66,7 +71,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total -= debt;
     }
 
-     enrollRentCompany(rent: number): void {
+    enrollRentCompany(rent: number): void {
         this._total += rent;
     }
 

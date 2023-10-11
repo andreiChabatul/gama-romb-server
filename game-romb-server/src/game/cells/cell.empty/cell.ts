@@ -28,6 +28,9 @@ export class CellEmpty implements CellEmptyI {
         this.player = player;
         this.sendInfoPLayer();
         setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+        if (this.type === 'goJail') {
+            player.goJail();
+        };
     }
 
     sendInfoPLayer(): void {

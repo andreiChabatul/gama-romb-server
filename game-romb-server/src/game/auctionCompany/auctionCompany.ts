@@ -120,7 +120,7 @@ export class AuctionCompany {
     }
 
     private endAuction(): void {
-        this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.priceAuction) : '';
+        this.auctionWinner ? this.cell.controlCompany('buyCompany', this.players[this.auctionWinner], this.priceAuction) : '';
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INFO_CELL_TURN,
             {
                 ...this.sendWaitingPLayer(),
