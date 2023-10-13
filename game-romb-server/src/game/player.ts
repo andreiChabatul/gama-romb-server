@@ -1,6 +1,6 @@
 import { Player, PlayerDefaultI } from "src/types";
 import { users } from "src/users/users.service";
-import { Chat } from "./chatGame/chat.room";
+import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
@@ -10,6 +10,7 @@ export class PlayerDefault implements PlayerDefaultI {
     private _name: string;
     private image: string;
     private _total: number;
+    private _prison: boolean;
     private capital: number;
     private cellPosition: number;
 
@@ -26,13 +27,10 @@ export class PlayerDefault implements PlayerDefaultI {
         this.cellPosition = 0;
     }
 
-    goJail(): void {
-        this.cellPosition = 12;
-        this.updatePlayer();
-    }
-
     set position(value: number) {
-        this.cellPosition = this.positionCellCalc(value);
+        this._prison
+            ? this.cellPosition = value
+            : this.cellPosition = this.positionCellCalc(value);
         this.updatePlayer();
     }
 
@@ -107,6 +105,7 @@ export class PlayerDefault implements PlayerDefaultI {
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
+            prison: this._prison
         })
     }
 
@@ -120,5 +119,12 @@ export class PlayerDefault implements PlayerDefaultI {
         this.updatePlayer();
     }
 
+    get prison(): boolean {
+        return this._prison;
+    }
 
+    set prison(value: boolean) {
+        this._prison = value;
+        this.updatePlayer();
+    }
 }

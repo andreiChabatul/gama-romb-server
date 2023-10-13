@@ -1,5 +1,3 @@
-import { EACTION_WEBSOCKET } from "./websocket";
-
 export interface Player extends UpdatePlayer {
     name: string;
     image: string;
@@ -11,10 +9,17 @@ export interface UpdatePlayer {
     total: number;
     capital: number;
     cellPosition: number;
+    prison?: boolean;
 }
 
-export interface PlayersGame {
+export type PlayersGame = {
     [id: string]: PlayerDefaultI;
+}
+
+export interface PrisonI {
+    addPrisoner(player: PlayerDefaultI): void;
+    deletePrisoner(player: PlayerDefaultI): void;
+    turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void;
 }
 
 
@@ -39,7 +44,8 @@ export interface PlayerDefaultI {
     payDebt(debt: number): void;
     set addTotal(value: number);
     set minusTotal(value: number);
-    goJail(): void
+    get prison(): boolean;
+    set prison(value: boolean);
 }
 
 export interface CellI {

@@ -1,17 +1,18 @@
 import { GameCreateDto } from "./dto/game.create.dto";
-import { Chat } from "./chatGame/chat.room";
-import { PlayersGame, RoomClass, cells, controlCompany, gameCell } from "src/types";
+import { Chat } from "./chatGame";
+import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
-import { CellCompany } from "./cells/cell.company/cell.company";
+import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
-import { AuctionCompany } from "./auctionCompany/auctionCompany";
-import { CellProfitLoss } from "./cells/cell.profit.loss/cell";
-import { TurnService } from "./turn.service/turn.service";
-import { CellEmpty } from "./cells/cell.empty/cell";
+import { AuctionCompany } from "./auctionCompany";
+import { CellProfitLoss } from "./cells/cell.profit.loss";
+import { TurnService } from "./turn.service";
+import { CellEmpty } from "./cells/cell.empty";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { ROOM_WS } from "./roomWS";
-import { COLORS_PLAYER } from "src/app/const";
+import { COLORS_PLAYER, DEBT_PRISON } from "src/app/const";
+import { Prison } from "./prison";
 
 export class Room implements RoomClass {
 
@@ -24,6 +25,7 @@ export class Room implements RoomClass {
     private chat: Chat;
     private auction: AuctionCompany;
     private turnService: TurnService;
+    private prison: PrisonI;
     private roomWS: Room_WS;
 
     constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
@@ -34,14 +36,14 @@ export class Room implements RoomClass {
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
         this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
+        this.prison = new Prison(this.turnService, this.roomWS);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
     addPlayer(id: string, client: WebSocket) {
         this.roomWS.addWebSocket(id, client);
-        const player = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat);
+        this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat);
         this.numberPlayer++;
-        this.players[id] = player;
         this.checkStartGame();
         this.fillCellsGame();
 
@@ -56,13 +58,21 @@ export class Room implements RoomClass {
     }
 
     playerMove(idUser: string, value: number, isDouble: boolean) {
-        this.turnService.turn(this.players[idUser], value, isDouble);
+        this.players[idUser].prison
+            ? this.prison.turnPrison(this.players[idUser], value, isDouble)
+            : this.turnService.turn(this.players[idUser], value, isDouble)
     }
 
     playerPayDebt(idUser: string, debtValue: number, receiverId?: string) {
-        (receiverId)
-            ? this.players[idUser].payRentCompany(debtValue, this.players[receiverId])
-            : this.players[idUser].payDebt(debtValue);
+        const player = this.players[idUser]
+        if (player.prison) {
+            player.payDebt(DEBT_PRISON);
+            this.prison.deletePrisoner(player);
+        } else {
+            (receiverId)
+            ? player.payRentCompany(debtValue, this.players[receiverId])
+            : player.payDebt(debtValue);
+        }
         this.turnService.endTurn();
     }
 
@@ -101,7 +111,7 @@ export class Room implements RoomClass {
                     infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellProfit.info };
                     break;
                 case 'empty':
-                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty);
+                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty, this.prison);
                     this.cellsGame[indexCell] = newCellEmpty;
                     infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellEmpty.info };
                     break;

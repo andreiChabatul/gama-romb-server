@@ -59,20 +59,7 @@ export class AppGateway {
         const diceRoll = payloadSocket.payload as DiceRollGamePayload;
         rooms[diceRoll.idRoom].playerMove(diceRoll.idUser, diceRoll.value, diceRoll.isDouble);
         break;
-      // case EACTION_WEBSOCKET.START_AUCTION:
-      //   const auctionStartPayload = payloadSocket.payload as BuyCompanyPayload;
-      //   rooms[auctionStartPayload.idRoom].startAuction(auctionStartPayload.idUser, auctionStartPayload.indexCompany);
-      //   break;
-
-      // case EACTION_WEBSOCKET.AUCTION_STEP:
-      //   const AuctionStepPayload = payloadSocket.payload;
-      //   rooms[AuctionStepPayload.idRoom].stepAuction(AuctionStepPayload.idUser);
-      //   break;
-
-      // case EACTION_WEBSOCKET.AUCTION_LEAVE:
-      //   const AuctionLeavePayload = payloadSocket.payload as BuyCompanyPayload;
-      //   rooms[AuctionLeavePayload.idRoom].leaveAuction(AuctionLeavePayload.idUser);
-      //   break;
+        
       case EACTION_WEBSOCKET.PAY_DEBT:
         const payDebtPayload = payloadSocket.payload as PayDebtPayload;
         rooms[payDebtPayload.idRoom].playerPayDebt(payDebtPayload.idUser, payDebtPayload.debtValue, payDebtPayload.receiverId);

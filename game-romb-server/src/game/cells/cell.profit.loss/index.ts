@@ -1,12 +1,12 @@
 import { CellProfitLossI, GameCellSquare, PlayerDefaultI, changeCell, changeData, infoCellTurn, language } from "src/types";
 import { DATA_PROFIT } from "./data/data.profit";
-import { Chat } from "src/game/chatGame/chat.room";
+import { Chat } from "src/game/chatGame";
 import { DESCRIPTION_CELL } from "./description/description";
 import { DATA_LOSS } from "./data/data.loss";
 import { DATA_TAX5 } from "./data/data.tax5";
 import { DATA_TAX10 } from "./data/data.tax10";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { TurnService } from "src/game/turn.service/turn.service";
+import { TurnService } from "src/game/turn.service";
 import { CELL_TEXT } from "./description/cell.text";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 

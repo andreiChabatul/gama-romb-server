@@ -1,9 +1,9 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn, language } from "src/types";
-import { Chat } from "../chatGame/chat.room";
+import { Chat } from "../chatGame";
 import { AUCTION_DESCRIPTION } from "./auction.description";
 import { changeMessage } from "../services/change.message";
 import { AUCTION_STEP } from "src/app/const";
-import { TurnService } from "../turn.service/turn.service";
+import { TurnService } from "../turn.service";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class AuctionCompany {

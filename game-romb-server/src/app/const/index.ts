@@ -3,6 +3,7 @@ import { countryCompanyMonopoly, countryCompanyNoMonopoly } from "src/types";
 export const AUCTION_STEP = 1.1;
 export const MAX_INDEX_CELL_BOARD = 38;
 export const TIME_TURN_DEFAULT = 3000;
+export const DEBT_PRISON = 50000;
 export const COLORS_PLAYER = ['#FF9400', '#E20001', '#42DD51', '#0FCBF1'];
 
 

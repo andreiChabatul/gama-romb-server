@@ -1,6 +1,6 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
 import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly, language } from "src/types";
-import { Chat } from "../chatGame/chat.room";
+import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { DESCRIPTION_TURN } from "./description/description";
 import { changeMessage } from "../services/change.message";

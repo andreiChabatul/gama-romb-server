@@ -1,10 +1,10 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellTurn, language } from "src/types";
-import { Chat } from "../../chatGame/chat.room";
+import { Chat } from "../../chatGame";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { changeMessage } from "src/game/services/change.message";
-import { AuctionCompany } from "src/game/auctionCompany/auctionCompany";
-import { TurnService } from "src/game/turn.service/turn.service";
+import { AuctionCompany } from "src/game/auctionCompany";
+import { TurnService } from "src/game/turn.service";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 import { GameCellCompanyInfo } from "src/types";
 

@@ -1,7 +1,7 @@
-import { CellEmptyI, GameCellSquare, PlayerDefaultI, emptyCell, infoCellTurn, language } from "src/types";
-import { Chat } from "src/game/chatGame/chat.room";
+import { CellEmptyI, GameCellSquare, PlayerDefaultI, PrisonI, emptyCell, infoCellTurn, language } from "src/types";
+import { Chat } from "src/game/chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { TurnService } from "src/game/turn.service/turn.service";
+import { TurnService } from "src/game/turn.service";
 import { DESCRIPTION_CELL_EMPTY } from "./description/description";
 import { CELL_TEXT_EMPTY } from "./description/cell.text";
 import { changeMessage } from "src/game/services/change.message";
@@ -16,7 +16,8 @@ export class CellEmpty implements CellEmptyI {
         private roomWS: Room_WS,
         private chat: Chat,
         private turnService: TurnService,
-        private type: emptyCell) {
+        private type: emptyCell,
+        private prison: PrisonI) {
     }
 
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
@@ -29,7 +30,7 @@ export class CellEmpty implements CellEmptyI {
         this.sendInfoPLayer();
         setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
         if (this.type === 'goJail') {
-            player.goJail();
+            this.prison.addPrisoner(player);
         };
     }
 
