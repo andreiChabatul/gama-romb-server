@@ -16,6 +16,11 @@ export type PlayersGame = {
     [id: string]: PlayerDefaultI;
 }
 
+export type dictionary = {
+    [key in categoryDictionary]:
+    { [key: string]: string; }
+}
+
 export interface PrisonI {
     addPrisoner(player: PlayerDefaultI): void;
     deletePrisoner(player: PlayerDefaultI): void;
@@ -208,3 +213,5 @@ export type infoCellTurn = {
     dept?: number;
     receiverId?: string;
 }
+
+export type categoryDictionary = 'TURN-SERVISE'

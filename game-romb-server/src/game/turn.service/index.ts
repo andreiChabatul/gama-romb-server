@@ -1,10 +1,14 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly, language } from "src/types";
+import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly, dictionary, language } from "src/types";
 import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { DESCRIPTION_TURN } from "./description/description";
 import { changeMessage } from "../services/change.message";
+import { Injectable } from "@nestjs/common";
+import LanguageServices from "../../languageServices";
 
+
+@Injectable()
 export class TurnService {
 
     private indexActive: number;
@@ -16,13 +20,12 @@ export class TurnService {
         private roomWS: Room_WS,
         private players: PlayersGame,
         private cellsGame: cells[],
-        private chat: Chat) { }
+        private chat: Chat,
+    ) { }
 
     firstTurn(): void {
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
-        this.chat.addMessage(
-            DESCRIPTION_TURN[this.language].firstTurn
-            + this.players[Object.keys(this.players)[this.indexActive]].name);
+        this.chat.addMessage(LanguageServices.getString('TURN-SERVISE', 'firstTurn', this.activePlayer()));
         this.updateTurn();
     }
 

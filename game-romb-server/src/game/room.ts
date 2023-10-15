@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame";
-import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, gameCell } from "src/types";
+import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, dictionary, gameCell, language } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
@@ -27,6 +27,7 @@ export class Room implements RoomClass {
     private turnService: TurnService;
     private prison: PrisonI;
     private roomWS: Room_WS;
+    
 
     constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
         this.roomName = gameCreateDto.roomName;
@@ -38,9 +39,10 @@ export class Room implements RoomClass {
         this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
         this.prison = new Prison(this.turnService, this.roomWS);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
+        const payload = [this.roomWS, this.players]
     }
 
-    addPlayer(id: string, client: WebSocket) {
+    async addPlayer(id: string, client: WebSocket) {
         this.roomWS.addWebSocket(id, client);
         this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat);
         this.numberPlayer++;
@@ -70,8 +72,8 @@ export class Room implements RoomClass {
             this.prison.deletePrisoner(player);
         } else {
             (receiverId)
-            ? player.payRentCompany(debtValue, this.players[receiverId])
-            : player.payDebt(debtValue);
+                ? player.payRentCompany(debtValue, this.players[receiverId])
+                : player.payDebt(debtValue);
         }
         this.turnService.endTurn();
     }

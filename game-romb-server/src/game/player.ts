@@ -1,4 +1,4 @@
-import { Player, PlayerDefaultI } from "src/types";
+import { Player, PlayerDefaultI, language } from "src/types";
 import { users } from "src/users/users.service";
 import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
@@ -8,6 +8,7 @@ import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 export class PlayerDefault implements PlayerDefaultI {
 
     private _name: string;
+    private _lang: language = 'en';
     private image: string;
     private _total: number;
     private _prison: boolean;
