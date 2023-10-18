@@ -1,4 +1,4 @@
-import { Player, PlayerDefaultI, language } from "src/types";
+import { Player, PlayerDefaultI } from "src/types";
 import { users } from "src/users/users.service";
 import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
@@ -8,7 +8,6 @@ import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 export class PlayerDefault implements PlayerDefaultI {
 
     private _name: string;
-    private _lang: language = 'en';
     private image: string;
     private _total: number;
     private _prison: boolean;
@@ -61,12 +60,12 @@ export class PlayerDefault implements PlayerDefaultI {
     }
 
     payRentCompany(rent: number, player: PlayerDefault): void {
-        this.chat.addMessage(`${this._name} pays rent in the amount ${rent}`);
+        
         this._total -= rent;
     }
 
     payDebt(debt: number): void {
-        this.chat.addMessage(`${this._name} выплачивает долг в размере: $${debt}`);
+    
         this._total -= debt;
     }
 
@@ -78,7 +77,7 @@ export class PlayerDefault implements PlayerDefaultI {
         let resultPosition = this.cellPosition + value;
         if (resultPosition >= 38) {
             this._total += CIRCLE_REWARD;
-            this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
+            // this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
         }
         return resultPosition;

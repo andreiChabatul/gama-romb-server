@@ -1,4 +1,4 @@
-import { CellProfitLossI, GameCellSquare, PlayerDefaultI, changeCell, changeData, infoCellTurn, language } from "src/types";
+import { CellProfitLossI, PlayerDefaultI, changeData, infoCellTurn, nameCell } from "src/types";
 import { DATA_PROFIT } from "./data/data.profit";
 import { Chat } from "src/game/chatGame";
 import { DESCRIPTION_CELL } from "./description/description";
@@ -7,13 +7,11 @@ import { DATA_TAX5 } from "./data/data.tax5";
 import { DATA_TAX10 } from "./data/data.tax10";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { TurnService } from "src/game/turn.service";
-import { CELL_TEXT } from "./description/cell.text";
 import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellProfitLoss implements CellProfitLossI {
 
     changeData: changeData[];
-    language: language = 'ru';
     data: changeData;
     player: PlayerDefaultI;
 
@@ -21,31 +19,32 @@ export class CellProfitLoss implements CellProfitLossI {
         private roomWS: Room_WS,
         private chat: Chat,
         private turnService: TurnService,
-        private change: changeCell) { }
+        private nameCell: nameCell,
+        private _index: number) { }
 
     cellProcessing(player: PlayerDefaultI): void {
         this.choiseData();
         this.player = player;
         this.data = this.changeData[this.randomIndex()];
-        this.chat.addMessage(player.name + this.generateDescription());
+        // this.chat.addMessage(player.name + this.generateDescription());
         this.sendInfoPLayer();
-        this.change === 'profit' ? this.addProfit() : '';
+        this.nameCell === 'profit' ? this.addProfit() : '';
     }
 
     choiseData(): void {
 
-        switch (this.change) {
+        switch (this.nameCell) {
             case 'profit':
-                this.changeData = DATA_PROFIT[this.language];
+                this.changeData = DATA_PROFIT.en;
                 break;
             case 'loss':
-                this.changeData = DATA_LOSS[this.language];
+                this.changeData = DATA_LOSS.en;
                 break;
             case 'tax5':
-                this.changeData = DATA_TAX5[this.language];
+                this.changeData = DATA_TAX5.en;
                 break;
             case 'tax10':
-                this.changeData = DATA_TAX10[this.language];
+                this.changeData = DATA_TAX10.en;
                 break;
             default:
                 break;
@@ -53,14 +52,14 @@ export class CellProfitLoss implements CellProfitLossI {
     }
 
     sendInfoPLayer(): void {
-        const name = (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change;
+        const name = (this.nameCell === 'tax10' || this.nameCell === 'tax5') ? 'tax' : this.nameCell;
         const payload: infoCellTurn = {
             nameCell: name,
-            titleCell: DESCRIPTION_CELL[this.language].title + name.toUpperCase(),
+            titleCell: DESCRIPTION_CELL.en.title + name.toUpperCase(),
             description: this.generateDescription(),
-            buttons: this.change === 'profit' ? 'none' : 'pay',
+            buttons: this.nameCell === 'profit' ? 'none' : 'pay',
             descriptionTwo: this.generateDesc(),
-            dept: (this.change === 'tax5' || this.change === 'tax10')
+            dept: (this.nameCell === 'tax5' || this.nameCell === 'tax10')
                 ? this.player.total * this.data.value
                 : this.data.value
         };
@@ -73,7 +72,7 @@ export class CellProfitLoss implements CellProfitLossI {
     }
 
     private generateDescription(): string {
-        return `${(this.change === 'tax5' || this.change === 'tax10')
+        return `${(this.nameCell === 'tax5' || this.nameCell === 'tax10')
             ? this.data.description + this.player.total * this.data.value
             : this.data.description + this.data.value}`
     }
@@ -84,25 +83,20 @@ export class CellProfitLoss implements CellProfitLossI {
     }
 
     private generateDesc(): string {
-        if (this.change === 'profit') {
+        if (this.nameCell === 'profit') {
             return null;
         };
 
         if (this.data.value > this.player.total) {
-            return DESCRIPTION_CELL[this.language].noEnoughtMoney;
+            return DESCRIPTION_CELL['en'].noEnoughtMoney;
         } else {
-            return DESCRIPTION_CELL[this.language].enoughtMoney;
+            return DESCRIPTION_CELL['en'].enoughtMoney;
         }
     }
 
 
-
-    get info(): GameCellSquare {
-
-        return {
-            imageCell: (this.change === 'tax10' || this.change === 'tax5') ? 'tax' : this.change,
-            textCell: CELL_TEXT[this.language][this.change]
-        }
+    get index(): number {
+        return this._index
     }
 
 }

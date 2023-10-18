@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn } from "src/types";
 import { Chat } from "../chatGame";
 import { AUCTION_DESCRIPTION } from "./auction.description";
 import { changeMessage } from "../services/change.message";
@@ -9,7 +9,7 @@ import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 export class AuctionCompany {
 
     cell: CellCompanyI;
-    language: language = 'ru';
+    language = 'ru';
     priceAuction: number;
     private auctionWinner: string;
     companyInfo: CompanyInfo;
@@ -28,9 +28,9 @@ export class AuctionCompany {
         this.indexActive = 0;
         this.companyInfo = this.cell.infoCompany;
         this.priceAuction = this.companyInfo.priceCompany;
-        this.chat.addMessage(changeMessage(
-            AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
-        ));
+        // this.chat.addMessage(changeMessage(
+        //     AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
+        // ));
         this.inactivePlayers.push(idUser);
         this.nextBind();
     }
@@ -38,20 +38,20 @@ export class AuctionCompany {
     stepAuction(player: PlayerDefaultI): void {
         this.auctionWinner = player.userId;
         this.priceAuction = Math.floor(this.priceAuction * AUCTION_STEP);
-        this.chat.addMessage(changeMessage(
-            AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
-            this.companyInfo,
-            player
-        ))
+        // this.chat.addMessage(changeMessage(
+        //     AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
+        //     this.companyInfo,
+        //     player
+        // ))
         this.nextBind();
     }
 
     leaveAuction(player: PlayerDefaultI): void {
-        this.chat.addMessage(changeMessage(
-            AUCTION_DESCRIPTION[this.language].auctionLeave,
-            null,
-            player
-        ));
+        // this.chat.addMessage(changeMessage(
+        //     AUCTION_DESCRIPTION[this.language].auctionLeave,
+        //     null,
+        //     player
+        // ));
         this.inactivePlayers.push(player.userId);
         this.nextBind();
     }
@@ -101,7 +101,7 @@ export class AuctionCompany {
 
     private sendActivePLayer(): infoCellTurn {
         return {
-            nameCell: this.companyInfo.nameCompany,
+            nameCell: 'aliexpress',
             titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionTitle, this.companyInfo),
             indexCompany: this.cell.index,
             buttons: 'auction',

@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellTurn, language } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellTurn } from "src/types";
 import { Chat } from "../../chatGame";
 import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -15,7 +15,7 @@ export class CellCompany implements CellCompanyI {
     private rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
-    private language: language = 'ru';
+    private language = 'ru';
 
     constructor(
         private roomWS: Room_WS,
@@ -40,18 +40,10 @@ export class CellCompany implements CellCompanyI {
     // }
 
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
-
         let endTurn = true;
-
-        this.chat.addMessage(changeMessage(
-            DESCRIPTION_CELL_COMPANY[this.language].titleTurn,
-            this.compnanyInfo,
-            player,
-            valueRoll));
-
         const payload: infoCellTurn = {
-            nameCell: this.compnanyInfo.nameCompany,
-            titleCell: this.compnanyInfo.nameCompany,
+            nameCell: 'aliexpress',
+            titleCell: 'this.compnanyInfo.nameCompany',
             description: DESCRIPTION_CELL_COMPANY[this.language].buyCompany
                 .replaceAll('PRICE', String(this.compnanyInfo.priceCompany)),
             indexCompany: this.indexCompany,
@@ -104,7 +96,6 @@ export class CellCompany implements CellCompanyI {
 
     get info(): GameCellCompanyInfo {
         return {
-            nameCompany: this.compnanyInfo.nameCompany,
             countryCompany: this.compnanyInfo.countryCompany,
             priceCompany: this.compnanyInfo.priceCompany,
             collateralCompany: this.compnanyInfo.collateralCompany,

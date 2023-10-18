@@ -1,19 +1,13 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly, dictionary, language } from "src/types";
+import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly } from "src/types";
 import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { DESCRIPTION_TURN } from "./description/description";
-import { changeMessage } from "../services/change.message";
-import { Injectable } from "@nestjs/common";
-import LanguageServices from "../../languageServices";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
-
-@Injectable()
 export class TurnService {
 
     private indexActive: number;
     private isDouble: boolean;
-    private language: language = 'ru';
     private doubleCounter: number = 0;
 
     constructor(
@@ -25,15 +19,22 @@ export class TurnService {
 
     firstTurn(): void {
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
-        this.chat.addMessage(LanguageServices.getString('TURN-SERVISE', 'firstTurn', this.activePlayer()));
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, playerId: this.activePlayer().userId });
         this.updateTurn();
     }
 
     turn(player: PlayerDefaultI, value: number, isDouble: boolean): void {
-        this.isDouble = isDouble;
         player.position = value;
-        if (this.cellsGame[player.position]) {
-            this.cellsGame[player.position].cellProcessing(player, value);
+        const cell = this.cellsGame[player.position];
+        this.isDouble = isDouble;
+        if (cell) {
+            this.chat.addSystemMessage({
+                action: EMESSAGE_CLIENT.INTO_CELL,
+                playerId: player.userId,
+                cellId: cell.index,
+                valueroll: value
+            })
+            cell.cellProcessing(player, value);
         };
     }
 
@@ -41,11 +42,11 @@ export class TurnService {
         if (this.isDouble) {
             this.doubleCounter++;
             this.checkDouble();
-            this.chat.addMessage(changeMessage(DESCRIPTION_TURN[this.language].doubleTurn, null, this.activePlayer()));
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, playerId: this.activePlayer().userId });
         } else {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            this.chat.addMessage(changeMessage(DESCRIPTION_TURN[this.language].turn, null, this.activePlayer()));
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, playerId: this.activePlayer().userId });
         }
         this.updateTurn();
     }

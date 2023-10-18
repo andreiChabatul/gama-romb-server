@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame";
-import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, dictionary, gameCell, language } from "src/types";
+import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
@@ -27,7 +27,7 @@ export class Room implements RoomClass {
     private turnService: TurnService;
     private prison: PrisonI;
     private roomWS: Room_WS;
-    
+
 
     constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
         this.roomName = gameCreateDto.roomName;
@@ -101,24 +101,20 @@ export class Room implements RoomClass {
     private fillCellsGame() {
         const infoCell: gameCell[] = [];
         defaultCell.map((cell, indexCell) => {
+            infoCell[indexCell] = { indexCell, ...cell };
             switch (cell.type) {
                 case 'company':
                     const newCellCompany = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell);
                     this.cellsGame[indexCell] = newCellCompany
-                    infoCell[indexCell] = { indexCell, location: cell.location, cellCompany: newCellCompany.info };
+                    infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
                     break;
                 case 'lossProfit':
-                    const newCellProfit = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.change);
+                    const newCellProfit = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.nameCell, indexCell);
                     this.cellsGame[indexCell] = newCellProfit;
-                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellProfit.info };
                     break;
                 case 'empty':
-                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.empty, this.prison);
+                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.nameCell, this.prison, indexCell);
                     this.cellsGame[indexCell] = newCellEmpty;
-                    infoCell[indexCell] = { indexCell, location: cell.location, cellSquare: newCellEmpty.info };
-                    break;
-                case '':
-                    infoCell[indexCell] = { indexCell, location: cell.location }
                     break;
                 default:
                     break;
