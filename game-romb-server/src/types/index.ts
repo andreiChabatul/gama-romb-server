@@ -24,8 +24,6 @@ export interface PrisonI {
     turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void;
 }
 
-
-
 export interface ChatI {
     readonly messages: ChatMessage[];
     addMessage(message: string, player: PlayerDefaultI): void;
@@ -41,13 +39,8 @@ export interface PlayerDefaultI {
     get userId(): string;
     get player(): Player;
     get color(): string;
-    setTotalPlayer(value: number): void;
-    buyCompany(price: number): void;
-    enrollRentCompany(rent: number): void;
-    payRentCompany(rent: number, player: PlayerDefaultI): void;
-    payDebt(debt: number): void;
     set addTotal(value: number);
-    set minusTotal(value: number);
+    minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
     get prison(): boolean;
     set prison(value: boolean);
 }
@@ -57,22 +50,18 @@ export interface CellI {
     get index(): number;
 }
 
-
 export interface CellCompanyI extends CellI {
     controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void;
     get owned(): string | null;
     get info(): GameCellCompanyInfo;
     get infoCompany(): CompanyInfo;
+    get rentCompany(): number
     set monopoly(value: boolean);
     set quantityStock(value: number);
 }
 
-export interface CellProfitLossI extends CellI {
-  
-}
-
 export interface CellEmptyI extends CellI {
- 
+
 }
 
 export interface companyCheckNoMonopoly {
@@ -85,17 +74,8 @@ export type location = {
     cellDirections: cellDirections,
 }
 
-export type dataChange = {
-    en: changeData[],
-    ru: changeData[],
-}
+export type cells = CellEmptyI | CellCompanyI;
 
-export type changeData = {
-    description: string,
-    value: number
-}
-
-export type cells = CellEmptyI | CellCompanyI | CellProfitLossI;
 export interface Rooms {
     id: string;
     room: RoomClass;
@@ -103,7 +83,6 @@ export interface Rooms {
 
 export interface RoomClass {
     returnInfoRoom(): InfoRoom;
-
 }
 
 export interface InfoRoom {
@@ -128,23 +107,22 @@ export interface SystemMessage {
     action?: EMESSAGE_CLIENT,
     playerId?: string,
     cellId?: number,
-    valueroll?: number
+    valueroll?: number,
 }
 
-
-export type gameCell = {
-    location: location;
+export interface gameCell extends createCell {
     indexCell: number;
-    nameCell: nameCell;
     cellCompany?: GameCellCompanyInfo;
 }
 
-export type createCell = {
+export interface createCell {
     location: location;
     nameCell: nameCell;
-    type: 'company' | 'lossProfit' | 'empty';
+    type: companyType;
     company?: CompanyInfo;
 }
+
+export type companyType = 'company' | 'lossProfit' | 'empty';
 
 export interface GameCellCompanyInfo extends CompanyInfo {
     shares: number;
@@ -169,8 +147,8 @@ export type nameCompany =
     | 'volvo' | 'essity' | 'ericsson'
     | 'hsbc' | 'rr' | 'bp';
 
-export type nameCell = nameCompany |  'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security' | 'tax';
-
+export type nameCell = nameCompany | nameCellEmpty;
+export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
 export interface CompanyInfo {
     countryCompany: countryCompany;
     priceCompany: number;
@@ -182,20 +160,11 @@ export interface CompanyInfo {
     priceStock?: number;
 }
 
-export interface CompanyInfoBuy extends CompanyInfo {
-    indexCompany: number;
-}
-
-export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none';
+export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'payRent' | 'payPrison' | 'profit';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | 'buyCompany' | 'startAuction' | 'leaveAuction' | 'stepAuction';
 
 export type infoCellTurn = {
-    nameCell: nameCell;
-    titleCell: string;
-    description: string;
-    descriptionTwo?: string;
-    indexCompany?: number;
+    indexCompany: number;
     buttons: infoCellButtons;
-    dept?: number;
-    receiverId?: string;
+    description?: string;
 }

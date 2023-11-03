@@ -87,7 +87,7 @@ export class AuctionCompany {
     private sendInactivePLayer(): infoCellTurn {
         return {
             ...this.sendWaitingPLayer(),
-            description: changeMessage(AUCTION_DESCRIPTION[this.language].auctionCanceling),
+          
         }
     }
 
@@ -95,17 +95,15 @@ export class AuctionCompany {
         return {
             ...this.sendActivePLayer(),
             buttons: 'none',
-            description: changeMessage(AUCTION_DESCRIPTION[this.language].auctionWainting),
+            
         }
     }
 
     private sendActivePLayer(): infoCellTurn {
         return {
-            nameCell: 'aliexpress',
-            titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionTitle, this.companyInfo),
             indexCompany: this.cell.index,
             buttons: 'auction',
-            description: changeMessage(AUCTION_DESCRIPTION[this.language].auctionDescBuyer + this.priceAuction),
+         
         }
     }
 

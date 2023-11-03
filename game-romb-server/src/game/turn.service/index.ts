@@ -129,7 +129,6 @@ export class TurnService {
 
     private checkDouble(): void {
         if (this.doubleCounter === 3) {
-            console.log(this.activePlayer().name, 'jail');
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
         }

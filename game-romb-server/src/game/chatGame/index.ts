@@ -19,14 +19,13 @@ export class Chat implements ChatI {
     }
 
     addSystemMessage(systemMessage: SystemMessage): void {
-        console.log(systemMessage, '123')
         this.messages.push(systemMessage);
         this.updateChat();
     }
 
     updateChat(): void {
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CHAT, {
-            chat: this.messages.slice(0, 35)
+            chat: this.messages[this.messages.length - 1]
         });
     }
 }

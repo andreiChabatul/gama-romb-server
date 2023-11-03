@@ -1,12 +1,11 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellTurn } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellButtons } from "src/types";
 import { Chat } from "../../chatGame";
-import { DESCRIPTION_CELL_COMPANY } from "./description/cell.description";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { changeMessage } from "src/game/services/change.message";
 import { AuctionCompany } from "src/game/auctionCompany";
 import { TurnService } from "src/game/turn.service";
-import { TIME_TURN_DEFAULT } from "src/app/const";
 import { GameCellCompanyInfo } from "src/types";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellCompany implements CellCompanyI {
 
@@ -15,7 +14,6 @@ export class CellCompany implements CellCompanyI {
     private rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
-    private language = 'ru';
 
     constructor(
         private roomWS: Room_WS,
@@ -29,52 +27,33 @@ export class CellCompany implements CellCompanyI {
         this._monopoly = false;
     }
 
-    // buyCompany(buyer: PlayerDefaultI, price?: number): void {
-    //     this._owned = buyer.userId;
-    //     buyer.buyCompany(price ? price : this.compnanyInfo.priceCompany);
-
-    //     this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
-    //     this.chat.addMessage
-    //         (`${buyer.name} buy company ${this.compnanyInfo.nameCompany} for ${price ? price : this.compnanyInfo.priceCompany}`);
-    //     this.updateInfoCompany();
-    // }
-
     cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
-        let endTurn = true;
-        const payload: infoCellTurn = {
-            nameCell: 'aliexpress',
-            titleCell: 'this.compnanyInfo.nameCompany',
-            description: DESCRIPTION_CELL_COMPANY[this.language].buyCompany
-                .replaceAll('PRICE', String(this.compnanyInfo.priceCompany)),
-            indexCompany: this.indexCompany,
-            buttons: 'none'
+
+        let buttons: infoCellButtons = 'none';
+        let description: string;
+
+        if (player.userId === this._owned) {
+            description = EMESSAGE_CLIENT.OWNED_COMPANY;
+            setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+        } else if (this._pledge) {
+            description = EMESSAGE_CLIENT.PLEDGE_COMPANY;
+            setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+        } else if (this._owned && player.userId !== this._owned && !this._pledge) {
+            description = EMESSAGE_CLIENT.RENT_COMPANY;
+            buttons = 'payRent';
+        } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
+            description = EMESSAGE_CLIENT.BUY_COMPANY;
+            buttons = 'buy';
+        } else {
+            description = EMESSAGE_CLIENT.AUCTION_COMPANY;
+            setTimeout(() => this.auction.startAuction(this, player.userId), TIME_TURN_DEFAULT);
         };
 
-        if (this._owned) {
-            if (this._owned === player.userId) {
-                payload.description = DESCRIPTION_CELL_COMPANY[this.language].owned;
-            } else if (this._pledge) {
-                payload.description = DESCRIPTION_CELL_COMPANY[this.language].pledgeCompany;
-            } else {
-                endTurn = false;
-                const debt = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
-                payload.buttons = 'pay';
-                payload.dept = debt;
-                payload.receiverId = this._owned;
-                payload.description = changeMessage(DESCRIPTION_CELL_COMPANY[this.language].ownedCompany, null, null, debt);
-            }
-        } else {
-            endTurn = false;
-            if (player.total < this.compnanyInfo.priceCompany) {
-                this.auction.startAuction(this, player.userId);
-                payload.description = DESCRIPTION_CELL_COMPANY[this.language].auctionCompany;
-            } else {
-                payload.buttons = 'buy';
-            }
-        }
-
-        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
-        endTurn ? setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT) : '';
+        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, {
+            indexCompany: this.indexCompany,
+            buttons,
+            description
+        });
     }
 
     updateInfoCompany(): void {
@@ -125,6 +104,11 @@ export class CellCompany implements CellCompanyI {
         return this._owned ? this._owned : null;
     }
 
+    get rentCompany(): number {
+        this.updateRentCompany();
+        return this.compnanyInfo.rentCompanyInfo[this.rentIndex]
+    }
+
     get infoCompany(): CompanyInfo {
         return this.compnanyInfo;
     }
@@ -151,7 +135,7 @@ export class CellCompany implements CellCompanyI {
         switch (action) {
             case 'buyStock':
                 this._quantityStock += 1;
-                player.minusTotal = this.compnanyInfo.priceStock;
+                player.minusTotal(this.compnanyInfo.priceStock);
                 break;
             case 'sellStock':
                 this._quantityStock -= 1;
@@ -163,11 +147,11 @@ export class CellCompany implements CellCompanyI {
                 break;
             case 'buyOutCompany':
                 this._pledge = false;
-                player.minusTotal = this.compnanyInfo.collateralCompany;
+                player.minusTotal(this.compnanyInfo.collateralCompany);
                 break;
             case 'buyCompany':
                 this._owned = player.userId;
-                player.minusTotal = (price ? price : this.compnanyInfo.priceCompany);
+                player.minusTotal(price ? price : this.compnanyInfo.priceCompany, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this.indexCompany);
                 this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
                 this.turnService.endTurn();
                 break;

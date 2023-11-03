@@ -3,6 +3,7 @@ import { users } from "src/users/users.service";
 import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 
 export class PlayerDefault implements PlayerDefaultI {
@@ -50,29 +51,6 @@ export class PlayerDefault implements PlayerDefaultI {
         return this.id;
     }
 
-    setTotalPlayer(value: number): void {
-        this._total = value;
-    }
-
-    buyCompany(price: number): void {
-        this._total -= price;
-        this.updatePlayer();
-    }
-
-    payRentCompany(rent: number, player: PlayerDefault): void {
-        
-        this._total -= rent;
-    }
-
-    payDebt(debt: number): void {
-    
-        this._total -= debt;
-    }
-
-    enrollRentCompany(rent: number): void {
-        this._total += rent;
-    }
-
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
         if (resultPosition >= 38) {
@@ -111,11 +89,13 @@ export class PlayerDefault implements PlayerDefaultI {
 
     set addTotal(value: number) {
         this._total += value;
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, playerId: this.id, valueroll: value });
         this.updatePlayer();
     }
 
-    set minusTotal(value: number) {
-        this._total -= value;
+    minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
+        this._total -= valueroll;
+        this.chat.addSystemMessage({ action, playerId: this.id, valueroll, cellId });
         this.updatePlayer();
     }
 

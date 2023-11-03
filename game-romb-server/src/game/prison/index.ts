@@ -21,6 +21,7 @@ export class Prison implements PrisonI {
 
     deletePrisoner(player: PlayerDefaultI): void {
         player.prison = false;
+        this.turnService.endTurn();
         console.log('вышел из тюрьмы');
     }
 

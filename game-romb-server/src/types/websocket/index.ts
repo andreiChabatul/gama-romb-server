@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { controlCompany } from "..";
+import { controlCompany, infoCellButtons } from "..";
 
 export enum EACTION_WEBSOCKET {
     CREATE_GAME = 'create game',
@@ -11,7 +11,7 @@ export enum EACTION_WEBSOCKET {
     DICE_ROLL = 'dice roll',
     INFO_CELL_TURN = 'info cell turn',
     END_TURN = 'end turn',
-    PAY_DEBT = 'pay debt',
+    CALC_VALUE_LS = 'calc value ls',
     UPDATE_CELL = 'update cell',
     START_GAME = 'start game',
     INIT_PLAYER = 'init player',
@@ -49,9 +49,10 @@ export interface ContorolCompanyPayload extends DefaultPayload {
     action: controlCompany;
 }
 
-export interface PayDebtPayload extends DefaultPayload {
-    debtValue: number;
-    receiverId?: string;
+export interface calcValuePayload extends DefaultPayload {
+    debtValue?: number;
+    indexCompany: number;
+    action: infoCellButtons;
 }
 
 export interface Room_WS {

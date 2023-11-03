@@ -6,13 +6,13 @@ import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
 import { AuctionCompany } from "./auctionCompany";
-import { CellProfitLoss } from "./cells/cell.profit.loss";
 import { TurnService } from "./turn.service";
 import { CellEmpty } from "./cells/cell.empty";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, Room_WS, calcValuePayload } from "src/types/websocket";
 import { ROOM_WS } from "./roomWS";
 import { COLORS_PLAYER, DEBT_PRISON } from "src/app/const";
 import { Prison } from "./prison";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class Room implements RoomClass {
 
@@ -39,7 +39,6 @@ export class Room implements RoomClass {
         this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
         this.prison = new Prison(this.turnService, this.roomWS);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
-        const payload = [this.roomWS, this.players]
     }
 
     async addPlayer(id: string, client: WebSocket) {
@@ -59,26 +58,47 @@ export class Room implements RoomClass {
         this.turnService.firstTurn();
     }
 
-    playerMove(idUser: string, value: number, isDouble: boolean) {
+    playerMove(diceRollGamePayload: DiceRollGamePayload) {
+        const { idUser, isDouble, value } = diceRollGamePayload;
         this.players[idUser].prison
             ? this.prison.turnPrison(this.players[idUser], value, isDouble)
             : this.turnService.turn(this.players[idUser], value, isDouble)
     }
 
-    playerPayDebt(idUser: string, debtValue: number, receiverId?: string) {
-        const player = this.players[idUser]
-        if (player.prison) {
-            player.payDebt(DEBT_PRISON);
-            this.prison.deletePrisoner(player);
-        } else {
-            (receiverId)
-                ? player.payRentCompany(debtValue, this.players[receiverId])
-                : player.payDebt(debtValue);
+    playerPay(calcValuePayload: calcValuePayload): void {
+        const { action, idUser, debtValue, indexCompany } = calcValuePayload;
+        const player = this.players[idUser];
+        let resultValue = player.prison ? DEBT_PRISON : debtValue;
+
+        switch (action) {
+            case 'profit':
+                player.addTotal = resultValue;
+                break;
+            case "pay":
+                player.minusTotal(resultValue, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_DEBT);
+                this.turnService.endTurn();
+                break;
+            case "payRent":
+                const company = this.cellsGame[indexCompany];
+                if ('controlCompany' in company) {
+                    const rentDebt = company.rentCompany;
+                    const ownedPlayer = this.players[company.owned];
+                    ownedPlayer.addTotal = rentDebt;
+                    this.players[idUser].minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
+                };
+                this.turnService.endTurn();
+                break;
+            case "payPrison":
+                player.minusTotal(DEBT_PRISON, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_PRISON);
+                this.prison.deletePrisoner(player);
+                break;
+            default:
+                break;
         }
-        this.turnService.endTurn();
     }
 
-    controlCompany(idUser: string, indexCompany: number, action: controlCompany) {
+    controlCompany(contorolCompanyPayload: ContorolCompanyPayload) {
+        const { action, idUser, indexCompany } = contorolCompanyPayload;
         const company = this.cellsGame[indexCompany];
         if ('controlCompany' in company) {
             company.controlCompany(action, this.players[idUser]);
@@ -102,23 +122,15 @@ export class Room implements RoomClass {
         const infoCell: gameCell[] = [];
         defaultCell.map((cell, indexCell) => {
             infoCell[indexCell] = { indexCell, ...cell };
-            switch (cell.type) {
-                case 'company':
-                    const newCellCompany = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell);
-                    this.cellsGame[indexCell] = newCellCompany
-                    infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
-                    break;
-                case 'lossProfit':
-                    const newCellProfit = new CellProfitLoss(this.roomWS, this.chat, this.turnService, cell.nameCell, indexCell);
-                    this.cellsGame[indexCell] = newCellProfit;
-                    break;
-                case 'empty':
-                    const newCellEmpty = new CellEmpty(this.roomWS, this.chat, this.turnService, cell.nameCell, this.prison, indexCell);
-                    this.cellsGame[indexCell] = newCellEmpty;
-                    break;
-                default:
-                    break;
+            if (cell.type === 'company') {
+                const newCellCompany = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell);
+                this.cellsGame[indexCell] = newCellCompany;
+                infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
             }
+            else {
+                this.cellsGame[indexCell] = new CellEmpty(this.roomWS, this.turnService, cell.nameCell, this.prison, indexCell);;
+            };
+
         })
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
     }

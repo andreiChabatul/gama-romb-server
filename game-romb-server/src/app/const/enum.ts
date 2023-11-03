@@ -2,5 +2,18 @@ export enum EMESSAGE_CLIENT {
     FIRST_TURN = 'firstTurn',
     TURN = "turn",
     DOUBLE_TURN = "doubleTurn",
-    INTO_CELL = "intoCell"
+    INTO_CELL = "intoCell",
+    INFO_CELL_BUY_COMPANY = "infoCellbuyCompany",
+    ADD_TOTAL = 'addTotal',
+    MINUS_TOTAL = 'minusTotal',
+    MINUS_TOTAL_BUY_COMPANY = 'minusTotalBuyCompany',
+    MINUS_TOTAL_PAY_DEBT = 'minusTotalPayDebt',
+    MINUS_TOTAL_PAY_RENT = 'minusTotalPayRent',
+    MINUS_TOTAL_PAY_PRISON = 'minusTotalPayPrison',
+    OWNED_COMPANY = 'ownedCompanyInfo',
+    PLEDGE_COMPANY = 'pledgeCompanyInfo',
+    RENT_COMPANY = 'rentCompanyInfo',
+    BUY_COMPANY = 'buyCompanyInfo',
+    AUCTION_COMPANY = 'auctionCompanyInfo'
+
 }
