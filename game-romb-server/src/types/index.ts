@@ -58,6 +58,7 @@ export interface CellCompanyI extends CellI {
     get rentCompany(): number
     set monopoly(value: boolean);
     set quantityStock(value: number);
+    set owned(userId: string);
 }
 
 export interface CellEmptyI extends CellI {
@@ -162,9 +163,21 @@ export interface CompanyInfo {
 
 export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'payRent' | 'payPrison' | 'profit';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | 'buyCompany' | 'startAuction' | 'leaveAuction' | 'stepAuction';
+export type controlDeal = 'offer' | 'refuse' | 'accept';
 
 export type infoCellTurn = {
     indexCompany: number;
     buttons: infoCellButtons;
     description?: string;
+}
+
+export type offerInfo = {
+    indexCompany: number[];
+    valueMoney: number;
+    idPerson: string;
+}
+
+export type offerDealInfo = {
+    offerPerson?: offerInfo,
+    receivePerson?: offerInfo,
 }

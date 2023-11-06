@@ -14,6 +14,7 @@ export enum EMESSAGE_CLIENT {
     PLEDGE_COMPANY = 'pledgeCompanyInfo',
     RENT_COMPANY = 'rentCompanyInfo',
     BUY_COMPANY = 'buyCompanyInfo',
-    AUCTION_COMPANY = 'auctionCompanyInfo'
-
+    AUCTION_COMPANY = 'auctionCompanyInfo',
+    REFUSE_DEAL = 'refuseDealInfo',
+    ACCEPT_DEAL = 'acceptDealInfo',
 }

@@ -1,7 +1,6 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn } from "src/types";
 import { Chat } from "../chatGame";
 import { AUCTION_DESCRIPTION } from "./auction.description";
-import { changeMessage } from "../services/change.message";
 import { AUCTION_STEP } from "src/app/const";
 import { TurnService } from "../turn.service";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -121,11 +120,11 @@ export class AuctionCompany {
         this.auctionWinner ? this.cell.controlCompany('buyCompany', this.players[this.auctionWinner], this.priceAuction) : '';
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INFO_CELL_TURN,
             {
-                ...this.sendWaitingPLayer(),
-                titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
-                description:
-                    changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
-                        + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
+                // ...this.sendWaitingPLayer(),
+                // titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
+                // description:
+                //     changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
+                //         + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
             });
         ;
 

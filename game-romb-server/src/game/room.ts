@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame";
-import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, gameCell } from "src/types";
+import { PlayersGame, PrisonI, RoomClass, cells, controlCompany, gameCell, offerDealInfo } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
@@ -8,11 +8,12 @@ import { defaultCell } from "./cells/defaultCell";
 import { AuctionCompany } from "./auctionCompany";
 import { TurnService } from "./turn.service";
 import { CellEmpty } from "./cells/cell.empty";
-import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, Room_WS, calcValuePayload } from "src/types/websocket";
+import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, OfferDealPayload, Room_WS, calcValuePayload } from "src/types/websocket";
 import { ROOM_WS } from "./roomWS";
 import { COLORS_PLAYER, DEBT_PRISON } from "src/app/const";
 import { Prison } from "./prison";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { OfferService } from "./offer.service";
 
 export class Room implements RoomClass {
 
@@ -27,7 +28,7 @@ export class Room implements RoomClass {
     private turnService: TurnService;
     private prison: PrisonI;
     private roomWS: Room_WS;
-
+    private offerService: OfferService;
 
     constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
         this.roomName = gameCreateDto.roomName;
@@ -38,6 +39,7 @@ export class Room implements RoomClass {
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
         this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
         this.prison = new Prison(this.turnService, this.roomWS);
+        this.offerService = new OfferService(this.players, this.roomWS, this.chat, this.turnService, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
@@ -103,6 +105,10 @@ export class Room implements RoomClass {
         if ('controlCompany' in company) {
             company.controlCompany(action, this.players[idUser]);
         };
+    }
+
+    offerDealControl(offerDealPayload: OfferDealPayload): void {
+        this.offerService.controlDeal(offerDealPayload);
     }
 
     addChatMessage(message: string, idUser: string): void {

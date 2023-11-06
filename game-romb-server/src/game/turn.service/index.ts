@@ -56,7 +56,7 @@ export class TurnService {
         this.nextTurn();
     };
 
-    private updateTurn(): void {
+    updateTurn(): void {
         this.updateMonopolyCompany();
         this.updateNoMonopolyCompany();
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN,

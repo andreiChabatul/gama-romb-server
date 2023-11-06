@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { controlCompany, infoCellButtons } from "..";
+import { controlCompany, controlDeal, infoCellButtons, offerDealInfo } from "..";
 
 export enum EACTION_WEBSOCKET {
     CREATE_GAME = 'create game',
@@ -18,7 +18,8 @@ export enum EACTION_WEBSOCKET {
     INIT_BOARD = 'init board',
     UPDATE_TURN = 'update turn',
     CONTROL_COMPANY = 'control company',
-    PRISON = 'prison'
+    PRISON = 'prison',
+    CONTROL_DEAL = 'control deal'
 }
 
 export interface payloadSocket {
@@ -53,6 +54,11 @@ export interface calcValuePayload extends DefaultPayload {
     debtValue?: number;
     indexCompany: number;
     action: infoCellButtons;
+}
+
+export interface OfferDealPayload extends DefaultPayload {
+    offerDealInfo?: offerDealInfo;
+    action: controlDeal;
 }
 
 export interface Room_WS {

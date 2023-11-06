@@ -104,6 +104,11 @@ export class CellCompany implements CellCompanyI {
         return this._owned ? this._owned : null;
     }
 
+    set owned(userId: string) {
+        this._owned = userId;
+        this.updateInfoCompany();
+    }
+
     get rentCompany(): number {
         this.updateRentCompany();
         return this.compnanyInfo.rentCompanyInfo[this.rentIndex]
