@@ -170,7 +170,7 @@ export const defaultCell: createCell[] = [
         type: 'empty',
         nameCell: 'inJail',
         location: {
-            gridArea: '1/14/3/15',
+            gridArea: '1/14/3/16',
             cellDirections: 'top'
         }
     },
@@ -178,7 +178,7 @@ export const defaultCell: createCell[] = [
         type: 'company',
         nameCell: 'rbc',
         location: {
-            gridArea: '3/14/4/15',
+            gridArea: '3/14/4/16',
             cellDirections: 'right'
         },
         company: {
@@ -194,7 +194,7 @@ export const defaultCell: createCell[] = [
         type: 'company',
         nameCell: 'telus',
         location: {
-            gridArea: '4/14/5/15',
+            gridArea: '4/14/5/16',
             cellDirections: 'right'
         },
         company: {
@@ -210,7 +210,7 @@ export const defaultCell: createCell[] = [
         type: 'company',
         nameCell: 'ttc',
         location: {
-            gridArea: '5/14/6/15',
+            gridArea: '5/14/6/16',
             cellDirections: 'right'
         },
         company: {
@@ -226,7 +226,7 @@ export const defaultCell: createCell[] = [
         type: 'lossProfit',
         nameCell: 'tax5',
         location: {
-            gridArea: '6/14/7/15',
+            gridArea: '6/14/7/16',
             cellDirections: 'right'
         }
     },
@@ -234,7 +234,7 @@ export const defaultCell: createCell[] = [
         type: 'company',
         nameCell: 'kaz',
         location: {
-            gridArea: '7/14/8/15',
+            gridArea: '7/14/8/16',
             cellDirections: 'right'
         },
         company: {
@@ -250,7 +250,7 @@ export const defaultCell: createCell[] = [
         type: 'company',
         nameCell: 'kazAzot',
         location: {
-            gridArea: '8/14/9/15',
+            gridArea: '8/14/9/16',
             cellDirections: 'right'
         },
         company: {
@@ -266,7 +266,7 @@ export const defaultCell: createCell[] = [
         type: 'empty',
         nameCell: 'parking',
         location: {
-            gridArea: '9/14/11/15',
+            gridArea: '9/14/11/16',
             cellDirections: 'bottom'
         }
     },
