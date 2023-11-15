@@ -1,28 +1,24 @@
-import { PlayerDefaultI, PrisonI, infoCellTurn } from "src/types";
+import { ChatI, PlayerDefaultI, PrisonI } from "src/types";
 import { TurnService } from "../turn.service";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { DEBT_PRISON } from "src/app/const";
+import { TIME_TURN_DEFAULT } from "src/app/const";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class Prison implements PrisonI {
 
-    prisoners: { [id: string]: number } = {}
-
     constructor(
         private turnService: TurnService,
-        private roomWS: Room_WS) { }
-
+        private chat: ChatI) { }
 
     addPrisoner(player: PlayerDefaultI): void {
         player.prison = true;
-        this.prisoners[player.userId] = 3;
-        setTimeout(() => player.position = 12, 1500);
-        this.updatePrison(player.userId);
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.GET_IN_PRISON, playerId: player.userId });
+        setTimeout(() => player.position = 12, TIME_TURN_DEFAULT);
     }
 
     deletePrisoner(player: PlayerDefaultI): void {
         player.prison = false;
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_PRISON, playerId: player.userId });
         this.turnService.endTurn();
-        console.log('вышел из тюрьмы');
     }
 
     turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void {
@@ -30,13 +26,8 @@ export class Prison implements PrisonI {
             this.deletePrisoner(player);
             this.turnService.turn(player, value, false);
         } else {
-            this.prisoners[player.userId]--;
-            this.updatePrison(player.userId);
+            player.attemptPrison = true;
             this.turnService.endTurn();
         }
-    }
-
-    updatePrison(userId: string): void {
-        this.roomWS.sendOnePlayer(userId, EACTION_WEBSOCKET.PRISON, { attemp: this.prisoners[userId] });
     }
 }

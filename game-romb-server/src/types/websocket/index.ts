@@ -18,7 +18,6 @@ export enum EACTION_WEBSOCKET {
     INIT_BOARD = 'init board',
     UPDATE_TURN = 'update turn',
     CONTROL_COMPANY = 'control company',
-    PRISON = 'prison',
     CONTROL_DEAL = 'control deal'
 }
 

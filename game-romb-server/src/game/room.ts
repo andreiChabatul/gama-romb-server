@@ -38,7 +38,7 @@ export class Room implements RoomClass {
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
         this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
-        this.prison = new Prison(this.turnService, this.roomWS);
+        this.prison = new Prison(this.turnService, this.chat);
         this.offerService = new OfferService(this.players, this.roomWS, this.chat, this.turnService, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }

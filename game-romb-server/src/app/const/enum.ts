@@ -17,4 +17,6 @@ export enum EMESSAGE_CLIENT {
     AUCTION_COMPANY = 'auctionCompanyInfo',
     REFUSE_DEAL = 'refuseDealInfo',
     ACCEPT_DEAL = 'acceptDealInfo',
+    LEAVE_PRISON = 'leavePrison',
+    GET_IN_PRISON = 'getInPrison',
 }

@@ -1,4 +1,4 @@
-import { Player, PlayerDefaultI } from "src/types";
+import { Player, PlayerDefaultI, prisonPlayer } from "src/types";
 import { users } from "src/users/users.service";
 import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
@@ -11,7 +11,7 @@ export class PlayerDefault implements PlayerDefaultI {
     private _name: string;
     private image: string;
     private _total: number;
-    private _prison: boolean;
+    private _prison: prisonPlayer;
     private capital: number;
     private cellPosition: number;
 
@@ -26,10 +26,11 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total = INIT_TOTAL;
         this.capital = 0;
         this.cellPosition = 0;
+        this._prison = { state: false, attempt: 0 };
     }
 
     set position(value: number) {
-        this._prison
+        this._prison.state
             ? this.cellPosition = value
             : this.cellPosition = this.positionCellCalc(value);
         this.updatePlayer();
@@ -53,7 +54,7 @@ export class PlayerDefault implements PlayerDefaultI {
 
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
-        if (resultPosition >= 38) {
+        if (resultPosition >= MAX_INDEX_CELL_BOARD) {
             this._total += CIRCLE_REWARD;
             // this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
@@ -70,6 +71,7 @@ export class PlayerDefault implements PlayerDefaultI {
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
+            prison: this._prison
         };
     }
 
@@ -100,11 +102,18 @@ export class PlayerDefault implements PlayerDefaultI {
     }
 
     get prison(): boolean {
-        return this._prison;
+        return this._prison.state;
     }
 
     set prison(value: boolean) {
-        this._prison = value;
+        value
+            ? this._prison = { state: true, attempt: 3 }
+            : this._prison = { state: false, attempt: 0 }
+        this.updatePlayer();
+    }
+
+    set attemptPrison(value: boolean) {
+        value ? this._prison.attempt-- : '';
         this.updatePlayer();
     }
 }

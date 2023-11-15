@@ -11,7 +11,12 @@ export interface UpdatePlayer {
     total: number;
     capital: number;
     cellPosition: number;
-    prison?: boolean;
+    prison: prisonPlayer;
+}
+
+export type prisonPlayer = {
+    state: boolean;
+    attempt: number;
 }
 
 export type PlayersGame = {
@@ -43,6 +48,7 @@ export interface PlayerDefaultI {
     minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
     get prison(): boolean;
     set prison(value: boolean);
+    set attemptPrison(value: boolean);
 }
 
 export interface CellI {
