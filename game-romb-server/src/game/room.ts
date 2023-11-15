@@ -70,14 +70,13 @@ export class Room implements RoomClass {
     playerPay(calcValuePayload: calcValuePayload): void {
         const { action, idUser, debtValue, indexCompany } = calcValuePayload;
         const player = this.players[idUser];
-        let resultValue = player.prison ? DEBT_PRISON : debtValue;
 
         switch (action) {
             case 'profit':
-                player.addTotal = resultValue;
+                player.addTotal = debtValue;
                 break;
             case "pay":
-                player.minusTotal(resultValue, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_DEBT);
+                player.minusTotal(debtValue, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_DEBT);
                 this.turnService.endTurn();
                 break;
             case "payRent":
