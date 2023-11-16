@@ -37,7 +37,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 200000,
             rentCompanyInfo: [0, 50000, 100000, 200000, 300000],
             collateralCompany: 100000,
-            buyBackCompany: 220000
+            buyBackCompany: 220000,
+            priceStock: 0
         }
     },
     {
@@ -92,7 +93,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 150000,
             rentCompanyInfo: [0, 25000, 50000],
             collateralCompany: 75000,
-            buyBackCompany: 165000
+            buyBackCompany: 165000,
+            priceStock: 0
         }
     },
     {
@@ -147,7 +149,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 200000,
             rentCompanyInfo: [0, 50000, 100000, 200000, 300000],
             collateralCompany: 100000,
-            buyBackCompany: 220000
+            buyBackCompany: 220000,
+            priceStock: 0
         }
     },
     {
@@ -298,7 +301,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 200000,
             rentCompanyInfo: [0, 50000, 100000, 200000, 300000],
             collateralCompany: 100000,
-            buyBackCompany: 220000
+            buyBackCompany: 220000,
+            priceStock: 0
         }
     },
     {
@@ -353,7 +357,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 150000,
             rentCompanyInfo: [0, 25000, 50000],
             collateralCompany: 75000,
-            buyBackCompany: 165000
+            buyBackCompany: 165000,
+            priceStock: 0
         }
     },
     {
@@ -409,7 +414,8 @@ export const defaultCell: createCell[] = [
             priceCompany: 200000,
             rentCompanyInfo: [0, 50000, 100000, 200000, 300000],
             collateralCompany: 100000,
-            buyBackCompany: 220000
+            buyBackCompany: 220000,
+            priceStock: 0
         }
     },
     {

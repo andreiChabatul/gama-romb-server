@@ -45,7 +45,7 @@ export class Room implements RoomClass {
 
     async addPlayer(id: string, client: WebSocket) {
         this.roomWS.addWebSocket(id, client);
-        this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat);
+        this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat, this.cellsGame);
         this.numberPlayer++;
         this.checkStartGame();
         this.fillCellsGame();

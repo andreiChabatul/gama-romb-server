@@ -49,6 +49,7 @@ export interface PlayerDefaultI {
     get prison(): boolean;
     set prison(value: boolean);
     set attemptPrison(value: boolean);
+    get capital(): number;
 }
 
 export interface CellI {
@@ -65,6 +66,8 @@ export interface CellCompanyI extends CellI {
     set monopoly(value: boolean);
     set quantityStock(value: number);
     set owned(userId: string);
+    get pledge(): boolean;
+    get quantityStock(): number;
 }
 
 export interface CellEmptyI extends CellI {
@@ -164,7 +167,7 @@ export interface CompanyInfo {
     rentCompanyInfo?: number[];
     rentCompany?: number;
     isMonopoly?: boolean;
-    priceStock?: number;
+    priceStock: number;
 }
 
 export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'payRent' | 'payPrison' | 'profit';

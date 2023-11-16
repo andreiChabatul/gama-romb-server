@@ -1,4 +1,4 @@
-import { Player, PlayerDefaultI, prisonPlayer } from "src/types";
+import { Player, PlayerDefaultI, cells, prisonPlayer } from "src/types";
 import { users } from "src/users/users.service";
 import { Chat } from "./chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/app/const";
@@ -12,19 +12,18 @@ export class PlayerDefault implements PlayerDefaultI {
     private image: string;
     private _total: number;
     private _prison: prisonPlayer;
-    private capital: number;
     private cellPosition: number;
 
     constructor(
         private roomWS: Room_WS,
         private id: string,
         private _color: string,
-        private chat: Chat) {
+        private chat: Chat,
+        private cells: cells[]) {
         const playerNew = users.find(user => user.userId === id);
         this._name = playerNew.nickname;
         this.image = 'temp';
         this._total = INIT_TOTAL;
-        this.capital = 0;
         this.cellPosition = 0;
         this._prison = { state: false, attempt: 0 };
     }
@@ -115,5 +114,13 @@ export class PlayerDefault implements PlayerDefaultI {
     set attemptPrison(value: boolean) {
         value ? this._prison.attempt-- : '';
         this.updatePlayer();
+    }
+
+    get capital(): number {
+        return this.cells.reduce((capital, cell) =>
+            ('controlCompany' in cell && cell.owned === this.userId && !cell.pledge)
+                ? capital + cell.info.collateralCompany + (cell.quantityStock * cell.infoCompany.priceStock)
+                : capital
+            , this.total);
     }
 }

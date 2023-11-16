@@ -122,6 +122,10 @@ export class CellCompany implements CellCompanyI {
         return this.indexCompany;
     }
 
+    get pledge(): boolean {
+        return this._pledge;
+    }
+
     set monopoly(value: boolean) {
         if (value !== this._monopoly) {
             this._monopoly = value;
@@ -134,6 +138,9 @@ export class CellCompany implements CellCompanyI {
         this.updateInfoCompany();
     }
 
+    get quantityStock(): number {
+        return this._quantityStock;
+    }
 
     controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void {
 
@@ -152,7 +159,7 @@ export class CellCompany implements CellCompanyI {
                 break;
             case 'buyOutCompany':
                 this._pledge = false;
-                player.minusTotal(this.compnanyInfo.collateralCompany);
+                player.minusTotal(this.compnanyInfo.buyBackCompany);
                 break;
             case 'buyCompany':
                 this._owned = player.userId;
