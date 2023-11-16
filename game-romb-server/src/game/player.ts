@@ -11,6 +11,7 @@ export class PlayerDefault implements PlayerDefaultI {
     private _name: string;
     private image: string;
     private _total: number;
+    private _bankrot: boolean;
     private _prison: prisonPlayer;
     private cellPosition: number;
 
@@ -47,6 +48,14 @@ export class PlayerDefault implements PlayerDefaultI {
         return this._name;
     }
 
+    set bankrot(value: boolean) {
+        this._bankrot = value;
+    }
+
+    get bankrot(): boolean {
+        return this._bankrot;
+    }
+
     get userId(): string {
         return this.id;
     }
@@ -70,7 +79,8 @@ export class PlayerDefault implements PlayerDefaultI {
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
-            prison: this._prison
+            prison: this._prison,
+            bankrot: this._bankrot,
         };
     }
 
@@ -84,7 +94,8 @@ export class PlayerDefault implements PlayerDefaultI {
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
-            prison: this._prison
+            prison: this._prison,
+            bankrot: this._bankrot,
         })
     }
 

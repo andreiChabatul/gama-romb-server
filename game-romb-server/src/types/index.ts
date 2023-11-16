@@ -12,6 +12,7 @@ export interface UpdatePlayer {
     capital: number;
     cellPosition: number;
     prison: prisonPlayer;
+    bankrot: boolean;
 }
 
 export type prisonPlayer = {
@@ -50,6 +51,9 @@ export interface PlayerDefaultI {
     set prison(value: boolean);
     set attemptPrison(value: boolean);
     get capital(): number;
+    set bankrot(value: boolean);
+    get bankrot(): boolean;
+
 }
 
 export interface CellI {

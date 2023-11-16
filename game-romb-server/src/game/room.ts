@@ -70,6 +70,7 @@ export class Room implements RoomClass {
     playerPay(calcValuePayload: calcValuePayload): void {
         const { action, idUser, debtValue, indexCompany } = calcValuePayload;
         const player = this.players[idUser];
+        (action !== 'profit' && player.capital <= debtValue) ? player.bankrot = true : '';
 
         switch (action) {
             case 'profit':
