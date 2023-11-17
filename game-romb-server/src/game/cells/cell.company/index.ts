@@ -1,5 +1,4 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellButtons } from "src/types";
-import { Chat } from "../../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { AuctionCompany } from "src/game/auctionCompany";
 import { TurnService } from "src/game/turn.service";
@@ -11,14 +10,13 @@ export class CellCompany implements CellCompanyI {
 
     private _pledge: boolean;
     private _owned: string | null;
-    private rentIndex: number;
+    private _rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
     private _valueRoll: number;
 
     constructor(
         private roomWS: Room_WS,
-        private chat: Chat,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionCompany,
         private turnService: TurnService,
@@ -64,7 +62,7 @@ export class CellCompany implements CellCompanyI {
         const payload = {
             indexCell: this.indexCompany,
             cellCompany: {
-                rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
+                rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
                 isPledge: this._pledge,
                 isMonopoly: this._monopoly,
                 shares: this._quantityStock,
@@ -80,7 +78,7 @@ export class CellCompany implements CellCompanyI {
             countryCompany: this.compnanyInfo.countryCompany,
             priceCompany: this.compnanyInfo.priceCompany,
             collateralCompany: this.compnanyInfo.collateralCompany,
-            rentCompany: this.compnanyInfo.rentCompanyInfo[this.rentIndex],
+            rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
             isPledge: this._pledge,
             buyBackCompany: this.compnanyInfo.buyBackCompany,
             priceStock: this.compnanyInfo.priceStock,
@@ -91,14 +89,14 @@ export class CellCompany implements CellCompanyI {
     }
 
     private updateRentCompany() {
-        this.rentIndex = 0;
+        this._rentIndex = 0;
         if (this._monopoly) {
-            this.rentIndex = 1;
+            this._rentIndex = 1;
             (this.compnanyInfo.countryCompany === 'ukraine') ? this._quantityStock = 2 : '';
         };
         (this.compnanyInfo.countryCompany === 'ukraine')
-            ? this.rentIndex = this._quantityStock
-            : this.rentIndex += this._quantityStock;
+            ? this._rentIndex = this._quantityStock
+            : this._rentIndex += this._quantityStock;
     }
 
 
@@ -113,7 +111,7 @@ export class CellCompany implements CellCompanyI {
 
     get rentCompany(): number {
         this.updateRentCompany();
-        const rentCompany = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
+        const rentCompany = this.compnanyInfo.rentCompanyInfo[this._rentIndex];
         return this.compnanyInfo.countryCompany !== 'ukraine' ? rentCompany : rentCompany * this._valueRoll;
     }
 

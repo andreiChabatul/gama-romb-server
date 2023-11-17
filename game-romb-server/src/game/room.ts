@@ -129,7 +129,7 @@ export class Room implements RoomClass {
         defaultCell.map((cell, indexCell) => {
             infoCell[indexCell] = { indexCell, ...cell };
             if (cell.type === 'company') {
-                const newCellCompany = new CellCompany(this.roomWS, this.chat, cell.company, this.auction, this.turnService, indexCell);
+                const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.turnService, indexCell);
                 this.cellsGame[indexCell] = newCellCompany;
                 infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
             }

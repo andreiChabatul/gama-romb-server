@@ -75,7 +75,8 @@ export interface CellCompanyI extends CellI {
 }
 
 export interface CellEmptyI extends CellI {
-
+    sendInfoPLayer(): void;
+    checkPayCell(): infoCellButtons;
 }
 
 export interface companyCheckNoMonopoly {

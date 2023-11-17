@@ -77,8 +77,7 @@ export class TurnService {
         function checkMonopoly(country: CellCompanyI[]) {
             let isMonopoly = true;
             for (let index = 0; index < country.length - 1; index++) {
-                if (country[index].owned === null
-                    || country[index].owned !== country[index + 1].owned) {
+                if (country[index].owned === null || country[index].owned !== country[index + 1].owned) {
                     isMonopoly = false;
                     break;
                 }

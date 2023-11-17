@@ -62,7 +62,7 @@ export class OfferService {
     controlDeal(offerDealPayload: OfferDealPayload): void {
         switch (offerDealPayload.action) {
             case 'offer':
-                this.newOffer(offerDealPayload.offerDealInfo)
+                this.newOffer(offerDealPayload.offerDealInfo);
                 break;
             case "refuse":
                 this.refuseDeal();
@@ -74,4 +74,5 @@ export class OfferService {
                 break;
         }
     }
+    
 }
