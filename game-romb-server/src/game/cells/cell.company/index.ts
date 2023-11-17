@@ -14,6 +14,7 @@ export class CellCompany implements CellCompanyI {
     private rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
+    private _valueRoll: number;
 
     constructor(
         private roomWS: Room_WS,
@@ -31,6 +32,7 @@ export class CellCompany implements CellCompanyI {
 
         let buttons: infoCellButtons = 'none';
         let description: string;
+        this._valueRoll = valueRoll;
 
         if (player.userId === this._owned) {
             description = EMESSAGE_CLIENT.OWNED_COMPANY;
@@ -111,7 +113,8 @@ export class CellCompany implements CellCompanyI {
 
     get rentCompany(): number {
         this.updateRentCompany();
-        return this.compnanyInfo.rentCompanyInfo[this.rentIndex]
+        const rentCompany = this.compnanyInfo.rentCompanyInfo[this.rentIndex];
+        return this.compnanyInfo.countryCompany !== 'ukraine' ? rentCompany : rentCompany * this._valueRoll;
     }
 
     get infoCompany(): CompanyInfo {
