@@ -5,23 +5,26 @@ import { v4 as uuidv4 } from 'uuid'
 export type User = {
     userId: string,
     nickname: string,
-    password: string
+    password: string,
+    statUser: statUser;
 };
+
+export type statUser = {
+    totalGame: number;
+    winGame: number;
+}
+
 
 
 export const users: User[] = [
-    {
-        userId: '1',
-        nickname: 'john',
-        password: 'changeme',
-    }
+   
 ];
 
 
 @Injectable()
 export class UsersService {
 
-    
+
 
     async findOne(username: string): Promise<User | undefined> {
         return users.find(user => user.nickname === username);
@@ -29,7 +32,7 @@ export class UsersService {
 
 
     async createUser(userCreate: CreateUserDto): Promise<User> {
-        const user = { ...userCreate, userId: uuidv4() }
+        const user: User = { ...userCreate, userId: uuidv4(), statUser: { totalGame: 15, winGame: 3 } }
         users.push(user);
         return user;
     }
