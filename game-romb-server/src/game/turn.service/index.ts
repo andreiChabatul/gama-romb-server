@@ -9,15 +9,19 @@ export class TurnService {
     private indexActive: number;
     private isDouble: boolean;
     private doubleCounter: number = 0;
+    private playersActive: PlayersGame = {};
 
     constructor(
         private roomWS: Room_WS,
         private players: PlayersGame,
         private cellsGame: cells[],
         private chat: Chat,
-    ) { }
+    ) {
+        // this.playersActive = this.players.fi
+    }
 
     firstTurn(): void {
+        this.checkBankrot();
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
         this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, playerId: this.activePlayer().userId });
         this.updateTurn();
@@ -117,12 +121,13 @@ export class TurnService {
     }
 
     private activePlayer(): PlayerDefaultI {
-        return this.players[Object.keys(this.players)[this.indexActive]];
+        return this.players[Object.keys(this.playersActive)[this.indexActive]];
     }
 
     private calcIndexActive(): number {
+        this.checkBankrot();
         let futureIndexActive = this.indexActive + 1;
-        futureIndexActive >= Object.keys(this.players).length ? futureIndexActive = 0 : '';
+        futureIndexActive >= Object.keys(this.playersActive).length ? futureIndexActive = 0 : '';
         return futureIndexActive;
     }
 
@@ -131,5 +136,15 @@ export class TurnService {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
         }
+    }
+
+    checkBankrot(): void {
+        this.playersActive = { ...this.players };
+        Object.keys(this.playersActive).forEach((key) =>
+            (this.playersActive[key].bankrot)
+                ? delete this.playersActive[key]
+                : ''
+        );
+        console.log(this.playersActive, 'active');
     }
 }

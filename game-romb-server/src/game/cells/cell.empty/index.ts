@@ -25,7 +25,7 @@ export class CellEmpty implements CellEmptyI {
     cellProcessing(player: PlayerDefaultI): void {
         this.player = player;
         this.sendInfoPLayer();
-        this.checkPayCell() ? '' : setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+        this.checkPayCell() === 'none' ? setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT) : '';
         (this.nameCell === 'goJail') ? this.prison.addPrisoner(player) : '';
     }
 

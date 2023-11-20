@@ -67,11 +67,13 @@ export class Room implements RoomClass {
             : this.turnService.turn(this.players[idUser], value, isDouble)
     }
 
+    playerBankrupt(idUser: string): void {
+        this.players[idUser].bankrot = true;
+    }
+
     playerPay(calcValuePayload: calcValuePayload): void {
         const { action, idUser, debtValue, indexCompany } = calcValuePayload;
         const player = this.players[idUser];
-        (action !== 'profit' && player.capital <= debtValue) ? player.bankrot = true : '';
-
         switch (action) {
             case 'profit':
                 player.addTotal = debtValue;

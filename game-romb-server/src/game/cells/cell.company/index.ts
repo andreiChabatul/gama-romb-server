@@ -52,7 +52,8 @@ export class CellCompany implements CellCompanyI {
         this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, {
             indexCompany: this.indexCompany,
             buttons,
-            description
+            description,
+            value: this.rentCompany
         });
     }
 

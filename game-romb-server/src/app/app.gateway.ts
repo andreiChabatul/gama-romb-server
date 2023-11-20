@@ -9,7 +9,7 @@ import { GameCreateDto } from 'src/game/dto/game.create.dto';
 import { Rooms } from 'src/types';
 import { Room } from 'src/game/room';
 import { v4 as uuidv4 } from 'uuid'
-import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, calcValuePayload, payloadSocket } from 'src/types/websocket';
+import { ContorolCompanyPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, calcValuePayload, payloadSocket } from 'src/types/websocket';
 
 const sockets: WebSocket[] = [];
 const rooms: Rooms = {} as Rooms;
@@ -73,6 +73,13 @@ export class AppGateway {
       case EACTION_WEBSOCKET.CONTROL_DEAL: {
         const offerDealPayload = payloadSocket.payload as OfferDealPayload;
         rooms[offerDealPayload.idRoom].offerDealControl(offerDealPayload);
+        break;
+      }
+
+      case EACTION_WEBSOCKET.BANKRUPT: {
+        const bankruptlPayload = payloadSocket.payload as DefaultPayload;
+        rooms[bankruptlPayload.idRoom].playerBankrupt(bankruptlPayload.idUser);
+        console.log(bankruptlPayload)
         break;
       }
 
