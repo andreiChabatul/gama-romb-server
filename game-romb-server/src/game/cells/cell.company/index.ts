@@ -14,6 +14,7 @@ export class CellCompany implements CellCompanyI {
     private _monopoly: boolean;
     private _quantityStock: number;
     private _valueRoll: number;
+    _cellValue: number;
 
     constructor(
         private roomWS: Room_WS,
@@ -26,7 +27,11 @@ export class CellCompany implements CellCompanyI {
         this._monopoly = false;
     }
 
-    cellProcessing(player: PlayerDefaultI, valueRoll?: number): void {
+    processing(player: PlayerDefaultI, valueRoll?: number): void {
+        
+    }
+
+    movePlayer(player: PlayerDefaultI, valueRoll?: number): void {
 
         let buttons: infoCellButtons = 'none';
         let description: string;
@@ -182,6 +187,10 @@ export class CellCompany implements CellCompanyI {
                 break;
         };
         this.updateInfoCompany();
+    }
+
+    sendInfoPLayer(): void {
+        
     }
 
 }

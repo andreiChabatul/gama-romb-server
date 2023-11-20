@@ -22,7 +22,11 @@ export class CellEmpty implements CellEmptyI {
             : 'none';
     }
 
-    cellProcessing(player: PlayerDefaultI): void {
+    processing(player: PlayerDefaultI, valueRoll?: number): void {
+        
+    }
+
+    movePlayer(player: PlayerDefaultI): void {
         this.player = player;
         this.sendInfoPLayer();
         this.checkPayCell() === 'none' ? setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT) : '';

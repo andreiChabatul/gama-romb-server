@@ -38,7 +38,7 @@ export class TurnService {
                 cellId: cell.index,
                 valueroll: value
             })
-            cell.cellProcessing(player, value);
+            cell.movePlayer(player, value);
         };
     }
 
@@ -141,10 +141,9 @@ export class TurnService {
     checkBankrot(): void {
         this.playersActive = { ...this.players };
         Object.keys(this.playersActive).forEach((key) =>
-            (this.playersActive[key].bankrot)
+            (this.playersActive[key].bankrupt)
                 ? delete this.playersActive[key]
                 : ''
         );
-        console.log(this.playersActive, 'active');
     }
 }

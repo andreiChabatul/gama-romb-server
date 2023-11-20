@@ -20,6 +20,7 @@ export enum EACTION_WEBSOCKET {
     CONTROL_COMPANY = 'control company',
     CONTROL_DEAL = 'control deal',
     BANKRUPT = 'bankrupt',
+    ACTIVE_CELL = 'active cell',
 }
 
 export interface payloadSocket {
@@ -30,6 +31,7 @@ export interface payloadSocket {
 export interface DefaultPayload {
     idRoom: string;
     idUser: string;
+    indexCell: number;
 }
 
 export interface PayloadJoinGame extends DefaultPayload {

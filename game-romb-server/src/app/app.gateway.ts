@@ -65,6 +65,11 @@ export class AppGateway {
         rooms[payDebtPayload.idRoom].playerPay(payDebtPayload);
         break;
 
+      case EACTION_WEBSOCKET.ACTIVE_CELL:
+        const activeCellPayload = payloadSocket.payload as DefaultPayload;
+        rooms[activeCellPayload.idRoom].activeCell(activeCellPayload.indexCell);
+        break;
+
       case EACTION_WEBSOCKET.CONTROL_COMPANY:
         const controlCompanyPayload = payloadSocket.payload as ContorolCompanyPayload;
         rooms[controlCompanyPayload.idRoom].controlCompany(controlCompanyPayload);

@@ -74,7 +74,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'profit',
         nameCell: 'profit',
         location: {
             gridArea: '1/7/3/8',
@@ -226,7 +226,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'tax',
         nameCell: 'tax5',
         location: {
             gridArea: '6/14/7/16',
@@ -338,7 +338,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'profit',
         nameCell: 'profit',
         location: {
             gridArea: '9/9/11/10',
@@ -491,7 +491,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'tax',
         nameCell: 'tax10',
         location: {
             gridArea: '6/1/5/3',
@@ -531,26 +531,3 @@ export const defaultCell: createCell[] = [
         }
     },
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
