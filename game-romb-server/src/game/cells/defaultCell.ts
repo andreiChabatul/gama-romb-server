@@ -98,7 +98,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'loss',
         nameCell: 'loss',
         location: {
             gridArea: '1/9/3/10',
@@ -362,7 +362,7 @@ export const defaultCell: createCell[] = [
         }
     },
     {
-        type: 'lossProfit',
+        type: 'loss',
         nameCell: 'loss',
         location: {
             gridArea: '9/7/11/8',

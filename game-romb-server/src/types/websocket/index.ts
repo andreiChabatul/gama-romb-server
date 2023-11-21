@@ -11,7 +11,6 @@ export enum EACTION_WEBSOCKET {
     DICE_ROLL = 'dice roll',
     INFO_CELL_TURN = 'info cell turn',
     END_TURN = 'end turn',
-    CALC_VALUE_LS = 'calc value ls',
     UPDATE_CELL = 'update cell',
     START_GAME = 'start game',
     INIT_PLAYER = 'init player',
@@ -31,7 +30,6 @@ export interface payloadSocket {
 export interface DefaultPayload {
     idRoom: string;
     idUser: string;
-    indexCell: number;
 }
 
 export interface PayloadJoinGame extends DefaultPayload {
@@ -50,12 +48,6 @@ export interface DiceRollGamePayload extends DefaultPayload {
 export interface ContorolCompanyPayload extends DefaultPayload {
     indexCompany: number;
     action: controlCompany;
-}
-
-export interface calcValuePayload extends DefaultPayload {
-    debtValue?: number;
-    indexCompany: number;
-    action: infoCellButtons;
 }
 
 export interface OfferDealPayload extends DefaultPayload {

@@ -123,9 +123,13 @@ export class PlayerDefault implements PlayerDefaultI {
         this.updatePlayer();
     }
 
-    set attemptPrison(value: boolean) {
-        value ? this._prison.attempt-- : '';
+    set attemptPrison(value: number) {
+        this._prison.attempt = value;
         this.updatePlayer();
+    }
+
+    get attemptPrison(): number {
+        return this._prison.attempt;
     }
 
     get capital(): number {

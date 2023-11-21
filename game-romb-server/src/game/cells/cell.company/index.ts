@@ -45,7 +45,7 @@ export class CellCompany implements CellCompanyI {
             setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
         } else if (this._owned && player.userId !== this._owned && !this._pledge) {
             description = EMESSAGE_CLIENT.RENT_COMPANY;
-            buttons = 'payRent';
+            buttons = 'pay';
         } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
             description = EMESSAGE_CLIENT.BUY_COMPANY;
             buttons = 'buy';

@@ -1,17 +1,21 @@
+import { VALUE_CELL } from "src/app/const";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
 import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
-export class CellTax implements CellDefault {
+export class CellLoss implements CellDefault {
 
     _cellValue: number;
+    _randomIndex: number;
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private _nameCell: string, private roomWS: Room_WS) { }
+    constructor(private _index: number, private roomWS: Room_WS) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;
-        this._cellValue = Math.round(player.total * (this._nameCell === 'tax5' ? 0.05 : 0.1));
+        this._randomIndex = Math.floor(Math.random() * VALUE_CELL.length)
+        this._cellValue = VALUE_CELL[this._randomIndex];
+        (this._cellValue > player.capital || this._cellValue === player.capital) ? player.bankrupt = true : '';
         this.sendInfoPLayer();
     }
 
@@ -22,8 +26,8 @@ export class CellTax implements CellDefault {
     sendInfoPLayer(): void {
         const payload: infoCellTurn = {
             indexCompany: this._index,
-            description: 'desc' + this._nameCell,
-            buttons: 'pay',
+            description: 'descloss' + this._randomIndex,
+            buttons: this.player.bankrupt ? 'bankrupt' : 'pay',
             value: this._cellValue
         };
         this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);

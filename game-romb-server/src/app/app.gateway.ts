@@ -6,13 +6,12 @@ import {
 import WebSocket from "ws";
 import { Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
-import { Rooms } from 'src/types';
-import { Room } from 'src/game/room';
+import { rooms } from 'src/types';
 import { v4 as uuidv4 } from 'uuid'
-import { ContorolCompanyPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, calcValuePayload, payloadSocket } from 'src/types/websocket';
+import { ContorolCompanyPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
+import { RoomGame } from 'src/game/room';
 
 const sockets: WebSocket[] = [];
-const rooms: Rooms = {} as Rooms;
 
 @WebSocketGateway(3100, {
   cors: {
@@ -20,10 +19,10 @@ const rooms: Rooms = {} as Rooms;
   }
 })
 
-
 export class AppGateway {
   @WebSocketServer()
   server: Server;
+  rooms: rooms = {};
 
   @SubscribeMessage('message')
   handleMessage(client: WebSocket, payload: string): void {
@@ -35,69 +34,65 @@ export class AppGateway {
       case EACTION_WEBSOCKET.CREATE_GAME:
         const payloadGame = payloadSocket.payload as GameCreateDto;
         const idRoom = uuidv4();
-        const room = new Room(payloadGame, idRoom);
+        const room = new RoomGame(payloadGame, idRoom);
         room.addPlayer(payloadGame.idUser, client);
-        rooms[idRoom] = room;
-        sendRooms();
+        this.rooms[idRoom] = room;
+        this.sendRooms();
         break;
 
       case EACTION_WEBSOCKET.LIST_ROOM:
-        sendRooms();
+        this.sendRooms();
         break;
 
       case EACTION_WEBSOCKET.JOIN_GAME:
         const joinGame = payloadSocket.payload as PayloadJoinGame;
-        rooms[joinGame.idRoomJoin].addPlayer(joinGame.idUser, client);
+        this.rooms[joinGame.idRoomJoin].addPlayer(joinGame.idUser, client);
         break;
 
       case EACTION_WEBSOCKET.MESSAGE_CHAT:
         const messageChat = payloadSocket.payload as MessageChatGamePayload;
-        rooms[messageChat.idRoom].addChatMessage(messageChat.message, messageChat.idUser);
+        this.rooms[messageChat.idRoom].addChatMessage(messageChat.message, messageChat.idUser);
         break;
 
       case EACTION_WEBSOCKET.DICE_ROLL:
         const diceRollPayload = payloadSocket.payload as DiceRollGamePayload;
-        rooms[diceRollPayload.idRoom].playerMove(diceRollPayload);
-        break;
-
-      case EACTION_WEBSOCKET.CALC_VALUE_LS:
-        const payDebtPayload = payloadSocket.payload as calcValuePayload;
-        rooms[payDebtPayload.idRoom].playerPay(payDebtPayload);
+        this.rooms[diceRollPayload.idRoom].playerMove(diceRollPayload);
         break;
 
       case EACTION_WEBSOCKET.ACTIVE_CELL:
         const activeCellPayload = payloadSocket.payload as DefaultPayload;
-        rooms[activeCellPayload.idRoom].activeCell(activeCellPayload.indexCell);
+        this.rooms[activeCellPayload.idRoom].activeCell(activeCellPayload.idUser);
         break;
 
       case EACTION_WEBSOCKET.CONTROL_COMPANY:
         const controlCompanyPayload = payloadSocket.payload as ContorolCompanyPayload;
-        rooms[controlCompanyPayload.idRoom].controlCompany(controlCompanyPayload);
+        this.rooms[controlCompanyPayload.idRoom].controlCompany(controlCompanyPayload);
         break;
 
       case EACTION_WEBSOCKET.CONTROL_DEAL: {
         const offerDealPayload = payloadSocket.payload as OfferDealPayload;
-        rooms[offerDealPayload.idRoom].offerDealControl(offerDealPayload);
+        this.rooms[offerDealPayload.idRoom].offerDealControl(offerDealPayload);
         break;
       }
 
-      case EACTION_WEBSOCKET.BANKRUPT: {
-        const bankruptlPayload = payloadSocket.payload as DefaultPayload;
-        rooms[bankruptlPayload.idRoom].playerBankrupt(bankruptlPayload.idUser);
-        console.log(bankruptlPayload)
-        break;
-      }
+      // case EACTION_WEBSOCKET.BANKRUPT: {
+      //   const bankruptlPayload = payloadSocket.payload as DefaultPayload;
+      //   this.rooms[bankruptlPayload.idRoom].playerBankrupt(bankruptlPayload.idUser);
+      //   break;
+      // }
 
       default:
         break;
     }
   }
+
+  sendRooms(): void {
+    const payload = [];
+    Object.keys(this.rooms).map((key) => payload.push(this.rooms[key].returnInfoRoom()))
+    sockets.map((client) =>
+      client.send(JSON.stringify({ action: EACTION_WEBSOCKET.LIST_ROOM, payload }))
+    );
+  }
 }
 
-const sendRooms = () => {
-  const payload = [];
-  Object.keys(rooms).map((key) => payload.push(rooms[key].returnInfoRoom()))
-  sockets.map((client) =>
-    client.send(JSON.stringify({ action: EACTION_WEBSOCKET.LIST_ROOM, payload }))
-  );
-}
+

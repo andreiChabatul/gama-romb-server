@@ -1,4 +1,6 @@
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { ContorolCompanyPayload, DiceRollGamePayload, OfferDealPayload } from "./websocket";
+import { WebSocket } from "ws";
 
 export interface Player extends UpdatePlayer {
     name: string;
@@ -28,6 +30,7 @@ export interface PrisonI {
     addPrisoner(player: PlayerDefaultI): void;
     deletePrisoner(player: PlayerDefaultI): void;
     turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void;
+    payDebt(player: PlayerDefaultI): void;
 }
 
 export interface ChatI {
@@ -49,7 +52,8 @@ export interface PlayerDefaultI {
     minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
     get prison(): boolean;
     set prison(value: boolean);
-    set attemptPrison(value: boolean);
+    set attemptPrison(value: number);
+    get attemptPrison(): number;
     get capital(): number;
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
@@ -78,7 +82,7 @@ export interface CellCompanyI extends CellDefault {
 }
 
 export interface CellEmptyI extends CellDefault {
-    
+
     checkPayCell(): infoCellButtons;
 }
 
@@ -93,12 +97,20 @@ export type location = {
 
 export type cells = CellEmptyI | CellCompanyI | CellDefault;
 
-export interface Rooms {
-    id: string;
-    room: RoomClass;
+export type rooms = {
+    [id: string]: RoomI;
 }
 
-export interface RoomClass {
+export interface RoomI {
+    addPlayer(id: string, client: WebSocket): void;
+    playerMove(diceRollGamePayload: DiceRollGamePayload): void
+    activeCell(idUser: string): void;
+    controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
+    offerDealControl(offerDealPayload: OfferDealPayload): void;
+    addChatMessage(message: string, idUser: string): void
+
+
+
     returnInfoRoom(): InfoRoom;
 }
 
@@ -139,7 +151,7 @@ export interface createCell {
     company?: CompanyInfo;
 }
 
-export type cellType = 'company' | 'lossProfit' | 'empty' | 'tax' | 'profit';
+export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
 
 export interface GameCellCompanyInfo extends CompanyInfo {
     shares: number;
@@ -177,7 +189,7 @@ export interface CompanyInfo {
     priceStock: number;
 }
 
-export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'payRent' | 'payPrison' | 'profit' | 'bankrupt';
+export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'bankrupt';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | 'buyCompany' | 'startAuction' | 'leaveAuction' | 'stepAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
 
