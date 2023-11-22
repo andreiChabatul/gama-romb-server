@@ -1,6 +1,5 @@
 import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn } from "src/types";
 import { Chat } from "../chatGame";
-import { AUCTION_DESCRIPTION } from "./auction.description";
 import { AUCTION_STEP } from "src/app/const";
 import { TurnService } from "../turn.service";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -8,9 +7,8 @@ import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 export class AuctionCompany {
 
     cell: CellCompanyI;
-    language = 'ru';
     priceAuction: number;
-    private auctionWinner: string;
+    auctionWinner: string;
     companyInfo: CompanyInfo;
     inactivePlayers: string[] = [];
     activePlayers: string[] = [];

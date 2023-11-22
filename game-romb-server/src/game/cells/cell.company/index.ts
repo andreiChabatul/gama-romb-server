@@ -1,10 +1,8 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, controlCompany, infoCellButtons } from "src/types";
+import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, controlCompany, infoCellTurn } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { AuctionCompany } from "src/game/auctionCompany";
-import { TurnService } from "src/game/turn.service";
 import { GameCellCompanyInfo } from "src/types";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { TIME_TURN_DEFAULT } from "src/app/const";
 
 export class CellCompany implements CellCompanyI {
 
@@ -14,80 +12,74 @@ export class CellCompany implements CellCompanyI {
     private _monopoly: boolean;
     private _quantityStock: number;
     private _valueRoll: number;
-    _cellValue: number;
+    private _player: PlayerDefaultI;
 
     constructor(
         private roomWS: Room_WS,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionCompany,
-        private turnService: TurnService,
-        private indexCompany: number,
+        private players: PlayersGame,
+        private _index: number,
     ) {
         this._quantityStock = 0;
         this._monopoly = false;
     }
 
-    processing(player: PlayerDefaultI, valueRoll?: number): void {
-        
-    }
-
     movePlayer(player: PlayerDefaultI, valueRoll?: number): void {
-
-        let buttons: infoCellButtons = 'none';
-        let description: string;
+        this._player = player;
         this._valueRoll = valueRoll;
+        const payload: infoCellTurn = {
+            indexCompany: this._index,
+            description: '',
+            buttons: 'none',
+        };
 
         if (player.userId === this._owned) {
-            description = EMESSAGE_CLIENT.OWNED_COMPANY;
-            setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+            payload.description = EMESSAGE_CLIENT.OWNED_COMPANY;
         } else if (this._pledge) {
-            description = EMESSAGE_CLIENT.PLEDGE_COMPANY;
-            setTimeout(() => this.turnService.endTurn(), TIME_TURN_DEFAULT);
+            payload.description = EMESSAGE_CLIENT.PLEDGE_COMPANY;
         } else if (this._owned && player.userId !== this._owned && !this._pledge) {
-            description = EMESSAGE_CLIENT.RENT_COMPANY;
-            buttons = 'pay';
+            payload.description = EMESSAGE_CLIENT.RENT_COMPANY;
+            payload.buttons = 'pay';
         } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
-            description = EMESSAGE_CLIENT.BUY_COMPANY;
-            buttons = 'buy';
+            payload.description = EMESSAGE_CLIENT.BUY_COMPANY;
+            payload.buttons = 'buy';
         } else {
-            description = EMESSAGE_CLIENT.AUCTION_COMPANY;
-            setTimeout(() => this.auction.startAuction(this, player.userId), TIME_TURN_DEFAULT);
+            payload.description = EMESSAGE_CLIENT.AUCTION_COMPANY;
         };
 
-        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, {
-            indexCompany: this.indexCompany,
-            buttons,
-            description,
-            value: this.rentCompany
-        });
+        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
-    updateInfoCompany(): void {
-        this.updateRentCompany();
-
-        const payload = {
-            indexCell: this.indexCompany,
-            cellCompany: {
-                rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
-                isPledge: this._pledge,
-                isMonopoly: this._monopoly,
-                shares: this._quantityStock,
-                owned: this.owned,
-            }
+    activateCell(): void {
+        if (this._owned && this._player.userId !== this._owned && !this._pledge) {
+            this.payRent();
+        } else if (!this._owned && this._player.total > this.compnanyInfo.priceCompany) {
+            this.buyCompany();
+        } else {
+            this.auction.startAuction(this, this._player.userId);
         };
+    }
 
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
+    buyCompany(player: PlayerDefaultI = this._player, price: number = this.compnanyInfo.priceCompany): void {
+        this._owned = player.userId;
+        player.minusTotal(price, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this._index);
+        this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
+        this.sendInfoPLayer();
+    }
+
+    payRent(): void {
+        const rentDebt = this.rentCompany;
+        const ownedPlayer = this.players[this.owned];
+        ownedPlayer.addTotal = rentDebt;
+        this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
     }
 
     get info(): GameCellCompanyInfo {
         return {
-            countryCompany: this.compnanyInfo.countryCompany,
-            priceCompany: this.compnanyInfo.priceCompany,
-            collateralCompany: this.compnanyInfo.collateralCompany,
+            companyInfo: this.compnanyInfo,
             rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
             isPledge: this._pledge,
-            buyBackCompany: this.compnanyInfo.buyBackCompany,
-            priceStock: this.compnanyInfo.priceStock,
             isMonopoly: this._monopoly,
             shares: this._quantityStock,
             owned: this.owned,
@@ -112,7 +104,7 @@ export class CellCompany implements CellCompanyI {
 
     set owned(userId: string) {
         this._owned = userId;
-        this.updateInfoCompany();
+        this.sendInfoPLayer();
     }
 
     get rentCompany(): number {
@@ -126,7 +118,7 @@ export class CellCompany implements CellCompanyI {
     }
 
     get index(): number {
-        return this.indexCompany;
+        return this._index;
     }
 
     get pledge(): boolean {
@@ -136,20 +128,20 @@ export class CellCompany implements CellCompanyI {
     set monopoly(value: boolean) {
         if (value !== this._monopoly) {
             this._monopoly = value;
-            this.updateInfoCompany();
+            this.sendInfoPLayer();
         };
     }
 
     set quantityStock(value: number) {
         this._quantityStock = value;
-        this.updateInfoCompany();
+        this.sendInfoPLayer();
     }
 
     get quantityStock(): number {
         return this._quantityStock;
     }
 
-    controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void {
+    controlCompany(action: controlCompany, player: PlayerDefaultI): void {
 
         switch (action) {
             case 'buyStock':
@@ -168,29 +160,36 @@ export class CellCompany implements CellCompanyI {
                 this._pledge = false;
                 player.minusTotal(this.compnanyInfo.buyBackCompany);
                 break;
-            case 'buyCompany':
-                this._owned = player.userId;
-                player.minusTotal(price ? price : this.compnanyInfo.priceCompany, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this.indexCompany);
-                this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
-                this.turnService.endTurn();
-                break;
-            case 'startAuction':
-                this.auction.startAuction(this, player.userId);
-                break;
-            case 'stepAuction':
-                this.auction.stepAuction(player);
-                break;
-            case 'leaveAuction':
-                this.auction.leaveAuction(player);
-                break;
+            // case 'startAuction':
+            //     this.auction.startAuction(this, player.userId);
+            //     break;
+            // case 'stepAuction':
+            //     this.auction.stepAuction(player);
+            //     break;
+            // case 'leaveAuction':
+            //     this.auction.leaveAuction(player);
+            //     break;
             default:
                 break;
         };
-        this.updateInfoCompany();
+        this.sendInfoPLayer();
     }
 
     sendInfoPLayer(): void {
-        
+        this.updateRentCompany();
+
+        const payload = {
+            indexCell: this._index,
+            cellCompany: {
+                rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
+                isPledge: this._pledge,
+                isMonopoly: this._monopoly,
+                shares: this._quantityStock,
+                owned: this.owned,
+            }
+        };
+
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
 }

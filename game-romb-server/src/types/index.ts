@@ -64,12 +64,12 @@ export interface CellDefault {
     _cellValue?: number;
     movePlayer(player: PlayerDefaultI, valueRoll?: number): void;
     get index(): number;
-    activateCell?(): void;
+    activateCell(): void;
     sendInfoPLayer(): void;
 }
 
 export interface CellCompanyI extends CellDefault {
-    controlCompany(action: controlCompany, player: PlayerDefaultI, price?: number): void;
+    controlCompany(action: controlCompany, player: PlayerDefaultI): void;
     get owned(): string | null;
     get info(): GameCellCompanyInfo;
     get infoCompany(): CompanyInfo;
@@ -78,7 +78,7 @@ export interface CellCompanyI extends CellDefault {
     get quantityStock(): number;
     set monopoly(value: boolean);
     set quantityStock(value: number);
-    set owned(userId: string);
+    set owned(player: string);
 }
 
 export interface CellEmptyI extends CellDefault {
@@ -108,9 +108,6 @@ export interface RoomI {
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
     offerDealControl(offerDealPayload: OfferDealPayload): void;
     addChatMessage(message: string, idUser: string): void
-
-
-
     returnInfoRoom(): InfoRoom;
 }
 
@@ -153,10 +150,13 @@ export interface createCell {
 
 export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
 
-export interface GameCellCompanyInfo extends CompanyInfo {
+export interface GameCellCompanyInfo {
+    companyInfo: CompanyInfo
     shares: number;
     isPledge: boolean;
-    owned?: string;
+    owned: string;
+    isMonopoly: boolean;
+    rentCompany: number;
 }
 
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
@@ -184,19 +184,18 @@ export interface CompanyInfo {
     collateralCompany: number;
     buyBackCompany: number;
     rentCompanyInfo?: number[];
-    rentCompany?: number;
-    isMonopoly?: boolean;
     priceStock: number;
 }
 
 export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'bankrupt';
-export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | 'buyCompany' | 'startAuction' | 'leaveAuction' | 'stepAuction';
+export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
+export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
 
 export type infoCellTurn = {
     indexCompany: number;
     buttons: infoCellButtons;
-    description?: string;
+    description: string;
     value?: number;
 }
 

@@ -135,7 +135,7 @@ export class PlayerDefault implements PlayerDefaultI {
     get capital(): number {
         return this.cells.reduce((capital, cell) =>
             ('controlCompany' in cell && cell.owned === this.userId && !cell.pledge)
-                ? capital + cell.info.collateralCompany + (cell.quantityStock * cell.infoCompany.priceStock)
+                ? capital + cell.infoCompany.collateralCompany + (cell.quantityStock * cell.infoCompany.priceStock)
                 : capital
             , this.total);
     }

@@ -9,6 +9,6 @@ export const VALUE_CELL = [25000, 50000, 75000, 100000, 125000, 150000, 175000, 
 
 
 export const CIRCLE_REWARD = 200000;
-export const INIT_TOTAL = 49000;
+export const INIT_TOTAL = 1500000;
 export const MONOPOLY_COMPANY: countryCompanyMonopoly[] = ['germany', 'ukraine', 'italia', 'britania', 'sweden', 'canada', 'kazah', 'china', 'usa'];
 export const NO_MONOPOY_COMPANY: countryCompanyNoMonopoly = 'japan';

@@ -36,12 +36,12 @@ export class OfferService {
         this.players[receivePerson.idPerson].addTotal = offerPerson.valueMoney;
         changeCompany(offerPerson, receivePerson, this.cellsGame);
         changeCompany(receivePerson, offerPerson, this.cellsGame);
-        
+
         function changeCompany(personOne, personTwo: offerInfo, cellsGame: cells[]): void {
             personOne.indexCompany.map((index) => {
                 const cell = cellsGame[index];
                 ('owned' in cell)
-                    ? cell.owned = personTwo.idPerson
+                    ? cell.owned = this.players[personTwo.idPerson]
                     : ''
             }
             );
@@ -74,5 +74,5 @@ export class OfferService {
                 break;
         }
     }
-    
+
 }

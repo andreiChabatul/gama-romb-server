@@ -75,26 +75,6 @@ export class RoomGame implements RoomI {
         this.turnService.endTurn();
     }
 
-    // playerPay(calcValuePayload: calcValuePayload): void {
-    //     const { action, idUser, debtValue, indexCompany } = calcValuePayload;
-    //     console.log(indexCompany)
-
-    //     // const player = this.players[idUser];
-    //     // switch (action) {
-    //     //     case "payRent":
-    //     //         const company = this.cellsGame[indexCompany];
-    //     //         if ('controlCompany' in company) {
-    //     //             const rentDebt = company.rentCompany;
-    //     //             const ownedPlayer = this.players[company.owned];
-    //     //             ownedPlayer.addTotal = rentDebt;
-    //     //             this.players[idUser].minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
-    //     //         };
-    //     //         this.turnService.endTurn();
-    //     //         break;
-
-    //     // }
-    // }
-
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void {
         const { action, idUser, indexCompany } = contorolCompanyPayload;
         const company = this.cellsGame[indexCompany];
@@ -127,7 +107,7 @@ export class RoomGame implements RoomI {
 
             switch (cell.type) {
                 case "company": {
-                    const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.turnService, indexCell);
+                    const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.players, indexCell);
                     this.cellsGame[indexCell] = newCellCompany;
                     infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
                     break;
