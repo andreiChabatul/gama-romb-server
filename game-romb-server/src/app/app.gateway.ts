@@ -8,7 +8,7 @@ import { Server } from 'socket.io';
 import { GameCreateDto } from 'src/game/dto/game.create.dto';
 import { rooms } from 'src/types';
 import { v4 as uuidv4 } from 'uuid'
-import { ContorolCompanyPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
+import { ContorolCompanyPayload, ControlAuctionPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, payloadSocket } from 'src/types/websocket';
 import { RoomGame } from 'src/game/room';
 
 const sockets: WebSocket[] = [];
@@ -72,6 +72,12 @@ export class AppGateway {
       case EACTION_WEBSOCKET.CONTROL_DEAL: {
         const offerDealPayload = payloadSocket.payload as OfferDealPayload;
         this.rooms[offerDealPayload.idRoom].offerDealControl(offerDealPayload);
+        break;
+      }
+
+      case EACTION_WEBSOCKET.AUCTION: {
+        const controlAuctionPayload = payloadSocket.payload as ControlAuctionPayload;
+        this.rooms[controlAuctionPayload.idRoom].controlAuction(controlAuctionPayload.idUser, controlAuctionPayload.action)
         break;
       }
 

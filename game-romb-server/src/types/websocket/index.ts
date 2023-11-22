@@ -1,25 +1,26 @@
 import { WebSocket } from "ws";
-import { controlCompany, controlDeal, infoCellButtons, offerDealInfo } from "..";
+import { controlAuction, controlCompany, controlDeal, offerDealInfo } from "..";
 
 export enum EACTION_WEBSOCKET {
     CREATE_GAME = 'create game',
-    LIST_ROOM = 'list room',
     JOIN_GAME = 'join game',
+    LIST_ROOM = 'list room',
     MESSAGE_CHAT = 'message chat',
-    UPDATE_PLAYER = 'update player',
+    INIT_PLAYER = 'init player',
+    INIT_BOARD = 'init board',
     UPDATE_CHAT = 'update chat',
+    UPDATE_CELL = 'update cell',
+    UPDATE_PLAYER = 'update player',
+    UPDATE_TURN = 'update turn',
     DICE_ROLL = 'dice roll',
     INFO_CELL_TURN = 'info cell turn',
     END_TURN = 'end turn',
-    UPDATE_CELL = 'update cell',
     START_GAME = 'start game',
-    INIT_PLAYER = 'init player',
-    INIT_BOARD = 'init board',
-    UPDATE_TURN = 'update turn',
     CONTROL_COMPANY = 'control company',
     CONTROL_DEAL = 'control deal',
     BANKRUPT = 'bankrupt',
     ACTIVE_CELL = 'active cell',
+    AUCTION = 'auction'
 }
 
 export interface payloadSocket {
@@ -48,6 +49,10 @@ export interface DiceRollGamePayload extends DefaultPayload {
 export interface ContorolCompanyPayload extends DefaultPayload {
     indexCompany: number;
     action: controlCompany;
+}
+
+export interface ControlAuctionPayload extends DefaultPayload {
+    action: controlAuction;
 }
 
 export interface OfferDealPayload extends DefaultPayload {

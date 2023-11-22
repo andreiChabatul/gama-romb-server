@@ -1,4 +1,4 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, infoCellTurn } from "src/types";
+import { CellCompanyI, PlayerDefaultI, PlayersGame, controlAuction, infoAuction, infoCellTurn } from "src/types";
 import { Chat } from "../chatGame";
 import { AUCTION_STEP } from "src/app/const";
 import { TurnService } from "../turn.service";
@@ -7,12 +7,12 @@ import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 export class AuctionCompany {
 
     cell: CellCompanyI;
-    priceAuction: number;
+    currentPrice: number;
     auctionWinner: string;
-    companyInfo: CompanyInfo;
     inactivePlayers: string[] = [];
     activePlayers: string[] = [];
     indexActive: number;
+    action: controlAuction;
 
     constructor(
         private players: PlayersGame,
@@ -23,24 +23,26 @@ export class AuctionCompany {
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.cell = cell;
         this.indexActive = 0;
-        this.companyInfo = this.cell.infoCompany;
-        this.priceAuction = this.companyInfo.priceCompany;
+        this.currentPrice = cell.infoCompany.priceCompany;
+        this.action = 'startAuction';
         // this.chat.addMessage(changeMessage(
         //     AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
         // ));
         this.inactivePlayers.push(idUser);
-        this.nextBind();
+        this.sendInfoPlayer();
+        // this.nextBind();
     }
 
     stepAuction(player: PlayerDefaultI): void {
         this.auctionWinner = player.userId;
-        this.priceAuction = Math.floor(this.priceAuction * AUCTION_STEP);
+        this.currentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
         // this.chat.addMessage(changeMessage(
         //     AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
         //     this.companyInfo,
         //     player
         // ))
-        this.nextBind();
+        // this.nextBind();
+        this.sendInfoPlayer();
     }
 
     leaveAuction(player: PlayerDefaultI): void {
@@ -70,7 +72,7 @@ export class AuctionCompany {
         this.activePlayers = [];
         Object.keys(this.players).map((key) => {
             if (!this.inactivePlayers.includes(key)) {
-                if (this.players[key].total < (this.priceAuction * AUCTION_STEP)) {
+                if (this.players[key].total < (this.currentPrice * AUCTION_STEP)) {
                     this.inactivePlayers.push(key);
                 }
             }
@@ -84,7 +86,7 @@ export class AuctionCompany {
     private sendInactivePLayer(): infoCellTurn {
         return {
             ...this.sendWaitingPLayer(),
-          
+
         }
     }
 
@@ -92,15 +94,16 @@ export class AuctionCompany {
         return {
             ...this.sendActivePLayer(),
             buttons: 'none',
-            
+
         }
     }
 
     private sendActivePLayer(): infoCellTurn {
         return {
             indexCompany: this.cell.index,
-            buttons: 'auction',
-         
+            buttons: 'none',
+            description: ''
+
         }
     }
 
@@ -115,7 +118,7 @@ export class AuctionCompany {
     }
 
     private endAuction(): void {
-        this.auctionWinner ? this.cell.controlCompany('buyCompany', this.players[this.auctionWinner], this.priceAuction) : '';
+        this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.currentPrice) : '';
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INFO_CELL_TURN,
             {
                 // ...this.sendWaitingPLayer(),
@@ -130,5 +133,16 @@ export class AuctionCompany {
         this.activePlayers = [];
         this.inactivePlayers = [];
         this.auctionWinner = '';
+    }
+
+    sendInfoPlayer(): void {
+        const payload: infoAuction = {
+            indexCompany: this.cell.index,
+            currentPrice: this.currentPrice,
+            currentPlayer: this.auctionWinner ? this.auctionWinner : '',
+            action: this.action
+        };
+
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.AUCTION, payload);
     }
 }

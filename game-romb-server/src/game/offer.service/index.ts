@@ -56,7 +56,7 @@ export class OfferService {
 
     private closeDeal(): void {
         this.turnService.updateTurn();
-        this.offerDealInfo = {};
+        this.offerDealInfo = {} as offerDealInfo;
     }
 
     controlDeal(offerDealPayload: OfferDealPayload): void {

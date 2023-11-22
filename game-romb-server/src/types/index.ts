@@ -2,6 +2,20 @@ import { EMESSAGE_CLIENT } from "src/app/const/enum";
 import { ContorolCompanyPayload, DiceRollGamePayload, OfferDealPayload } from "./websocket";
 import { WebSocket } from "ws";
 
+export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
+export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
+export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';
+export type controlDeal = 'offer' | 'refuse' | 'accept';
+export type cells = CellEmptyI | CellCompanyI | CellDefault;
+export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
+export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
+export type countryCompanyNoMonopoly = 'japan';
+export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
+export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
+export type nameCell = nameCompany | nameCellEmpty;
+export type dealPerson = 'offerPerson' | 'receivePerson';
+export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
+
 export interface Player extends UpdatePlayer {
     name: string;
     image: string;
@@ -70,6 +84,7 @@ export interface CellDefault {
 
 export interface CellCompanyI extends CellDefault {
     controlCompany(action: controlCompany, player: PlayerDefaultI): void;
+    buyCompany(player: PlayerDefaultI, price: number): void
     get owned(): string | null;
     get info(): GameCellCompanyInfo;
     get infoCompany(): CompanyInfo;
@@ -95,8 +110,6 @@ export type location = {
     cellDirections: cellDirections,
 }
 
-export type cells = CellEmptyI | CellCompanyI | CellDefault;
-
 export type rooms = {
     [id: string]: RoomI;
 }
@@ -107,7 +120,8 @@ export interface RoomI {
     activeCell(idUser: string): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
     offerDealControl(offerDealPayload: OfferDealPayload): void;
-    addChatMessage(message: string, idUser: string): void
+    addChatMessage(message: string, idUser: string): void;
+    controlAuction(idUser: string, action: controlAuction): void;
     returnInfoRoom(): InfoRoom;
 }
 
@@ -148,8 +162,6 @@ export interface createCell {
     company?: CompanyInfo;
 }
 
-export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
-
 export interface GameCellCompanyInfo {
     companyInfo: CompanyInfo
     shares: number;
@@ -158,11 +170,6 @@ export interface GameCellCompanyInfo {
     isMonopoly: boolean;
     rentCompany: number;
 }
-
-export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
-export type countryCompanyNoMonopoly = 'japan';
-export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
-export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
 
 export type nameCompany =
     'volkswagen' | 'allianz' | 'continental'
@@ -176,8 +183,6 @@ export type nameCompany =
     | 'volvo' | 'essity' | 'ericsson'
     | 'hsbc' | 'rr' | 'bp';
 
-export type nameCell = nameCompany | nameCellEmpty;
-export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
 export interface CompanyInfo {
     countryCompany: countryCompany;
     priceCompany: number;
@@ -186,11 +191,6 @@ export interface CompanyInfo {
     rentCompanyInfo?: number[];
     priceStock: number;
 }
-
-export type infoCellButtons = 'auction' | 'pay' | 'buy' | 'none' | 'bankrupt';
-export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
-export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction';
-export type controlDeal = 'offer' | 'refuse' | 'accept';
 
 export type infoCellTurn = {
     indexCompany: number;
@@ -206,6 +206,12 @@ export type offerInfo = {
 }
 
 export type offerDealInfo = {
-    offerPerson?: offerInfo,
-    receivePerson?: offerInfo,
+    [key in dealPerson]: offerInfo;
+}
+
+export type infoAuction = {
+    currentPrice: number;
+    currentPlayer: string;
+    action: controlAuction;
+    indexCompany: number;
 }

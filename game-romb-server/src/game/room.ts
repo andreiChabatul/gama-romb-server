@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame";
-import { InfoRoom, PlayersGame, PrisonI, RoomI, cells, gameCell } from "src/types";
+import { InfoRoom, PlayersGame, PrisonI, RoomI, cells, controlAuction, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
@@ -77,10 +77,22 @@ export class RoomGame implements RoomI {
 
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void {
         const { action, idUser, indexCompany } = contorolCompanyPayload;
-        const company = this.cellsGame[indexCompany];
-        if ('controlCompany' in company) {
-            company.controlCompany(action, this.players[idUser]);
-        };
+        const cell = this.cellsGame[indexCompany];
+        ('controlCompany' in cell) ? cell.controlCompany(action, this.players[idUser]) : '';
+    };
+
+    controlAuction(idUser: string, action: controlAuction): void {
+        switch (action) {
+            case 'startAuction':
+                const indexCell = this.players[idUser].position;
+                const cell = this.cellsGame[indexCell];
+                ('controlCompany' in cell) ? this.auction.startAuction(cell, idUser) : '';
+                break;
+
+            default:
+                break;
+        }
+
     }
 
     offerDealControl(offerDealPayload: OfferDealPayload): void {
