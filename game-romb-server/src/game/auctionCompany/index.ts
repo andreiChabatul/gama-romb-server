@@ -1,148 +1,95 @@
-import { CellCompanyI, PlayerDefaultI, PlayersGame, controlAuction, infoAuction, infoCellTurn } from "src/types";
+import { AuctionI, CellCompanyI, PlayersGame, controlAuction, descAuction, infoAuction } from "src/types";
 import { Chat } from "../chatGame";
 import { AUCTION_STEP } from "src/app/const";
-import { TurnService } from "../turn.service";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
-export class AuctionCompany {
+export class AuctionCompany implements AuctionI {
 
     cell: CellCompanyI;
     currentPrice: number;
     auctionWinner: string;
-    inactivePlayers: string[] = [];
-    activePlayers: string[] = [];
     indexActive: number;
     action: controlAuction;
+    playersId: string[];
 
-    constructor(
-        private players: PlayersGame,
-        private roomWS: Room_WS,
-        private chat: Chat,
-        private turnService: TurnService) { }
+    constructor(private players: PlayersGame, private roomWS: Room_WS, private chat: Chat) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
+        this.playersId = Object.keys(this.players);
         this.cell = cell;
         this.indexActive = 0;
         this.currentPrice = cell.infoCompany.priceCompany;
         this.action = 'startAuction';
+        this.auctionWinner = '';
         // this.chat.addMessage(changeMessage(
         //     AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
         // ));
-        this.inactivePlayers.push(idUser);
-        this.sendInfoPlayer();
-        // this.nextBind();
+        this.filterParticipants(idUser);
+        this.nextStep();
     }
 
-    stepAuction(player: PlayerDefaultI): void {
-        this.auctionWinner = player.userId;
+    stepAuction(idUser: string): void {
+        this.auctionWinner = idUser;
         this.currentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
+        this.filterParticipants();
         // this.chat.addMessage(changeMessage(
         //     AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
         //     this.companyInfo,
         //     player
         // ))
-        // this.nextBind();
-        this.sendInfoPlayer();
+        this.nextStep();
     }
 
-    leaveAuction(player: PlayerDefaultI): void {
+    filterParticipants(idUser?: string): void {
+        const index = this.playersId.indexOf(idUser);
+        this.playersId.splice(index, 1);
+        this.playersId.map((id, index) =>
+            (this.players[id].total < this.currentPrice) ? this.playersId.splice(index, 1) : '');
+    }
+
+    leaveAuction(idUser: string): void {
         // this.chat.addMessage(changeMessage(
         //     AUCTION_DESCRIPTION[this.language].auctionLeave,
         //     null,
         //     player
         // ));
-        this.inactivePlayers.push(player.userId);
-        this.nextBind();
+        this.filterParticipants(idUser);
+        this.nextStep();
     }
 
-    private sendAuctionInfo(): void {
-        this.filterPlayers();
-        this.activePlayers.forEach((userId, index) => {
-            const payload = (index === this.indexActive) ? this.sendActivePLayer() : this.sendWaitingPLayer();
-            this.roomWS.sendOnePlayer(userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
-
-        }); //отправка сообщения активным участникам аукциона
-
-        this.inactivePlayers.forEach((userId) => {
-            this.roomWS.sendOnePlayer(userId, EACTION_WEBSOCKET.INFO_CELL_TURN, this.sendInactivePLayer())
-        }); //отправка сообщения неактивным участникам аукциона
-    }
-
-    private filterPlayers(): void {
-        this.activePlayers = [];
-        Object.keys(this.players).map((key) => {
-            if (!this.inactivePlayers.includes(key)) {
-                if (this.players[key].total < (this.currentPrice * AUCTION_STEP)) {
-                    this.inactivePlayers.push(key);
-                }
-            }
-        });
-
-        Object.keys(this.players).map((key) =>
-            (!this.inactivePlayers.includes(key)) ? this.activePlayers.push(key) : ''
-        )
-    }
-
-    private sendInactivePLayer(): infoCellTurn {
-        return {
-            ...this.sendWaitingPLayer(),
-
-        }
-    }
-
-    private sendWaitingPLayer(): infoCellTurn {
-        return {
-            ...this.sendActivePLayer(),
-            buttons: 'none',
-
-        }
-    }
-
-    private sendActivePLayer(): infoCellTurn {
-        return {
-            indexCompany: this.cell.index,
-            buttons: 'none',
-            description: ''
-
-        }
-    }
-
-    private nextBind(): void {
-        this.filterPlayers();
-        if ((this.activePlayers.length === 1 && this.auctionWinner) || this.activePlayers.length === 0) {
+    private nextStep(): void {
+        if ((this.playersId.length === 1 && this.auctionWinner) || this.playersId.length === 0) {
             this.endAuction();
         } else {
-            this.indexActive > this.activePlayers.length - 2 ? this.indexActive = 0 : this.indexActive += 1;
-            this.sendAuctionInfo();
-        };
+            (this.indexActive > this.playersId.length - 2) ? 0 : this.indexActive += 1;
+        }
+        this.sendAllPlayers();
     }
 
     private endAuction(): void {
         this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.currentPrice) : '';
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INFO_CELL_TURN,
-            {
-                // ...this.sendWaitingPLayer(),
-                // titleCell: changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinish, this.companyInfo),
-                // description:
-                //     changeMessage(AUCTION_DESCRIPTION[this.language].auctionFinishDesc
-                //         + `${this.auctionWinner ? this.players[this.auctionWinner].name : 'No'}`),
-            });
-        ;
-
-        setTimeout(() => { this.turnService.endTurn() }, 1000);
-        this.activePlayers = [];
-        this.inactivePlayers = [];
-        this.auctionWinner = '';
+        this.action = 'endAuction'
     }
 
-    sendInfoPlayer(): void {
+    sendInfoPlayer(idUser: string, description: descAuction): void {
         const payload: infoAuction = {
             indexCompany: this.cell.index,
             currentPrice: this.currentPrice,
-            currentPlayer: this.auctionWinner ? this.auctionWinner : '',
-            action: this.action
+            currentPlayer: this.auctionWinner ? this.players[this.auctionWinner].name : '',
+            action: this.action,
+            description
         };
-
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.AUCTION, payload);
+        this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.AUCTION, payload);
     }
+
+    sendAllPlayers(): void {
+        Object.values(this.players).map((player) => {
+            if (!player.bankrupt) {
+                let desc: descAuction = this.playersId.includes(player.userId) ? 'wait' : 'inactive';
+                player.userId === this.playersId[this.indexActive] ? desc = 'active' : '';
+                this.sendInfoPlayer(player.userId, desc);
+            }
+        })
+    }
+
 }

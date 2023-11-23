@@ -1,7 +1,5 @@
-import { CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, controlCompany, infoCellTurn } from "src/types";
+import { AuctionI, CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { AuctionCompany } from "src/game/auctionCompany";
-import { GameCellCompanyInfo } from "src/types";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class CellCompany implements CellCompanyI {
@@ -17,7 +15,7 @@ export class CellCompany implements CellCompanyI {
     constructor(
         private roomWS: Room_WS,
         private compnanyInfo: CompanyInfo,
-        private auction: AuctionCompany,
+        private auction: AuctionI,
         private players: PlayersGame,
         private _index: number,
     ) {
@@ -52,12 +50,15 @@ export class CellCompany implements CellCompanyI {
     }
 
     activateCell(): void {
-        if (this._owned && this._player.userId !== this._owned && !this._pledge) {
+
+        if (this._player.userId === this._owned || this._pledge) {
+            return;
+        } else if (this._owned && this._player.userId !== this._owned && !this._pledge) {
             this.payRent();
         } else if (!this._owned && this._player.total > this.compnanyInfo.priceCompany) {
             this.buyCompany();
         } else {
-            this.auction.startAuction(this, this._player.userId);
+            setTimeout(() => this.auction.startAuction(this, this._player.userId), 0);
         };
     }
 
@@ -75,9 +76,9 @@ export class CellCompany implements CellCompanyI {
         this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
     }
 
-    get info(): GameCellCompanyInfo {
+    get info(): updateInfoCompany {
+        this.updateRentCompany();
         return {
-            companyInfo: this.compnanyInfo,
             rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
             isPledge: this._pledge,
             isMonopoly: this._monopoly,
@@ -160,15 +161,6 @@ export class CellCompany implements CellCompanyI {
                 this._pledge = false;
                 player.minusTotal(this.compnanyInfo.buyBackCompany);
                 break;
-            // case 'startAuction':
-            //     this.auction.startAuction(this, player.userId);
-            //     break;
-            // case 'stepAuction':
-            //     this.auction.stepAuction(player);
-            //     break;
-            // case 'leaveAuction':
-            //     this.auction.leaveAuction(player);
-            //     break;
             default:
                 break;
         };
@@ -176,19 +168,10 @@ export class CellCompany implements CellCompanyI {
     }
 
     sendInfoPLayer(): void {
-        this.updateRentCompany();
-
         const payload = {
             indexCell: this._index,
-            cellCompany: {
-                rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
-                isPledge: this._pledge,
-                isMonopoly: this._monopoly,
-                shares: this._quantityStock,
-                owned: this.owned,
-            }
+            company: this.info,
         };
-
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 

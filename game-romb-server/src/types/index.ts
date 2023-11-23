@@ -14,6 +14,7 @@ export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden
 export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
 export type nameCell = nameCompany | nameCellEmpty;
 export type dealPerson = 'offerPerson' | 'receivePerson';
+export type descAuction = 'active' | 'wait' | 'inactive';
 export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
 
 export interface Player extends UpdatePlayer {
@@ -86,7 +87,7 @@ export interface CellCompanyI extends CellDefault {
     controlCompany(action: controlCompany, player: PlayerDefaultI): void;
     buyCompany(player: PlayerDefaultI, price: number): void
     get owned(): string | null;
-    get info(): GameCellCompanyInfo;
+    get info(): updateInfoCompany;
     get infoCompany(): CompanyInfo;
     get rentCompany(): number;
     get pledge(): boolean;
@@ -125,6 +126,12 @@ export interface RoomI {
     returnInfoRoom(): InfoRoom;
 }
 
+export interface AuctionI {
+    leaveAuction(idUser: string): void;
+    startAuction(cell: CellCompanyI, idUser: string): void;
+    stepAuction(idUser: string): void;
+}
+
 export interface InfoRoom {
     maxPLayers: number,
     idRoom: string,
@@ -152,7 +159,7 @@ export interface SystemMessage {
 
 export interface gameCell extends createCell {
     indexCell: number;
-    cellCompany?: GameCellCompanyInfo;
+    company?: CompanyInfo;
 }
 
 export interface createCell {
@@ -162,8 +169,7 @@ export interface createCell {
     company?: CompanyInfo;
 }
 
-export interface GameCellCompanyInfo {
-    companyInfo: CompanyInfo
+export interface updateInfoCompany {
     shares: number;
     isPledge: boolean;
     owned: string;
@@ -213,5 +219,6 @@ export type infoAuction = {
     currentPrice: number;
     currentPlayer: string;
     action: controlAuction;
+    description: descAuction;
     indexCompany: number;
 }

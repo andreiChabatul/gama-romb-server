@@ -28,6 +28,6 @@ export class CellEmpty implements CellDefault {
 
     activateCell(): void {
         this._nameCell === 'goJail' ? this.prison.addPrisoner(this.player) : '';
-        this.player.prison && this._nameCell === 'inJail' ? this.prison.payDebt(this.player) : '';
+        this.player && this.player.prison && this._nameCell === 'inJail' ? this.prison.payDebt(this.player) : '';
     }
 }

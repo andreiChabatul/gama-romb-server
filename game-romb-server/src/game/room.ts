@@ -1,6 +1,6 @@
 import { GameCreateDto } from "./dto/game.create.dto";
 import { Chat } from "./chatGame";
-import { InfoRoom, PlayersGame, PrisonI, RoomI, cells, controlAuction, gameCell } from "src/types";
+import { AuctionI, InfoRoom, PlayersGame, PrisonI, RoomI, cells, controlAuction, gameCell } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
@@ -26,7 +26,7 @@ export class RoomGame implements RoomI {
     players: PlayersGame = {};
     private cellsGame: cells[] = [];
     private chat: Chat;
-    private auction: AuctionCompany;
+    private auction: AuctionI;
     private turnService: TurnService;
     private prison: PrisonI;
     private roomWS: Room_WS;
@@ -39,7 +39,7 @@ export class RoomGame implements RoomI {
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
-        this.auction = new AuctionCompany(this.players, this.roomWS, this.chat, this.turnService);
+        this.auction = new AuctionCompany(this.players, this.roomWS, this.chat);
         this.prison = new Prison(this.turnService, this.chat);
         this.offerService = new OfferService(this.players, this.roomWS, this.chat, this.turnService, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
@@ -88,11 +88,18 @@ export class RoomGame implements RoomI {
                 const cell = this.cellsGame[indexCell];
                 ('controlCompany' in cell) ? this.auction.startAuction(cell, idUser) : '';
                 break;
-
+            case "leaveAuction":
+                this.auction.leaveAuction(idUser);
+                break;
+            case "stepAuction":
+                this.auction.stepAuction(idUser);
+                break;
+            case "endAuction":
+                this.turnService.endTurn();
+                break;
             default:
                 break;
         }
-
     }
 
     offerDealControl(offerDealPayload: OfferDealPayload): void {
@@ -121,7 +128,7 @@ export class RoomGame implements RoomI {
                 case "company": {
                     const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.players, indexCell);
                     this.cellsGame[indexCell] = newCellCompany;
-                    infoCell[indexCell] = { ...infoCell[indexCell], cellCompany: newCellCompany.info };
+                    infoCell[indexCell] = { ...infoCell[indexCell], company: { ...infoCell[indexCell].company, ...newCellCompany.info } };
                     break;
                 }
                 case "empty": {
