@@ -1,4 +1,3 @@
-import { GameCreateDto } from "../dto/game.create.dto";
 import { Chat } from "../chatGame";
 import { AuctionI, PlayersGame, PrisonI, RoomI, cells, gameCell, infoRoom } from "src/types";
 import { WebSocket } from "ws";
@@ -8,7 +7,7 @@ import { defaultCell } from "../cells/defaultCell";
 import { AuctionCompany } from "../auction.service";
 import { TurnService } from "../turn.service";
 import { CellEmpty } from "../cells/cell.empty";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS, gameCreate } from "src/types/websocket";
 import { ROOM_WS } from "../roomWS";
 import { COLORS_PLAYER } from "src/app/const";
 import { Prison } from "../prison";
@@ -32,7 +31,7 @@ export class RoomGame implements RoomI {
     private roomWS: Room_WS;
     private offerService: OfferService;
 
-    constructor(gameCreateDto: GameCreateDto, private idRoom: string) {
+    constructor(gameCreateDto: gameCreate, private idRoom: string) {
         this.roomName = gameCreateDto.roomName;
         this.playerCount = gameCreateDto.players;
         this.numberPlayer = 0;
@@ -54,6 +53,10 @@ export class RoomGame implements RoomI {
         Object.values(this.players).forEach((player) => {
             this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_PLAYER, player.player);
         })//перенести в старт game
+    }
+
+    deletePlayer(idUser: string): void {
+        delete this.players[idUser];
     }
 
     private checkStartGame() {
@@ -133,6 +136,10 @@ export class RoomGame implements RoomI {
             roomName: this.roomName,
             players: Object.values(this.players).map((player) => player.player),
         };
+    }
+
+    get amountPlayers(): number {
+        return Object.keys(this.players).length;
     }
 
     private fillCellsGame() {

@@ -1,9 +1,8 @@
 import { RoomsControllerI, rooms } from "src/types";
-import { ContorolCompanyPayload, ControlAuctionPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, payloadSocket } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, PayloadJoinGame, gameCreate, payloadSocket } from "src/types/websocket";
 import { WebSocket } from "ws";
 import { RoomGame } from "./room";
 import { v4 as uuidv4 } from 'uuid'
-import { GameCreateDto } from "../dto/game.create.dto";
 
 export class RoomsController implements RoomsControllerI {
 
@@ -13,23 +12,10 @@ export class RoomsController implements RoomsControllerI {
     processing(client: WebSocket, payload: string): void {
         const payloadSocket: payloadSocket = JSON.parse(payload);
         switch (payloadSocket.action) {
-            case EACTION_WEBSOCKET.CREATE_GAME:
-                const payloadGame = payloadSocket.payload as GameCreateDto;
-                const idRoom = uuidv4();
-                const room = new RoomGame(payloadGame, idRoom);
-                this.rooms[idRoom] = room;
-                room.addPlayer(payloadGame.idUser, client);
-                this.sendRooms();
-                break;
 
-            case EACTION_WEBSOCKET.LIST_ROOM:
-                this.sendRooms();
-                break;
-
-            case EACTION_WEBSOCKET.JOIN_GAME:
-                const joinGame = payloadSocket.payload as PayloadJoinGame;
-                this.rooms[joinGame.idRoomJoin].addPlayer(joinGame.idUser, client);
-                this.sendRooms();
+            case EACTION_WEBSOCKET.CONTROL_ROOM:
+                const controlRoomPayload = payloadSocket.payload as ControlRoomPayload;
+                this.controlRoom(controlRoomPayload, client);
                 break;
 
             case EACTION_WEBSOCKET.MESSAGE_CHAT:
@@ -76,9 +62,35 @@ export class RoomsController implements RoomsControllerI {
 
     }
 
+
+    controlRoom({ action, gameCreate, idUser, idRoomJoin }: ControlRoomPayload, client: WebSocket): void {
+        switch (action) {
+            case 'create':
+                const idRoom = uuidv4();
+                const room = new RoomGame(gameCreate, idRoom);
+                this.rooms[idRoom] = room;
+                room.addPlayer(idUser, client);
+                break;
+            case "list":
+                break;
+            case "join":
+                this.rooms[idRoomJoin].addPlayer(idUser, client);
+                break;
+            case "leave":
+                this.rooms[idRoomJoin].deletePlayer(idUser);
+                break;
+            default:
+                break;
+        }
+        this.sendRooms();
+    }
+
     sendRooms(): void {
         const payload = [];
-        Object.keys(this.rooms).map((key) => payload.push(this.rooms[key].returnInfoRoom()))
+        Object.keys(this.rooms).map((key) =>
+            this.rooms[key].amountPlayers
+                ? payload.push(this.rooms[key].returnInfoRoom())
+                : delete this.rooms[key]);
         this.sockets.map((client) =>
             client.send(JSON.stringify({ action: EACTION_WEBSOCKET.LIST_ROOM, payload }))
         );

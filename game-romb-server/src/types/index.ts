@@ -117,6 +117,7 @@ export interface RoomsControllerI {
 
 export interface RoomI {
     addPlayer(id: string, client: WebSocket): void;
+    deletePlayer(idUser: string): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
     activeCell(idUser: string): void;
     addChatMessage(messageChatGamePayload: MessageChatGamePayload): void;
@@ -124,6 +125,7 @@ export interface RoomI {
     controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
     returnInfoRoom(): infoRoom;
+    get amountPlayers(): number;
 }
 
 export interface OfferServiceI {
