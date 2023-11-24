@@ -1,27 +1,26 @@
-import { GameCreateDto } from "./dto/game.create.dto";
-import { Chat } from "./chatGame";
-import { AuctionI, InfoRoom, PlayersGame, PrisonI, RoomI, cells, controlAuction, gameCell } from "src/types";
+import { GameCreateDto } from "../dto/game.create.dto";
+import { Chat } from "../chatGame";
+import { AuctionI, PlayersGame, PrisonI, RoomI, cells, gameCell, infoRoom } from "src/types";
 import { WebSocket } from "ws";
-import { PlayerDefault } from "./player";
-import { CellCompany } from "./cells/cell.company";
-import { defaultCell } from "./cells/defaultCell";
-import { AuctionCompany } from "./auction.service";
-import { TurnService } from "./turn.service";
-import { CellEmpty } from "./cells/cell.empty";
+import { PlayerDefault } from "../player";
+import { CellCompany } from "../cells/cell.company";
+import { defaultCell } from "../cells/defaultCell";
+import { AuctionCompany } from "../auction.service";
+import { TurnService } from "../turn.service";
+import { CellEmpty } from "../cells/cell.empty";
 import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS } from "src/types/websocket";
-import { ROOM_WS } from "./roomWS";
+import { ROOM_WS } from "../roomWS";
 import { COLORS_PLAYER } from "src/app/const";
-import { Prison } from "./prison";
-import { OfferService } from "./offer.service";
-import { CellTax } from "./cells/cell.tax";
-import { CellProfit } from "./cells/cell.profit";
-import { CellLoss } from "./cells/cell.loss";
+import { Prison } from "../prison";
+import { OfferService } from "../offer.service";
+import { CellTax } from "../cells/cell.tax";
+import { CellProfit } from "../cells/cell.profit";
+import { CellLoss } from "../cells/cell.loss";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class RoomGame implements RoomI {
 
     playerCount: number;
-    isVisiblity: boolean;
     roomName: string;
     numberPlayer: number;
     players: PlayersGame = {};
@@ -43,15 +42,14 @@ export class RoomGame implements RoomI {
         this.auction = new AuctionCompany(this.players, this.roomWS);
         this.prison = new Prison(this.turnService, this.chat);
         this.offerService = new OfferService(this.players, this.roomWS, this.cellsGame);
-        gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
     addPlayer(id: string, client: WebSocket): void {
         this.roomWS.addWebSocket(id, client);
         this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat, this.cellsGame);
         this.numberPlayer++;
-        this.checkStartGame();
         this.fillCellsGame();
+        this.checkStartGame();
 
         Object.values(this.players).forEach((player) => {
             this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_PLAYER, player.player);
@@ -128,12 +126,12 @@ export class RoomGame implements RoomI {
         this.chat.addMessage(message, this.players[idUser]);
     }
 
-    returnInfoRoom(): InfoRoom {
+    returnInfoRoom(): infoRoom {
         return {
             maxPLayers: this.playerCount,
             idRoom: this.idRoom,
-            isVisiblity: this.isVisiblity,
-            roomName: this.roomName
+            roomName: this.roomName,
+            players: Object.values(this.players).map((player) => player.player),
         };
     }
 

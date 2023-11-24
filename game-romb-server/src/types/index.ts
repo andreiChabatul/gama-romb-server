@@ -109,6 +109,12 @@ export type rooms = {
     [id: string]: RoomI;
 }
 
+export interface RoomsControllerI {
+    processing(client: WebSocket, payload: string): void;
+    disconnected(client: WebSocket): void;
+    addSocket(client: WebSocket): void
+}
+
 export interface RoomI {
     addPlayer(id: string, client: WebSocket): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
@@ -117,7 +123,7 @@ export interface RoomI {
     controlAuction(controlAuctionPayload: ControlAuctionPayload): void;
     controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
-    returnInfoRoom(): InfoRoom;
+    returnInfoRoom(): infoRoom;
 }
 
 export interface OfferServiceI {
@@ -131,11 +137,11 @@ export interface AuctionI {
     stepAuction(idUser: string): void;
 }
 
-export interface InfoRoom {
+export type infoRoom = {
     maxPLayers: number,
     idRoom: string,
-    isVisiblity: boolean,
-    roomName: string
+    roomName: string,
+    players: Player[],
 }
 
 export type UpdateRoom = {
