@@ -50,8 +50,8 @@ export class AppGateway {
         break;
 
       case EACTION_WEBSOCKET.MESSAGE_CHAT:
-        const messageChat = payloadSocket.payload as MessageChatGamePayload;
-        this.rooms[messageChat.idRoom].addChatMessage(messageChat.message, messageChat.idUser);
+        const messageChatGamePayload = payloadSocket.payload as MessageChatGamePayload;
+        this.rooms[messageChatGamePayload.idRoom].addChatMessage(messageChatGamePayload);
         break;
 
       case EACTION_WEBSOCKET.DICE_ROLL:
@@ -71,13 +71,13 @@ export class AppGateway {
 
       case EACTION_WEBSOCKET.CONTROL_DEAL: {
         const offerDealPayload = payloadSocket.payload as OfferDealPayload;
-        this.rooms[offerDealPayload.idRoom].offerDealControl(offerDealPayload);
+        this.rooms[offerDealPayload.idRoom].controlDeal(offerDealPayload);
         break;
       }
 
       case EACTION_WEBSOCKET.AUCTION: {
         const controlAuctionPayload = payloadSocket.payload as ControlAuctionPayload;
-        this.rooms[controlAuctionPayload.idRoom].controlAuction(controlAuctionPayload.idUser, controlAuctionPayload.action)
+        this.rooms[controlAuctionPayload.idRoom].controlAuction(controlAuctionPayload);
         break;
       }
 

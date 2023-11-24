@@ -16,9 +16,7 @@ export class TurnService {
         private players: PlayersGame,
         private cellsGame: cells[],
         private chat: Chat,
-    ) {
-        // this.playersActive = this.players.fi
-    }
+    ) { }
 
     firstTurn(): void {
         this.checkBankrot();

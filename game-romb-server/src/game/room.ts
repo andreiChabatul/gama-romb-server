@@ -8,7 +8,7 @@ import { defaultCell } from "./cells/defaultCell";
 import { AuctionCompany } from "./auction.service";
 import { TurnService } from "./turn.service";
 import { CellEmpty } from "./cells/cell.empty";
-import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, OfferDealPayload, Room_WS } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS } from "src/types/websocket";
 import { ROOM_WS } from "./roomWS";
 import { COLORS_PLAYER } from "src/app/const";
 import { Prison } from "./prison";
@@ -42,7 +42,7 @@ export class RoomGame implements RoomI {
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
         this.auction = new AuctionCompany(this.players, this.roomWS);
         this.prison = new Prison(this.turnService, this.chat);
-        this.offerService = new OfferService(this.players, this.roomWS, this.chat, this.turnService, this.cellsGame);
+        this.offerService = new OfferService(this.players, this.roomWS, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
     }
 
@@ -63,8 +63,7 @@ export class RoomGame implements RoomI {
         this.turnService.firstTurn();
     }
 
-    playerMove(diceRollGamePayload: DiceRollGamePayload): void {
-        const { idUser, isDouble, value } = diceRollGamePayload;
+    playerMove({ idUser, isDouble, value }: DiceRollGamePayload): void {
         this.players[idUser].prison
             ? this.prison.turnPrison(this.players[idUser], value, isDouble)
             : this.turnService.turn(this.players[idUser], value, isDouble)
@@ -76,13 +75,12 @@ export class RoomGame implements RoomI {
         this.turnService.endTurn();
     }
 
-    controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void {
-        const { action, idUser, indexCompany } = contorolCompanyPayload;
+    controlCompany({ action, idUser, indexCompany }: ContorolCompanyPayload): void {
         const cell = this.cellsGame[indexCompany];
         ('controlCompany' in cell) ? cell.controlCompany(action, this.players[idUser]) : '';
     };
 
-    controlAuction(idUser: string, action: controlAuction): void {
+    controlAuction({ idUser, action }: ControlAuctionPayload): void {
         switch (action) {
             case 'startAuction':
                 const cellId = this.players[idUser].position;
@@ -107,11 +105,26 @@ export class RoomGame implements RoomI {
         };
     }
 
-    offerDealControl(offerDealPayload: OfferDealPayload): void {
-        this.offerService.controlDeal(offerDealPayload);
+    controlDeal({ action, offerDealInfo, idUser }: OfferDealPayload): void {
+        switch (action) {
+            case 'offer':
+                this.offerService.newOffer(offerDealInfo);
+                break;
+            case "refuse":
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.REFUSE_DEAL, idUser });
+                this.turnService.updateTurn();
+                break;
+            case "accept":
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ACCEPT_DEAL, idUser });
+                this.offerService.acceptDeal();
+                this.turnService.updateTurn();
+                break;
+            default:
+                break;
+        };
     }
 
-    addChatMessage(message: string, idUser: string): void {
+    addChatMessage({ message, idUser }: MessageChatGamePayload): void {
         this.chat.addMessage(message, this.players[idUser]);
     }
 

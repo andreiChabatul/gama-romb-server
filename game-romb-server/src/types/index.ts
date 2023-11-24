@@ -1,12 +1,12 @@
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { ContorolCompanyPayload, DiceRollGamePayload, OfferDealPayload } from "./websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
 export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
-export type cells = CellEmptyI | CellCompanyI | CellDefault;
+export type cells = CellCompanyI | CellDefault;
 export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
 export type countryCompanyNoMonopoly = 'japan';
@@ -72,7 +72,6 @@ export interface PlayerDefaultI {
     get capital(): number;
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
-
 }
 
 export interface CellDefault {
@@ -97,11 +96,6 @@ export interface CellCompanyI extends CellDefault {
     set owned(player: string);
 }
 
-export interface CellEmptyI extends CellDefault {
-
-    checkPayCell(): infoCellButtons;
-}
-
 export interface companyCheckNoMonopoly {
     [key: number]: number[]
 }
@@ -119,11 +113,16 @@ export interface RoomI {
     addPlayer(id: string, client: WebSocket): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
     activeCell(idUser: string): void;
+    addChatMessage(messageChatGamePayload: MessageChatGamePayload): void;
+    controlAuction(controlAuctionPayload: ControlAuctionPayload): void;
+    controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
-    offerDealControl(offerDealPayload: OfferDealPayload): void;
-    addChatMessage(message: string, idUser: string): void;
-    controlAuction(idUser: string, action: controlAuction): void;
     returnInfoRoom(): InfoRoom;
+}
+
+export interface OfferServiceI {
+    newOffer(offerDealInfo: offerDealInfo): void;
+    acceptDeal(): void;
 }
 
 export interface AuctionI {
