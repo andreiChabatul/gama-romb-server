@@ -102,13 +102,13 @@ export class PlayerDefault implements PlayerDefaultI {
 
     set addTotal(value: number) {
         this._total += value;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, playerId: this.id, valueroll: value });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
         this.updatePlayer();
     }
 
     minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
         this._total -= valueroll;
-        this.chat.addSystemMessage({ action, playerId: this.id, valueroll, cellId });
+        this.chat.addSystemMessage({ action, idUser: this.id, valueroll, cellId });
         this.updatePlayer();
     }
 

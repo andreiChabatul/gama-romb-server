@@ -19,4 +19,8 @@ export enum EMESSAGE_CLIENT {
     ACCEPT_DEAL = 'acceptDealInfo',
     LEAVE_PRISON = 'leavePrison',
     GET_IN_PRISON = 'getInPrison',
+    START_AUCTION ='startAuction',
+    LEAVE_AUCTION ='leaveAuction',
+    STEP_AUCTION ='stepAuction',
+    END_AUCTION ='endAuction',
 }

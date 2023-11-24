@@ -14,7 +14,7 @@ export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden
 export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
 export type nameCell = nameCompany | nameCellEmpty;
 export type dealPerson = 'offerPerson' | 'receivePerson';
-export type descAuction = 'active' | 'wait' | 'inactive';
+export type statePlayer = 'active' | 'wait' | 'inactive';
 export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
 
 export interface Player extends UpdatePlayer {
@@ -152,7 +152,7 @@ export interface ChatMessage extends SystemMessage {
 
 export interface SystemMessage {
     action?: EMESSAGE_CLIENT,
-    playerId?: string,
+    idUser?: string,
     cellId?: number,
     valueroll?: number,
 }
@@ -219,6 +219,6 @@ export type infoAuction = {
     currentPrice: number;
     currentPlayer: string;
     action: controlAuction;
-    description: descAuction;
+    statePlayer: statePlayer;
     indexCompany: number;
 }

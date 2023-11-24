@@ -1,5 +1,4 @@
-import { AuctionI, CellCompanyI, PlayersGame, controlAuction, descAuction, infoAuction } from "src/types";
-import { Chat } from "../chatGame";
+import { AuctionI, CellCompanyI, PlayersGame, controlAuction, infoAuction, statePlayer } from "src/types";
 import { AUCTION_STEP } from "src/app/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
@@ -12,7 +11,7 @@ export class AuctionCompany implements AuctionI {
     action: controlAuction;
     playersId: string[];
 
-    constructor(private players: PlayersGame, private roomWS: Room_WS, private chat: Chat) { }
+    constructor(private players: PlayersGame, private roomWS: Room_WS) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.playersId = Object.keys(this.players);
@@ -21,9 +20,6 @@ export class AuctionCompany implements AuctionI {
         this.currentPrice = cell.infoCompany.priceCompany;
         this.action = 'startAuction';
         this.auctionWinner = '';
-        // this.chat.addMessage(changeMessage(
-        //     AUCTION_DESCRIPTION[this.language].auctionStart, this.companyInfo
-        // ));
         this.filterParticipants(idUser);
         this.nextStep();
     }
@@ -32,37 +28,25 @@ export class AuctionCompany implements AuctionI {
         this.auctionWinner = idUser;
         this.currentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
         this.filterParticipants();
-        // this.chat.addMessage(changeMessage(
-        //     AUCTION_DESCRIPTION[this.language].auctionStep + this.priceAuction,
-        //     this.companyInfo,
-        //     player
-        // ))
         this.nextStep();
     }
 
-    filterParticipants(idUser?: string): void {
+    leaveAuction(idUser: string): void {
+        this.filterParticipants(idUser);
+        this.nextStep();
+    }
+
+    private filterParticipants(idUser?: string): void {
         const index = this.playersId.indexOf(idUser);
         this.playersId.splice(index, 1);
         this.playersId.map((id, index) =>
             (this.players[id].total < this.currentPrice) ? this.playersId.splice(index, 1) : '');
     }
 
-    leaveAuction(idUser: string): void {
-        // this.chat.addMessage(changeMessage(
-        //     AUCTION_DESCRIPTION[this.language].auctionLeave,
-        //     null,
-        //     player
-        // ));
-        this.filterParticipants(idUser);
-        this.nextStep();
-    }
-
     private nextStep(): void {
-        if ((this.playersId.length === 1 && this.auctionWinner) || this.playersId.length === 0) {
-            this.endAuction();
-        } else {
-            (this.indexActive > this.playersId.length - 2) ? 0 : this.indexActive += 1;
-        }
+        ((this.playersId.length === 1 && this.auctionWinner) || this.playersId.length === 0)
+            ? this.endAuction()
+            : (this.indexActive > this.playersId.length - 2) ? 0 : this.indexActive += 1;
         this.sendAllPlayers();
     }
 
@@ -71,25 +55,25 @@ export class AuctionCompany implements AuctionI {
         this.action = 'endAuction'
     }
 
-    sendInfoPlayer(idUser: string, description: descAuction): void {
+    private sendInfoPlayer(idUser: string, statePlayer: statePlayer): void {
         const payload: infoAuction = {
             indexCompany: this.cell.index,
             currentPrice: this.currentPrice,
             currentPlayer: this.auctionWinner ? this.players[this.auctionWinner].name : '',
             action: this.action,
-            description
+            statePlayer
         };
         this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.AUCTION, payload);
     }
 
-    sendAllPlayers(): void {
+    private sendAllPlayers(): void {
         Object.values(this.players).map((player) => {
             if (!player.bankrupt) {
-                let desc: descAuction = this.playersId.includes(player.userId) ? 'wait' : 'inactive';
+                let desc: statePlayer = this.playersId.includes(player.userId) ? 'wait' : 'inactive';
                 player.userId === this.playersId[this.indexActive] ? desc = 'active' : '';
                 this.sendInfoPlayer(player.userId, desc);
             }
-        })
+        });
     }
 
 }

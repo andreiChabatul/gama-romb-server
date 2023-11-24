@@ -25,7 +25,7 @@ export class OfferService {
     }
 
     private acceptDeal(): void {
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ACCEPT_DEAL, playerId: this.offerDealInfo.receivePerson.idPerson });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ACCEPT_DEAL, idUser: this.offerDealInfo.receivePerson.idPerson });
 
         const offerPerson = this.offerDealInfo.offerPerson;
         const receivePerson = this.offerDealInfo.receivePerson;
@@ -50,7 +50,7 @@ export class OfferService {
     }
 
     private refuseDeal(): void {
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.REFUSE_DEAL, playerId: this.offerDealInfo.receivePerson.idPerson })
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.REFUSE_DEAL, idUser: this.offerDealInfo.receivePerson.idPerson })
         this.closeDeal();
     }
 

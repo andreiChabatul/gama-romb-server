@@ -10,12 +10,12 @@ export class Prison implements PrisonI {
     addPrisoner(player: PlayerDefaultI): void {
         player.prison = true;
         player.position = 12;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.GET_IN_PRISON, playerId: player.userId });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.GET_IN_PRISON, idUser: player.userId });
     }
 
     deletePrisoner(player: PlayerDefaultI): void {
         player.prison = false;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_PRISON, playerId: player.userId });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_PRISON, idUser: player.userId });
         this.turnService.endTurn();
     }
 

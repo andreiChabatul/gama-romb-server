@@ -5,7 +5,7 @@ import { WebSocket } from "ws";
 import { PlayerDefault } from "./player";
 import { CellCompany } from "./cells/cell.company";
 import { defaultCell } from "./cells/defaultCell";
-import { AuctionCompany } from "./auctionCompany";
+import { AuctionCompany } from "./auction.service";
 import { TurnService } from "./turn.service";
 import { CellEmpty } from "./cells/cell.empty";
 import { ContorolCompanyPayload, DiceRollGamePayload, EACTION_WEBSOCKET, OfferDealPayload, Room_WS } from "src/types/websocket";
@@ -16,6 +16,7 @@ import { OfferService } from "./offer.service";
 import { CellTax } from "./cells/cell.tax";
 import { CellProfit } from "./cells/cell.profit";
 import { CellLoss } from "./cells/cell.loss";
+import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class RoomGame implements RoomI {
 
@@ -39,7 +40,7 @@ export class RoomGame implements RoomI {
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
-        this.auction = new AuctionCompany(this.players, this.roomWS, this.chat);
+        this.auction = new AuctionCompany(this.players, this.roomWS);
         this.prison = new Prison(this.turnService, this.chat);
         this.offerService = new OfferService(this.players, this.roomWS, this.chat, this.turnService, this.cellsGame);
         gameCreateDto.visibility ? this.isVisiblity = true : this.isVisiblity = false;
@@ -84,22 +85,26 @@ export class RoomGame implements RoomI {
     controlAuction(idUser: string, action: controlAuction): void {
         switch (action) {
             case 'startAuction':
-                const indexCell = this.players[idUser].position;
-                const cell = this.cellsGame[indexCell];
+                const cellId = this.players[idUser].position;
+                const cell = this.cellsGame[cellId];
                 ('controlCompany' in cell) ? this.auction.startAuction(cell, idUser) : '';
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.START_AUCTION, cellId });
                 break;
             case "leaveAuction":
                 this.auction.leaveAuction(idUser);
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_AUCTION, idUser });
                 break;
             case "stepAuction":
                 this.auction.stepAuction(idUser);
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.STEP_AUCTION, idUser });
                 break;
             case "endAuction":
-                this.turnService.endTurn();
+                this.turnService.updateTurn();
+                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.END_AUCTION });
                 break;
             default:
                 break;
-        }
+        };
     }
 
     offerDealControl(offerDealPayload: OfferDealPayload): void {
@@ -147,11 +152,7 @@ export class RoomGame implements RoomI {
                     this.cellsGame[indexCell] = new CellLoss(indexCell, this.roomWS);
                     break;
                 }
-
             }
-
-
-
         })
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
     }

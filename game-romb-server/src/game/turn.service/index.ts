@@ -23,7 +23,7 @@ export class TurnService {
     firstTurn(): void {
         this.checkBankrot();
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, playerId: this.activePlayer().userId });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer().userId });
         this.updateTurn();
     }
 
@@ -34,7 +34,7 @@ export class TurnService {
         if (cell) {
             this.chat.addSystemMessage({
                 action: EMESSAGE_CLIENT.INTO_CELL,
-                playerId: player.userId,
+                idUser: player.userId,
                 cellId: cell.index,
                 valueroll: value
             })
@@ -46,11 +46,11 @@ export class TurnService {
         if (this.isDouble) {
             this.doubleCounter++;
             this.checkDouble();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, playerId: this.activePlayer().userId });
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer().userId });
         } else {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, playerId: this.activePlayer().userId });
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer().userId });
         }
         this.updateTurn();
     }
