@@ -1,5 +1,5 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
-import { CellCompanyI, PlayerDefaultI, PlayersGame, cells, companyCheckNoMonopoly } from "src/types";
+import { CellCompanyI, PlayerDefaultI, playersGame, cells, companyCheckNoMonopoly } from "src/types";
 import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
@@ -9,11 +9,11 @@ export class TurnService {
     private indexActive: number;
     private isDouble: boolean;
     private doubleCounter: number = 0;
-    private playersActive: PlayersGame = {};
+    private playersActive: playersGame = {};
 
     constructor(
         private roomWS: Room_WS,
-        private players: PlayersGame,
+        private players: playersGame,
         private cellsGame: cells[],
         private chat: Chat,
     ) { }

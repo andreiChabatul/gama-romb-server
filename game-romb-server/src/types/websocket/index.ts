@@ -4,9 +4,6 @@ import { controlAuction, controlCompany, controlDeal, offerDealInfo } from "..";
 export enum EACTION_WEBSOCKET {
     LIST_ROOM = 'list room',
     CONTROL_ROOM = 'control room',
-    MESSAGE_CHAT = 'message chat',
-    INIT_PLAYER = 'init player',
-    INIT_BOARD = 'init board',
     UPDATE_CHAT = 'update chat',
     UPDATE_CELL = 'update cell',
     UPDATE_PLAYER = 'update player',

@@ -37,7 +37,7 @@ export type prisonPlayer = {
     attempt: number;
 }
 
-export type PlayersGame = {
+export type playersGame = {
     [id: string]: PlayerDefaultI;
 }
 
@@ -49,7 +49,7 @@ export interface PrisonI {
 }
 
 export interface ChatI {
-    readonly messages: ChatMessage[];
+    readonly messages: chatMessage[];
     addMessage(message: string, player: PlayerDefaultI): void;
     addSystemMessage(systemMessage: SystemMessage): void;
     updateChat(): void;
@@ -151,7 +151,7 @@ export type UpdateRoom = {
     turnId: string;
 }
 
-export interface ChatMessage extends SystemMessage {
+export interface chatMessage extends SystemMessage {
     message?: string;
     senderName?: string;
     senderColor?: string;
@@ -229,3 +229,18 @@ export type infoAuction = {
     statePlayer: statePlayer;
     indexCompany: number;
 }
+
+export type gameRoom = {
+    chat: chatMessage[];
+    idRoom: string;
+    players: playersGameFront,
+    board: gameCell[];
+    turnId: string;
+    offerDealInfo?: offerDealInfo;
+    infoAuction?: infoAuction;
+}
+
+export type playersGameFront = {
+    [key: string]: Player
+}
+

@@ -1,5 +1,5 @@
 import { Chat } from "../chatGame";
-import { AuctionI, PlayersGame, PrisonI, RoomI, cells, gameCell, infoRoom } from "src/types";
+import { AuctionI, PrisonI, RoomI, cells, gameCell, gameRoom, infoRoom, playersGame } from "src/types";
 import { WebSocket } from "ws";
 import { PlayerDefault } from "../player";
 import { CellCompany } from "../cells/cell.company";
@@ -22,7 +22,7 @@ export class RoomGame implements RoomI {
     playerCount: number;
     roomName: string;
     numberPlayer: number;
-    players: PlayersGame = {};
+    players: playersGame = {};
     private cellsGame: cells[] = [];
     private chat: Chat;
     private auction: AuctionI;
@@ -47,27 +47,35 @@ export class RoomGame implements RoomI {
         this.roomWS.addWebSocket(id, client);
         this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat, this.cellsGame);
         this.numberPlayer++;
-        this.fillCellsGame();
         this.checkStartGame();
-
-        Object.values(this.players).forEach((player) => {
-            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_PLAYER, player.player);
-        })//перенести в старт game
     }
 
     deletePlayer(idUser: string): void {
         delete this.players[idUser];
     }
 
-    private checkStartGame() {
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, { idRoom: this.idRoom });
-        this.turnService.firstTurn();
+    private checkStartGame(): void {
+
+        if (this.amountPlayers === Number(this.playerCount)) {
+            const payload: gameRoom = {
+                idRoom: this.idRoom,
+                players: Object.entries(this.players).reduce((res, curr) => {
+                    res[curr[0]] = curr[1].player;
+                    return res;
+                }, {}),
+                board: this.fillCellsGame(),
+                chat: [],
+                turnId: ''
+            };
+            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, payload);
+            this.turnService.firstTurn();
+        };
     }
 
     playerMove({ idUser, isDouble, value }: DiceRollGamePayload): void {
         this.players[idUser].prison
             ? this.prison.turnPrison(this.players[idUser], value, isDouble)
-            : this.turnService.turn(this.players[idUser], value, isDouble)
+            : this.turnService.turn(this.players[idUser], value, isDouble);
     }
 
     activeCell(idUser: string): void {
@@ -142,36 +150,34 @@ export class RoomGame implements RoomI {
         return Object.keys(this.players).length;
     }
 
-    private fillCellsGame() {
+    private fillCellsGame(): gameCell[] {
         const infoCell: gameCell[] = [];
         defaultCell.map((cell, indexCell) => {
             infoCell[indexCell] = { indexCell, ...cell };
 
             switch (cell.type) {
-                case "company": {
+                case "company":
                     const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.players, indexCell);
                     this.cellsGame[indexCell] = newCellCompany;
-                    infoCell[indexCell] = { ...infoCell[indexCell], company: { ...infoCell[indexCell].company, ...newCellCompany.info } };
+                    infoCell[indexCell] = {
+                        ...infoCell[indexCell],
+                        company: { ...infoCell[indexCell].company, ...newCellCompany.info }
+                    };
                     break;
-                }
-                case "empty": {
+                case "empty":
                     this.cellsGame[indexCell] = new CellEmpty(indexCell, cell.nameCell, this.roomWS, this.prison);
                     break;
-                }
-                case "tax": {
+                case "tax":
                     this.cellsGame[indexCell] = new CellTax(indexCell, cell.nameCell, this.roomWS);
                     break;
-                }
-                case "profit": {
+                case "profit":
                     this.cellsGame[indexCell] = new CellProfit(indexCell, this.roomWS);
                     break;
-                }
-                case "loss": {
+                case "loss":
                     this.cellsGame[indexCell] = new CellLoss(indexCell, this.roomWS);
                     break;
-                }
             }
-        })
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.INIT_BOARD, { board: infoCell })
+        });
+        return infoCell;
     }
 }

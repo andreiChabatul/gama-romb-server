@@ -1,9 +1,9 @@
-import { ChatI, ChatMessage, PlayerDefaultI, SystemMessage } from "src/types";
+import { ChatI, chatMessage, PlayerDefaultI, SystemMessage } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class Chat implements ChatI {
 
-    readonly messages: ChatMessage[] = [];
+    readonly messages: chatMessage[] = [];
 
     constructor(private roomWS: Room_WS) { }
 

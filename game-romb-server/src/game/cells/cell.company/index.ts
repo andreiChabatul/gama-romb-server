@@ -1,4 +1,4 @@
-import { AuctionI, CellCompanyI, CompanyInfo, PlayerDefaultI, PlayersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
+import { AuctionI, CellCompanyI, CompanyInfo, PlayerDefaultI, playersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
@@ -16,7 +16,7 @@ export class CellCompany implements CellCompanyI {
         private roomWS: Room_WS,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionI,
-        private players: PlayersGame,
+        private players: playersGame,
         private _index: number,
     ) {
         this._quantityStock = 0;

@@ -1,4 +1,4 @@
-import { AuctionI, CellCompanyI, PlayersGame, controlAuction, infoAuction, statePlayer } from "src/types";
+import { AuctionI, CellCompanyI, playersGame, controlAuction, infoAuction, statePlayer } from "src/types";
 import { AUCTION_STEP } from "src/app/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
@@ -11,7 +11,7 @@ export class AuctionCompany implements AuctionI {
     action: controlAuction;
     playersId: string[];
 
-    constructor(private players: PlayersGame, private roomWS: Room_WS) { }
+    constructor(private players: playersGame, private roomWS: Room_WS) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.playersId = Object.keys(this.players);
