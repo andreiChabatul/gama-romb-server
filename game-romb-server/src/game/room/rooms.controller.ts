@@ -52,7 +52,9 @@ export class RoomsController implements RoomsControllerI {
 
             case EACTION_WEBSOCKET.END_GAME: {
                 const endGamePayload = payloadSocket.payload as EndGamePayload;
-                this.rooms[endGamePayload.idRoom].endGame(endGamePayload);
+                this.rooms[endGamePayload.idRoom]
+                    ? this.rooms[endGamePayload.idRoom].endGame(endGamePayload)
+                    : '';
                 break;
             }
 

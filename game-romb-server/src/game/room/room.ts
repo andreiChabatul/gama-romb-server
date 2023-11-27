@@ -140,6 +140,9 @@ export class RoomGame implements RoomI {
                 break;
             case "stay":
                 this.turnService.endTurn();
+            case "endGame":
+                this.players = {};
+                break;
             default:
                 break;
         }

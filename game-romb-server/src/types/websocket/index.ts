@@ -21,7 +21,7 @@ export enum EACTION_WEBSOCKET {
 }
 
 export type controlRoom = 'create' | 'leave' | 'join' | 'list';
-export type endGameAction = 'leave' | 'stay';
+export type endGameAction = 'leave' | 'stay' | 'endGame';
 export type gameCreate = {
     roomName: string
     players: number
