@@ -135,6 +135,7 @@ export class RoomGame implements RoomI {
     endGame({ idUser, action }: EndGamePayload): void {
         switch (action) {
             case 'leave':
+                this.players[idUser].bankrupt = true;
                 this.roomWS.leavePlayer(idUser);
                 this.turnService.endTurn();
                 break;
