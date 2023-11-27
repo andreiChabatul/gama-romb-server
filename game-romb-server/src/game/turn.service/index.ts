@@ -19,9 +19,9 @@ export class TurnService {
     ) { }
 
     firstTurn(): void {
-        this.checkBankrot();
+        this.filterBankrupt();
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer().userId });
+        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer.userId });
         this.updateTurn();
     }
 
@@ -44,18 +44,19 @@ export class TurnService {
         if (this.isDouble) {
             this.doubleCounter++;
             this.checkDouble();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer().userId });
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
         } else {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer().userId });
+            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
         }
         this.updateTurn();
     }
 
     endTurn(): void {
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_TURN);
-        this.nextTurn();
+        this.filterBankrupt();
+        this.checkWinner() ? this.nextTurn() : '';
     };
 
     updateTurn(): void {
@@ -63,7 +64,7 @@ export class TurnService {
         this.updateNoMonopolyCompany();
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN,
             {
-                turnId: this.activePlayer().userId
+                turnId: this.activePlayer.userId
             });
     }
 
@@ -118,12 +119,11 @@ export class TurnService {
         })
     }
 
-    private activePlayer(): PlayerDefaultI {
+    get activePlayer(): PlayerDefaultI {
         return this.players[Object.keys(this.playersActive)[this.indexActive]];
     }
 
     private calcIndexActive(): number {
-        this.checkBankrot();
         let futureIndexActive = this.indexActive + 1;
         futureIndexActive >= Object.keys(this.playersActive).length ? futureIndexActive = 0 : '';
         return futureIndexActive;
@@ -136,12 +136,19 @@ export class TurnService {
         }
     }
 
-    checkBankrot(): void {
-        this.playersActive = { ...this.players };
-        Object.keys(this.playersActive).forEach((key) =>
-            (this.playersActive[key].bankrupt)
-                ? delete this.playersActive[key]
-                : ''
-        );
-    }
+    filterBankrupt(): void {
+        this.playersActive = Object.fromEntries(
+            Object.entries(this.players).filter(([, value]) => !value.bankrupt));
+    };
+
+    checkWinner(): boolean {
+        const userIds = Object.keys(this.playersActive);
+        if (userIds.length === 1) {
+            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_GAME, { winUser: userIds[0] })
+            return false;
+        } else {
+            return true;
+        }
+    };
+
 }

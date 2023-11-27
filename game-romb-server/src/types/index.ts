@@ -1,5 +1,5 @@
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload } from "./websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EndGamePayload, MessageChatGamePayload, OfferDealPayload } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
@@ -124,6 +124,7 @@ export interface RoomI {
     controlAuction(controlAuctionPayload: ControlAuctionPayload): void;
     controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
+    endGame(endGamePayload: EndGamePayload): void
     returnInfoRoom(): infoRoom;
     get amountPlayers(): number;
 }

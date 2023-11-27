@@ -16,10 +16,12 @@ export enum EACTION_WEBSOCKET {
     CONTROL_DEAL = 'control deal',
     BANKRUPT = 'bankrupt',
     ACTIVE_CELL = 'active cell',
-    AUCTION = 'auction'
+    AUCTION = 'auction',
+    END_GAME = 'end game'
 }
 
 export type controlRoom = 'create' | 'leave' | 'join' | 'list';
+export type endGameAction = 'leave' | 'stay';
 export type gameCreate = {
     roomName: string
     players: number
@@ -65,6 +67,10 @@ export interface ControlAuctionPayload extends DefaultPayload {
     action: controlAuction;
 }
 
+export interface EndGamePayload extends DefaultPayload {
+    action: endGameAction;
+}
+
 export interface OfferDealPayload extends DefaultPayload {
     offerDealInfo?: offerDealInfo;
     action: controlDeal;
@@ -75,4 +81,5 @@ export interface Room_WS {
     addWebSocket(is: string, webSocket: WebSocket): void;
     sendAllPlayers(action: EACTION_WEBSOCKET, payload?: {}): void;
     sendOnePlayer(id: string, action: EACTION_WEBSOCKET, payload?: {}): void;
+    leavePlayer(idUser: string): void;
 }

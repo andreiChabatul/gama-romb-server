@@ -1,5 +1,5 @@
 import { RoomsControllerI, rooms } from "src/types";
-import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, payloadSocket } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, EndGamePayload, payloadSocket } from "src/types/websocket";
 import { WebSocket } from "ws";
 import { RoomGame } from "./room";
 import { v4 as uuidv4 } from 'uuid'
@@ -47,6 +47,12 @@ export class RoomsController implements RoomsControllerI {
             case EACTION_WEBSOCKET.AUCTION: {
                 const controlAuctionPayload = payloadSocket.payload as ControlAuctionPayload;
                 this.rooms[controlAuctionPayload.idRoom].controlAuction(controlAuctionPayload);
+                break;
+            }
+
+            case EACTION_WEBSOCKET.END_GAME: {
+                const endGamePayload = payloadSocket.payload as EndGamePayload;
+                this.rooms[endGamePayload.idRoom].endGame(endGamePayload);
                 break;
             }
 

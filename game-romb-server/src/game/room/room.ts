@@ -7,7 +7,7 @@ import { defaultCell } from "../cells/defaultCell";
 import { AuctionCompany } from "../auction.service";
 import { TurnService } from "../turn.service";
 import { CellEmpty } from "../cells/cell.empty";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS, gameCreate } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, Room_WS, gameCreate } from "src/types/websocket";
 import { ROOM_WS } from "../roomWS";
 import { COLORS_PLAYER } from "src/app/const";
 import { Prison } from "../prison";
@@ -55,8 +55,7 @@ export class RoomGame implements RoomI {
     }
 
     private checkStartGame(): void {
-
-        if (this.amountPlayers === Number(this.playerCount)) {
+        if (this.amountPlayers === Number(this.playerCount)) { //убрать труе потом, временно чтобы тестть
             const payload: gameRoom = {
                 idRoom: this.idRoom,
                 players: Object.entries(this.players).reduce((res, curr) => {
@@ -133,6 +132,20 @@ export class RoomGame implements RoomI {
         };
     }
 
+    endGame({ idUser, action }: EndGamePayload): void {
+        switch (action) {
+            case 'leave':
+                this.roomWS.leavePlayer(idUser);
+                this.turnService.endTurn();
+                break;
+            case "stay":
+                this.turnService.endTurn();
+            default:
+                break;
+        }
+
+    }
+
     addChatMessage({ message, idUser }: MessageChatGamePayload): void {
         this.chat.addMessage(message, this.players[idUser]);
     }
@@ -159,10 +172,7 @@ export class RoomGame implements RoomI {
                 case "company":
                     const newCellCompany = new CellCompany(this.roomWS, cell.company, this.auction, this.players, indexCell);
                     this.cellsGame[indexCell] = newCellCompany;
-                    infoCell[indexCell] = {
-                        ...infoCell[indexCell],
-                        company: { ...infoCell[indexCell].company, ...newCellCompany.info }
-                    };
+                    infoCell[indexCell].company = { ...infoCell[indexCell].company, ...newCellCompany.info }
                     break;
                 case "empty":
                     this.cellsGame[indexCell] = new CellEmpty(indexCell, cell.nameCell, this.roomWS, this.prison);
