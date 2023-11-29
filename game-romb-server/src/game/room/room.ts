@@ -19,8 +19,6 @@ import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class RoomGame implements RoomI {
 
-    playerCount: number;
-    roomName: string;
     numberPlayer: number;
     players: playersGame = {};
     private cellsGame: cells[] = [];
@@ -30,10 +28,10 @@ export class RoomGame implements RoomI {
     private prison: PrisonI;
     private roomWS: Room_WS;
     private offerService: OfferService;
+    private infoRoom: gameCreate;
 
     constructor(gameCreateDto: gameCreate, private idRoom: string) {
-        this.roomName = gameCreateDto.roomName;
-        this.playerCount = gameCreateDto.players;
+        this.infoRoom = gameCreateDto;
         this.numberPlayer = 0;
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
@@ -55,7 +53,7 @@ export class RoomGame implements RoomI {
     }
 
     private checkStartGame(): void {
-        if (this.amountPlayers === Number(this.playerCount)) { //убрать труе потом, временно чтобы тестть
+        if (this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
             const payload: gameRoom = {
                 idRoom: this.idRoom,
                 players: Object.entries(this.players).reduce((res, curr) => {
@@ -64,7 +62,8 @@ export class RoomGame implements RoomI {
                 }, {}),
                 board: this.fillCellsGame(),
                 chat: [],
-                turnId: ''
+                turnId: '',
+                timeTurn: this.infoRoom.timeTurn
             };
             this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, payload);
             this.turnService.firstTurn();
@@ -144,6 +143,10 @@ export class RoomGame implements RoomI {
             case "endGame":
                 this.players = {};
                 break;
+            case "endTime":
+                this.players[idUser].bankrupt = true;
+                this.activeCell(idUser);
+                break;
             default:
                 break;
         }
@@ -156,9 +159,8 @@ export class RoomGame implements RoomI {
 
     returnInfoRoom(): infoRoom {
         return {
-            maxPLayers: this.playerCount,
+            ...this.infoRoom,
             idRoom: this.idRoom,
-            roomName: this.roomName,
             players: Object.values(this.players).map((player) => player.player),
         };
     }

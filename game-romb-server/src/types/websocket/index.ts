@@ -21,11 +21,11 @@ export enum EACTION_WEBSOCKET {
 }
 
 export type controlRoom = 'create' | 'leave' | 'join' | 'list';
-export type endGameAction = 'leave' | 'stay' | 'endGame';
+export type endGameAction = 'leave' | 'stay' | 'endGame' | 'endTime';
 export type gameCreate = {
     roomName: string
-    players: number
-    runningGame: number
+    maxPlayers: number
+    timeTurn: number
     idUser: string
 }
 export interface payloadSocket {

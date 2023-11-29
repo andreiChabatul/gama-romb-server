@@ -141,7 +141,7 @@ export interface AuctionI {
 }
 
 export type infoRoom = {
-    maxPLayers: number,
+    maxPlayers: number,
     idRoom: string,
     roomName: string,
     players: Player[],
@@ -237,6 +237,7 @@ export type gameRoom = {
     players: playersGameFront,
     board: gameCell[];
     turnId: string;
+    timeTurn: number;
     offerDealInfo?: offerDealInfo;
     infoAuction?: infoAuction;
 }
