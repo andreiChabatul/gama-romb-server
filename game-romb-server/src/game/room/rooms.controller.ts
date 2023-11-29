@@ -71,18 +71,18 @@ export class RoomsController implements RoomsControllerI {
     }
 
 
-    controlRoom({ action, gameCreate, idUser, idRoomJoin }: ControlRoomPayload, client: WebSocket): void {
+    controlRoom({ action, gameCreate, idUser, idRoomJoin, colorPlayer }: ControlRoomPayload, client: WebSocket): void {
         switch (action) {
             case 'create':
                 const idRoom = uuidv4();
                 const room = new RoomGame(gameCreate, idRoom);
                 this.rooms[idRoom] = room;
-                room.addPlayer(idUser, client);
+                room.addPlayer(idUser, gameCreate.colorPlayer, client);
                 break;
             case "list":
                 break;
             case "join":
-                this.rooms[idRoomJoin].addPlayer(idUser, client);
+                this.rooms[idRoomJoin].addPlayer(idUser, colorPlayer, client);
                 break;
             case "leave":
                 this.rooms[idRoomJoin].deletePlayer(idUser);

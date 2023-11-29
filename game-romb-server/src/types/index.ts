@@ -116,7 +116,7 @@ export interface RoomsControllerI {
 }
 
 export interface RoomI {
-    addPlayer(id: string, client: WebSocket): void;
+    addPlayer(id: string, color: string, client: WebSocket): void;
     deletePlayer(idUser: string): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
     activeCell(idUser: string): void;

@@ -19,7 +19,6 @@ import { EMESSAGE_CLIENT } from "src/app/const/enum";
 
 export class RoomGame implements RoomI {
 
-    numberPlayer: number;
     players: playersGame = {};
     private cellsGame: cells[] = [];
     private chat: Chat;
@@ -32,7 +31,6 @@ export class RoomGame implements RoomI {
 
     constructor(gameCreateDto: gameCreate, private idRoom: string) {
         this.infoRoom = gameCreateDto;
-        this.numberPlayer = 0;
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
         this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
@@ -41,10 +39,9 @@ export class RoomGame implements RoomI {
         this.offerService = new OfferService(this.players, this.roomWS, this.cellsGame);
     }
 
-    addPlayer(id: string, client: WebSocket): void {
+    addPlayer(id: string, color: string, client: WebSocket): void {
         this.roomWS.addWebSocket(id, client);
-        this.players[id] = new PlayerDefault(this.roomWS, id, COLORS_PLAYER[this.numberPlayer], this.chat, this.cellsGame);
-        this.numberPlayer++;
+        this.players[id] = new PlayerDefault(id, color, this.roomWS, this.chat, this.cellsGame);
         this.checkStartGame();
     }
 

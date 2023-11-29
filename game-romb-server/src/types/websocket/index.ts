@@ -27,6 +27,7 @@ export type gameCreate = {
     maxPlayers: number
     timeTurn: number
     idUser: string
+    colorPlayer: string;
 }
 export interface payloadSocket {
     action: EACTION_WEBSOCKET,
@@ -37,7 +38,7 @@ export interface ControlRoomPayload extends DefaultPayload {
     action: controlRoom;
     gameCreate: gameCreate;
     idRoomJoin?: string;
-
+    colorPlayer?: string;
 }
 
 export interface DefaultPayload {

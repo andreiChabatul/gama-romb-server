@@ -70,7 +70,7 @@ export class CellCompany implements CellCompanyI {
     }
 
     payRent(): void {
-        const rentDebt = this.rentCompany;
+        const rentDebt = this._player.bankrupt ? this._player.capital : this.rentCompany;
         const ownedPlayer = this.players[this.owned];
         ownedPlayer.addTotal = rentDebt;
         this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);

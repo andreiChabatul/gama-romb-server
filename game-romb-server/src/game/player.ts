@@ -16,9 +16,9 @@ export class PlayerDefault implements PlayerDefaultI {
     private cellPosition: number;
 
     constructor(
-        private roomWS: Room_WS,
         private id: string,
         private _color: string,
+        private roomWS: Room_WS,
         private chat: Chat,
         private cells: cells[]) {
         const playerNew = users.find(user => user.userId === id);
