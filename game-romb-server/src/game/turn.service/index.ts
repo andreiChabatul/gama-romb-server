@@ -56,8 +56,8 @@ export class TurnService {
     endTurn(): void {
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_TURN);
         this.filterBankrupt();
-        this.checkWinner() ? this.nextTurn() : '';
-        // this.nextTurn() //template
+        // this.checkWinner() ? this.nextTurn() : '';
+        this.nextTurn() //template
     };
 
     updateTurn(): void {

@@ -50,7 +50,7 @@ export class RoomGame implements RoomI {
     }
 
     private checkStartGame(): void {
-        if (this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
+        if (true || this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
             const payload: gameRoom = {
                 idRoom: this.idRoom,
                 players: Object.entries(this.players).reduce((res, curr) => {
