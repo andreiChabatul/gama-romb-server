@@ -1,5 +1,5 @@
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EndGamePayload, MessageChatGamePayload, OfferDealPayload } from "./websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, payloadSocket } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
@@ -110,7 +110,7 @@ export type rooms = {
 }
 
 export interface RoomsControllerI {
-    processing(client: WebSocket, payload: string): void;
+    processing(client: WebSocket, payload: payloadSocket): void;
     disconnected(client: WebSocket): void;
     addSocket(client: WebSocket): void
 }

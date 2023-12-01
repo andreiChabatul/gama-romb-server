@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import { RoomsControllerI } from 'src/types';
 import { RoomsController } from 'src/game/room/rooms.controller';
 import { Server } from 'http';
+import { EACTION_WEBSOCKET, payloadSocket } from 'src/types/websocket';
 
 @WebSocketGateway(3100, {
   cors: {
@@ -20,7 +21,7 @@ export class AppGateway {
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: WebSocket, payload: string): void {
+  handleMessage(client: WebSocket, payload: payloadSocket): void {
     this.roomsController.processing(client, payload);
   }
 

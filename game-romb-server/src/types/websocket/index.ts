@@ -14,7 +14,6 @@ export enum EACTION_WEBSOCKET {
     START_GAME = 'start game',
     CONTROL_COMPANY = 'control company',
     CONTROL_DEAL = 'control deal',
-    BANKRUPT = 'bankrupt',
     ACTIVE_CELL = 'active cell',
     AUCTION = 'auction',
     END_GAME = 'end game'
@@ -29,10 +28,7 @@ export type gameCreate = {
     idUser: string
     colorPlayer: string;
 }
-export interface payloadSocket {
-    action: EACTION_WEBSOCKET,
-    payload: {}
-}
+export type payloadSocket = [EACTION_WEBSOCKET, {}];
 
 export interface ControlRoomPayload extends DefaultPayload {
     action: controlRoom;
