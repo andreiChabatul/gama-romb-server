@@ -1,9 +1,9 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import WebSocket from "ws";
 import { RoomsControllerI } from 'src/types';
 import { RoomsController } from 'src/game/room/rooms.controller';
 import { Server } from 'http';
-import { EACTION_WEBSOCKET, payloadSocket } from 'src/types/websocket';
+import { payloadSocket, myWebSocket } from 'src/types/websocket';
 
 @WebSocketGateway(3100, {
   cors: {
@@ -11,7 +11,7 @@ import { EACTION_WEBSOCKET, payloadSocket } from 'src/types/websocket';
   }
 })
 
-export class AppGateway {
+export class AppGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
   roomsController: RoomsControllerI
@@ -21,17 +21,16 @@ export class AppGateway {
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: WebSocket, payload: payloadSocket): void {
+  handleMessage(client: myWebSocket, payload: payloadSocket): void {
+    client.idPlayer = payload[1].idUser;
     this.roomsController.processing(client, payload);
   }
 
-  handleDisconnect(client: WebSocket) {
+  handleDisconnect(client: myWebSocket): void {
     this.roomsController.disconnected(client);
-    // console.log(`Disconnected: ${client}`);
-    //Выполняем действия
   }
 
-  handleConnection(client: WebSocket) {
+  handleConnection(client: myWebSocket) {
     this.roomsController.addSocket(client);
   }
 

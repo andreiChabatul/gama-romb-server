@@ -9,13 +9,13 @@ import { TurnService } from "../turn.service";
 import { CellEmpty } from "../cells/cell.empty";
 import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, Room_WS, gameCreate } from "src/types/websocket";
 import { ROOM_WS } from "../roomWS";
-import { COLORS_PLAYER } from "src/app/const";
 import { Prison } from "../prison";
 import { OfferService } from "../offer.service";
 import { CellTax } from "../cells/cell.tax";
 import { CellProfit } from "../cells/cell.profit";
 import { CellLoss } from "../cells/cell.loss";
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { TIME_DISCONNECT } from "src/app/const";
 
 export class RoomGame implements RoomI {
 
@@ -50,7 +50,7 @@ export class RoomGame implements RoomI {
     }
 
     private checkStartGame(): void {
-        if (true || this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
+        if (this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
             const payload: gameRoom = {
                 idRoom: this.idRoom,
                 players: Object.entries(this.players).reduce((res, curr) => {
@@ -160,6 +160,16 @@ export class RoomGame implements RoomI {
             idRoom: this.idRoom,
             players: Object.values(this.players).map((player) => player.player),
         };
+    }
+
+    disconnectPlayer(idUser: string): void {
+        if (this.players[idUser]) {
+            this.players[idUser].online = false;
+            setTimeout(() => {
+                this.roomWS.leavePlayer(idUser);
+                this.endGame({ idUser, action: "endTime", idRoom: '' })
+            }, TIME_DISCONNECT)
+        }
     }
 
     get amountPlayers(): number {

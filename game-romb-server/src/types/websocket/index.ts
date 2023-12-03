@@ -1,6 +1,10 @@
 import { WebSocket } from "ws";
 import { controlAuction, controlCompany, controlDeal, offerDealInfo } from "..";
 
+export interface myWebSocket extends WebSocket {
+    idPlayer: string;
+}
+
 export enum EACTION_WEBSOCKET {
     LIST_ROOM = 'list room',
     CONTROL_ROOM = 'control room',
@@ -28,7 +32,7 @@ export type gameCreate = {
     idUser: string
     colorPlayer: string;
 }
-export type payloadSocket = [EACTION_WEBSOCKET, {}];
+export type payloadSocket = [EACTION_WEBSOCKET, DefaultPayload];
 
 export interface ControlRoomPayload extends DefaultPayload {
     action: controlRoom;

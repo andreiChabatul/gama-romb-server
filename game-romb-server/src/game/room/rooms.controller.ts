@@ -1,5 +1,5 @@
 import { RoomsControllerI, rooms } from "src/types";
-import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, EndGamePayload, payloadSocket } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, EndGamePayload, payloadSocket, myWebSocket } from "src/types/websocket";
 import { WebSocket } from "ws";
 import { RoomGame } from "./room";
 import { v4 as uuidv4 } from 'uuid'
@@ -96,16 +96,14 @@ export class RoomsController implements RoomsControllerI {
         );
     }
 
-    disconnected(client: WebSocket): void {
-        // console.log(this.sockets[1])
-        // console.log(this.sockets.indexOf(client), 'check')
+    disconnected(client: myWebSocket): void {
+        const index: number = this.sockets.indexOf(client);
+        index > -1 ? this.sockets.splice(index, 1) : '';
+        Object.values(this.rooms).forEach((room) => room.disconnectPlayer(client.idPlayer));
     }
-
 
     addSocket(client: WebSocket): void {
         this.sockets.push(client);
     }
-
-
 
 }
