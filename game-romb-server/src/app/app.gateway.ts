@@ -4,7 +4,7 @@ import { RoomsControllerI } from 'src/types';
 import { RoomsController } from 'src/game/room/rooms.controller';
 import { Server } from 'http';
 
-@WebSocketGateway(3100, {
+@WebSocketGateway(3001, {
   cors: {
     origin: '*',
   }
@@ -31,6 +31,7 @@ export class AppGateway {
   }
 
   handleConnection(client: WebSocket) {
+    console.log('conect')
     this.roomsController.addSocket(client);
   }
 

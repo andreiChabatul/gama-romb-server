@@ -24,7 +24,7 @@ export class AuthService {
             throw new HttpException('Пользователь существует', HttpStatus.BAD_REQUEST);
         };
         const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.prismaService.user.create({ data: { nickName: userDto.nickname, password: hashPassword } });
+        const user = await this.prismaService.user.create({ data: { nickName: userDto.nickname, password: hashPassword, image: '' } }); 
         return { accessToken: this.generateToken(user.nickName, user.id), nickname: user.nickName, idUser: user.id };
     }
 
