@@ -13,6 +13,7 @@ export class PlayerDefault implements PlayerDefaultI {
     private _total: number;
     private _bankrupt: boolean;
     private _prison: prisonPlayer;
+    private _isOnline: boolean;
     private cellPosition: number;
 
     constructor(
@@ -27,6 +28,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._total = INIT_TOTAL;
         this.cellPosition = 0;
         this._prison = { state: false, attempt: 0 };
+        this._isOnline = true;
     }
 
     set position(value: number) {
@@ -82,6 +84,7 @@ export class PlayerDefault implements PlayerDefaultI {
             cellPosition: this.cellPosition,
             prison: this._prison,
             bankrupt: this._bankrupt,
+            online: this._isOnline,
         };
     }
 
@@ -97,6 +100,7 @@ export class PlayerDefault implements PlayerDefaultI {
             cellPosition: this.cellPosition,
             prison: this._prison,
             bankrupt: this._bankrupt,
+            online: this._isOnline
         })
     }
 
@@ -125,6 +129,11 @@ export class PlayerDefault implements PlayerDefaultI {
 
     set attemptPrison(value: number) {
         this._prison.attempt = value;
+        this.updatePlayer();
+    }
+
+    set online(value: boolean) {
+        this._isOnline = value;
         this.updatePlayer();
     }
 

@@ -1,5 +1,5 @@
 import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EndGamePayload, MessageChatGamePayload, OfferDealPayload } from "./websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, myWebSocket, payloadSocket } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
@@ -30,6 +30,7 @@ export interface UpdatePlayer {
     cellPosition: number;
     prison: prisonPlayer;
     bankrupt: boolean;
+    online: boolean;
 }
 
 export type prisonPlayer = {
@@ -72,6 +73,7 @@ export interface PlayerDefaultI {
     get capital(): number;
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
+    set online(value: boolean);
 }
 
 export interface CellDefault {
@@ -110,8 +112,8 @@ export type rooms = {
 }
 
 export interface RoomsControllerI {
-    processing(client: WebSocket, payload: string): void;
-    disconnected(client: WebSocket): void;
+    processing(client: WebSocket, payload: payloadSocket): void;
+    disconnected(client: myWebSocket): void;
     addSocket(client: WebSocket): void
 }
 
@@ -126,6 +128,7 @@ export interface RoomI {
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
     endGame(endGamePayload: EndGamePayload): void
     returnInfoRoom(): infoRoom;
+    disconnectPlayer(idUser: string): void;
     get amountPlayers(): number;
 }
 

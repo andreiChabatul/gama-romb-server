@@ -1,5 +1,5 @@
 import { RoomsControllerI, rooms } from "src/types";
-import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, EndGamePayload, payloadSocket } from "src/types/websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DefaultPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, EndGamePayload, payloadSocket, myWebSocket } from "src/types/websocket";
 import { WebSocket } from "ws";
 import { RoomGame } from "./room";
 import { v4 as uuidv4 } from 'uuid'
@@ -9,67 +9,59 @@ export class RoomsController implements RoomsControllerI {
     rooms: rooms = {};
     sockets: WebSocket[] = [];
 
-    processing(client: WebSocket, payload: string): void {
-        const payloadSocket: payloadSocket = JSON.parse(payload);
-        switch (payloadSocket.action) {
+    processing(client: WebSocket, [action, data]: payloadSocket): void {
+        switch (action) {
 
             case EACTION_WEBSOCKET.CONTROL_ROOM:
-                const controlRoomPayload = payloadSocket.payload as ControlRoomPayload;
+                const controlRoomPayload = data as ControlRoomPayload;
                 this.controlRoom(controlRoomPayload, client);
                 break;
 
             case EACTION_WEBSOCKET.UPDATE_CHAT:
-                const messageChatGamePayload = payloadSocket.payload as MessageChatGamePayload;
+                const messageChatGamePayload = data as MessageChatGamePayload;
                 this.rooms[messageChatGamePayload.idRoom].addChatMessage(messageChatGamePayload);
                 break;
 
             case EACTION_WEBSOCKET.DICE_ROLL:
-                const diceRollPayload = payloadSocket.payload as DiceRollGamePayload;
-                this.rooms[diceRollPayload.idRoom].playerMove(diceRollPayload);
+                const diceRollPayload = data as DiceRollGamePayload;
+                this.rooms[diceRollPayload.idRoom].playerMove(data as DiceRollGamePayload);
                 break;
 
             case EACTION_WEBSOCKET.ACTIVE_CELL:
-                const activeCellPayload = payloadSocket.payload as DefaultPayload;
+                const activeCellPayload = data as DefaultPayload;
                 this.rooms[activeCellPayload.idRoom].activeCell(activeCellPayload.idUser);
                 break;
 
             case EACTION_WEBSOCKET.CONTROL_COMPANY:
-                const controlCompanyPayload = payloadSocket.payload as ContorolCompanyPayload;
+                const controlCompanyPayload = data as ContorolCompanyPayload;
                 this.rooms[controlCompanyPayload.idRoom].controlCompany(controlCompanyPayload);
                 break;
 
             case EACTION_WEBSOCKET.CONTROL_DEAL: {
-                const offerDealPayload = payloadSocket.payload as OfferDealPayload;
+                const offerDealPayload = data as OfferDealPayload;
                 this.rooms[offerDealPayload.idRoom].controlDeal(offerDealPayload);
                 break;
             }
 
             case EACTION_WEBSOCKET.AUCTION: {
-                const controlAuctionPayload = payloadSocket.payload as ControlAuctionPayload;
+                const controlAuctionPayload = data as ControlAuctionPayload;
                 this.rooms[controlAuctionPayload.idRoom].controlAuction(controlAuctionPayload);
                 break;
             }
 
             case EACTION_WEBSOCKET.END_GAME: {
-                const endGamePayload = payloadSocket.payload as EndGamePayload;
+                const endGamePayload = data as EndGamePayload;
                 this.rooms[endGamePayload.idRoom]
                     ? this.rooms[endGamePayload.idRoom].endGame(endGamePayload)
                     : '';
                 break;
             }
 
-            // case EACTION_WEBSOCKET.BANKRUPT: {
-            //   const bankruptlPayload = payloadSocket.payload as DefaultPayload;
-            //   this.rooms[bankruptlPayload.idRoom].playerBankrupt(bankruptlPayload.idUser);
-            //   break;
-            // }
-
             default:
                 break;
         }
 
     }
-
 
     controlRoom({ action, gameCreate, idUser, idRoomJoin, colorPlayer }: ControlRoomPayload, client: WebSocket): void {
         switch (action) {
@@ -104,16 +96,14 @@ export class RoomsController implements RoomsControllerI {
         );
     }
 
-    disconnected(client: WebSocket): void {
-        // console.log(this.sockets[1])
-        // console.log(this.sockets.indexOf(client), 'check')
+    disconnected(client: myWebSocket): void {
+        const index: number = this.sockets.indexOf(client);
+        index > -1 ? this.sockets.splice(index, 1) : '';
+        Object.values(this.rooms).forEach((room) => room.disconnectPlayer(client.idPlayer));
     }
-
 
     addSocket(client: WebSocket): void {
         this.sockets.push(client);
     }
-
-
 
 }
