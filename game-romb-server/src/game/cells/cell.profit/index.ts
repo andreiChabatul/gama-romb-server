@@ -1,4 +1,4 @@
-import { VALUE_CELL } from "src/app/const";
+import { VALUE_CELL } from "src/const";
 import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 

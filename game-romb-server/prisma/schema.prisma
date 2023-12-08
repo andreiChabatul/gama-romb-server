@@ -11,11 +11,22 @@ datasource db {
 }
 
 model User {
-  id    String     @id @default(uuid())
+  id         String     @id @default(uuid())
   createdAt  DateTime   @default(now())
-  password String
-  image String
-  nickName  String @unique
-  numberGame Int @default(0)
-  numberWin Int @default(0)
+  password   String
+  image      String
+  nickName   String     @unique
+  numberGame Int        @default(0)
+  numberWin  Int        @default(0)
+  Token      Token[]
+  @@map("users")
+}
+
+model Token {
+  token      String  @unique 
+  exp        DateTime
+  user       User    @relation(fields: [userId], references: [id])
+  userId     String
+  userAgent  String
+  @@map("tokens")
 }

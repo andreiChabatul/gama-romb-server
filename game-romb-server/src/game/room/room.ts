@@ -1,7 +1,7 @@
 import { Chat } from "../chatGame";
-import { AuctionI, PrisonI, RoomI, cells, gameCell, gameRoom, infoRoom, playersGame } from "src/types";
+import { AuctionI, PrisonI, RoomI, cells, fullPlayer, gameCell, gameRoom, infoRoom, playersGame } from "src/types";
 import { WebSocket } from "ws";
-import { PlayerDefault } from "../player";
+import { PlayerDefault } from "../player/player";
 import { CellCompany } from "../cells/cell.company";
 import { defaultCell } from "../cells/defaultCell";
 import { AuctionCompany } from "../auction.service";
@@ -14,8 +14,10 @@ import { OfferService } from "../offer.service";
 import { CellTax } from "../cells/cell.tax";
 import { CellProfit } from "../cells/cell.profit";
 import { CellLoss } from "../cells/cell.loss";
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { TIME_DISCONNECT } from "src/app/const";
+import { EMESSAGE_CLIENT } from "src/const/enum";
+import { TIME_DISCONNECT } from "src/const";
+import { emptyPlayer } from "../player/empty.player";
+import { UserService } from "src/user/user.service";
 
 export class RoomGame implements RoomI {
 
@@ -29,7 +31,7 @@ export class RoomGame implements RoomI {
     private offerService: OfferService;
     private infoRoom: gameCreate;
 
-    constructor(gameCreateDto: gameCreate, private idRoom: string) {
+    constructor(gameCreateDto: gameCreate, private idRoom: string, private userService: UserService) {
         this.infoRoom = gameCreateDto;
         this.roomWS = new ROOM_WS();
         this.chat = new Chat(this.roomWS);
@@ -49,12 +51,12 @@ export class RoomGame implements RoomI {
         delete this.players[idUser];
     }
 
-    private checkStartGame(): void {
+    private async checkStartGame(): Promise<void> {
         if (this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
             const payload: gameRoom = {
                 idRoom: this.idRoom,
-                players: Object.entries(this.players).reduce((res, curr) => {
-                    res[curr[0]] = curr[1].player;
+                players: (await this.fillPlayers()).reduce((res, curr) => {
+                    res[curr.id] = curr;
                     return res;
                 }, {}),
                 board: this.fillCellsGame(),
@@ -131,9 +133,11 @@ export class RoomGame implements RoomI {
     endGame({ idUser, action }: EndGamePayload): void {
         switch (action) {
             case 'leave':
-                this.players[idUser].bankrupt = true;
                 this.roomWS.leavePlayer(idUser);
-                this.turnService.endTurn();
+                this.players[idUser].bankrupt = true;
+                this.activeCell(idUser);
+                delete this.players[idUser];
+                this.turnService.updateTurn();
                 break;
             case "stay":
                 this.turnService.endTurn();
@@ -141,8 +145,11 @@ export class RoomGame implements RoomI {
                 this.players = {};
                 break;
             case "endTime":
+                this.roomWS.leavePlayer(idUser);
                 this.players[idUser].bankrupt = true;
                 this.activeCell(idUser);
+                delete this.players[idUser];
+                this.turnService.updateTurn();
                 break;
             default:
                 break;
@@ -151,24 +158,31 @@ export class RoomGame implements RoomI {
     }
 
     addChatMessage({ message, idUser }: MessageChatGamePayload): void {
-        this.chat.addMessage(message, this.players[idUser]);
+        this.chat.addMessage(message, idUser);
     }
 
-    returnInfoRoom(): infoRoom {
+    async returnInfoRoom(): Promise<infoRoom> {
         return {
             ...this.infoRoom,
             idRoom: this.idRoom,
-            players: Object.values(this.players).map((player) => player.player),
+            players: await this.fillPlayers(),
         };
+    }
+
+    async fillPlayers(): Promise<fullPlayer[]> {
+        const playersPrisma = await this.userService.findMany(Object.keys(this.players));
+        const players = playersPrisma.map((player) => {
+            return { ...emptyPlayer, ...player, color: this.players[player.id].color }
+        });
+        return players;
     }
 
     disconnectPlayer(idUser: string): void {
         if (this.players[idUser]) {
             this.players[idUser].online = false;
-            setTimeout(() => {
-                this.roomWS.leavePlayer(idUser);
-                this.endGame({ idUser, action: "endTime", idRoom: '' })
-            }, TIME_DISCONNECT)
+            setTimeout(() =>
+                this.endGame({ idUser, action: "leave", idRoom: '' })
+                , TIME_DISCONNECT)
         }
     }
 

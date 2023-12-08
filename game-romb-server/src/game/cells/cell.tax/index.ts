@@ -1,4 +1,4 @@
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 

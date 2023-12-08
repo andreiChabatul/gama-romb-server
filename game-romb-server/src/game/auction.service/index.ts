@@ -1,5 +1,5 @@
 import { AuctionI, CellCompanyI, playersGame, controlAuction, infoAuction, statePlayer } from "src/types";
-import { AUCTION_STEP } from "src/app/const";
+import { AUCTION_STEP } from "src/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class AuctionCompany implements AuctionI {
@@ -59,7 +59,7 @@ export class AuctionCompany implements AuctionI {
         const payload: infoAuction = {
             indexCompany: this.cell.index,
             currentPrice: this.currentPrice,
-            currentPlayer: this.auctionWinner ? this.players[this.auctionWinner].name : '',
+            currentPlayer: this.auctionWinner ? this.players[this.auctionWinner].userId : '',
             action: this.action,
             statePlayer
         };

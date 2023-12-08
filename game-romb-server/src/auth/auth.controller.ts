@@ -1,6 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Res, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginDto, RegisterDto } from './dto';
+import { Tokens } from 'src/types/auth';
+import { Response, Request } from 'express';
+import { Cookie, UserAgent } from 'src/decorators';
+
+const REFRESH_TOKEN = 'refreshToken';
 
 @Controller('auth')
 export class AuthController {
@@ -8,13 +13,48 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('/login')
-    login(@Body() userDto: CreateUserDto) {
-        return this.authService.login(userDto);
+    async login(@Body() dto: LoginDto, @Res() res: Response, @UserAgent() agent: string) {
+
+        const tokens = await this.authService.login(dto, agent);
+        if (!tokens) {
+            throw new BadRequestException('Ошибка при авторизации')
+        };
+        this.setRefreshTokenToCookies(tokens, res);
     }
 
     @Post('/registration')
-    registration(@Body() userDto: CreateUserDto) {
-        return this.authService.registration(userDto);
+    registration(@Body() dto: RegisterDto, @Res() res: Response, @UserAgent() agent: string) {
+        const user = this.authService.register(dto, agent);
+        if (!user) {
+            throw new BadRequestException('Ошибка регистрации')
+        };
+        return user;
     }
 
+    @Get('/refresh-tokens')
+    async refreshTokens(@Cookie(REFRESH_TOKEN) refreshToken: string, @Res() res: Response, @UserAgent() agent: string) {
+        if (!refreshToken) {
+            throw new UnauthorizedException();
+        };
+        const tokens = await this.authService.refresTokens(refreshToken, agent);
+        if (!tokens) {
+            throw new UnauthorizedException();
+        };
+        this.setRefreshTokenToCookies(tokens, res);
+    }
+
+
+    private setRefreshTokenToCookies(tokens: Tokens, res: Response) {
+        if (!tokens) {
+            throw new UnauthorizedException();
+        };
+        res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            expires: new Date(tokens.refreshToken.exp),
+            secure: false,
+            path: '/'
+        });
+        res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
+    }
 }

@@ -1,8 +1,8 @@
-import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
+import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/const";
 import { CellCompanyI, PlayerDefaultI, playersGame, cells, companyCheckNoMonopoly } from "src/types";
 import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 
 export class TurnService {
 

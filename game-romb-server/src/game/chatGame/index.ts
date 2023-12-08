@@ -1,4 +1,4 @@
-import { ChatI, chatMessage, PlayerDefaultI, SystemMessage } from "src/types";
+import { ChatI, chatMessage, SystemMessage } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class Chat implements ChatI {
@@ -7,14 +7,8 @@ export class Chat implements ChatI {
 
     constructor(private roomWS: Room_WS) { }
 
-    addMessage(message: string, player: PlayerDefaultI): void {
-        this.messages.push(
-            {
-                message,
-                senderName: player.name,
-                senderColor: player.color
-
-            });
+    addMessage(message: string, senderId: string): void {
+        this.messages.push({ message, senderId });
         this.updateChat();
     }
 

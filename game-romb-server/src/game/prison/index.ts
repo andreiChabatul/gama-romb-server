@@ -1,7 +1,7 @@
 import { ChatI, PlayerDefaultI, PrisonI } from "src/types";
 import { TurnService } from "../turn.service";
-import { DEBT_PRISON } from "src/app/const";
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { DEBT_PRISON } from "src/const";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 
 export class Prison implements PrisonI {
 

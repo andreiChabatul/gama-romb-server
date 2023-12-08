@@ -1,6 +1,6 @@
 import { AuctionI, CellCompanyI, CompanyInfo, PlayerDefaultI, playersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 
 export class CellCompany implements CellCompanyI {
 
