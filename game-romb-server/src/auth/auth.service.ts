@@ -1,5 +1,4 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid'
 import { LoginDto, RegisterDto } from './dto';
@@ -26,10 +25,16 @@ export class AuthService {
 
     async login(dto: LoginDto, agent: string): Promise<Tokens> {
         const user = await this.userService.findOne(dto.nickName);
-        if (!user && !compareSync(dto.password, user.password)) {
-            throw new UnauthorizedException('error login or password');
+        if (user && compareSync(dto.password, user.password)) {
+            return this.generateTokens(user, agent);
         };
-        return this.generateTokens(user, agent);
+        throw new UnauthorizedException('error login or password');
+    }
+
+    async logout() { }
+
+    async deleteRefreshToken(token: string) {
+        return this.prismaService.token.delete({ where: { token } })
     }
 
     async refresTokens(refreshToken: string, agent: string): Promise<Tokens> {

@@ -23,12 +23,12 @@ export class AuthController {
     }
 
     @Post('/registration')
-    registration(@Body() dto: RegisterDto, @Res() res: Response, @UserAgent() agent: string) {
-        const user = this.authService.register(dto, agent);
-        if (!user) {
+    async registration(@Body() dto: RegisterDto, @Res() res: Response, @UserAgent() agent: string) {
+        const tokens = await this.authService.register(dto, agent);
+        if (!tokens) {
             throw new BadRequestException('Ошибка регистрации')
         };
-        return user;
+        this.setRefreshTokenToCookies(tokens, res);
     }
 
     @Get('/refresh-tokens')
@@ -43,6 +43,25 @@ export class AuthController {
         this.setRefreshTokenToCookies(tokens, res);
     }
 
+    @Get('/logout')
+    async logout(@Cookie(REFRESH_TOKEN) refreshToken: string, @Res() res: Response) {
+        if (!refreshToken) {
+            res.sendStatus(HttpStatus.OK);
+            return;
+        }
+        await this.authService.deleteRefreshToken(refreshToken);
+        res.cookie(REFRESH_TOKEN, '', { httpOnly: true, secure: true, expires: new Date() });
+        res.sendStatus(HttpStatus.OK);
+    }
+
+    @Get('google')
+    googleAuth() { }
+
+    @Get('google/callback')
+    googleAuthCallback(@Req() req: Request) {
+        return req.user;
+    }
+
 
     private setRefreshTokenToCookies(tokens: Tokens, res: Response) {
         if (!tokens) {
@@ -50,7 +69,7 @@ export class AuthController {
         };
         res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
             httpOnly: true,
-            sameSite: 'lax',
+            sameSite: 'none',
             expires: new Date(tokens.refreshToken.exp),
             secure: false,
             path: '/'
