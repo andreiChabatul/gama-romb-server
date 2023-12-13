@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
 import { Tokens, googleInfo } from 'src/types/auth';
 import { Response, Request } from 'express';
-import { Cookie, UserAgent } from 'src/decorators';
+import { Cookie, UserAgent } from 'src/lib/common/decorators';
 import { GoogleGuard } from './guards/google.guard';
 import { HttpService } from '@nestjs/axios';
 import { FRONT_ACCESS, GOOGLE_AUTH_INFO, YANDEX_AUTH_INFO } from 'src/const';
