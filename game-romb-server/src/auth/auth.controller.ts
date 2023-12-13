@@ -6,7 +6,7 @@ import { Response, Request } from 'express';
 import { Cookie, UserAgent } from 'src/decorators';
 import { GoogleGuard } from './guards/google.guard';
 import { HttpService } from '@nestjs/axios';
-import { FRONT_ACCESS, GOOGLE_AUTH_INFO } from 'src/const';
+import { FRONT_ACCESS, GOOGLE_AUTH_INFO, YANDEX_AUTH_INFO } from 'src/const';
 import { map, mergeMap } from 'rxjs';
 import { handleTimeoutAndErrors } from 'src/lib/common/helper';
 import { YandexGuard } from './guards/yandex.guard';
@@ -60,7 +60,6 @@ export class AuthController {
         res.sendStatus(HttpStatus.OK);
     }
 
-
     @UseGuards(GoogleGuard)
     @Get('google')
     authGoogle() { }
@@ -73,7 +72,7 @@ export class AuthController {
             return this.httpService
                 .get(`${GOOGLE_AUTH_INFO}${googleToken}`)
                 .pipe(
-                    mergeMap(({ data: { name } }) => this.authService.googleAuth(name, agent)),
+                    mergeMap(({ data: { name } }) => this.authService.socialAuth(name, agent)),
                     handleTimeoutAndErrors(),
                     map((tokens) => {
                         this.setRefreshTokenToCookies(tokens, res, false);
@@ -90,12 +89,12 @@ export class AuthController {
     @UseGuards(YandexGuard)
     @Get('yandex/callback')
     yandexAuthCallback(@Req() req: Request, @Res() res: Response, @UserAgent() agent: string) {
-        const googleToken = req.user['accessToken']
-        if (googleToken) {
+        const yandexToken = req.user['accessToken'];
+        if (yandexToken) {
             return this.httpService
-                .get(`${GOOGLE_AUTH_INFO}${googleToken}`)
+                .get(`${YANDEX_AUTH_INFO}${yandexToken}`)
                 .pipe(
-                    mergeMap(({ data: { name } }) => this.authService.googleAuth(name, agent)),
+                    mergeMap(({ data: { real_name } }) => {return this.authService.socialAuth(real_name, agent)}),
                     handleTimeoutAndErrors(),
                     map((tokens) => {
                         this.setRefreshTokenToCookies(tokens, res, false);

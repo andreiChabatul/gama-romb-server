@@ -84,7 +84,7 @@ export class AuthService {
     }
 
 
-    async googleAuth(name: string, agent: string) {
+    async socialAuth(name: string, agent: string) {
         const candidate = await this.userService.findOne(name);
         if (candidate) {
             return this.generateTokens(candidate, agent);
