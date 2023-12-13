@@ -10,10 +10,11 @@ export class UserService {
     constructor(private readonly prismaServices: PrismaService) { }
 
     async save(user: Partial<User>): Promise<User> {
+        const hashPassword = user?.password ? this.hashPassword(user.password) : null;
         return this.prismaServices.user.create({
             data: {
                 nickName: user.nickName,
-                password: this.hashPassword(user.password),
+                password: hashPassword,
                 image: defaultAvatar
             }
         });

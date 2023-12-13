@@ -13,7 +13,8 @@ datasource db {
 model User {
   id         String     @id @default(uuid())
   createdAt  DateTime   @default(now())
-  password   String
+  password   String?
+  locale     Locale     @default(ru)
   image      String
   nickName   String     @unique
   numberGame Int        @default(0)
@@ -29,4 +30,9 @@ model Token {
   userId     String
   userAgent  String
   @@map("tokens")
+}
+
+enum Locale {
+  ru
+  en
 }

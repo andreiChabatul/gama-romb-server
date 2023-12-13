@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid'
 import { LoginDto, RegisterDto } from './dto';
@@ -81,6 +81,19 @@ export class AuthService {
                 userId
             }
         })
+    }
+
+
+    async googleAuth(name: string, agent: string) {
+        const candidate = await this.userService.findOne(name);
+        if (candidate) {
+            return this.generateTokens(candidate, agent);
+        }
+        const user = await this.userService.save({ nickName: name });
+        if (!user) {
+            throw new BadRequestException('Error')
+        }
+        return this.generateTokens(candidate, agent);
     }
 
 

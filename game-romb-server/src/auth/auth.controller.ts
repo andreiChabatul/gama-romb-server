@@ -1,16 +1,22 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Res, Req, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Res, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
-import { Tokens } from 'src/types/auth';
+import { Tokens, googleInfo } from 'src/types/auth';
 import { Response, Request } from 'express';
 import { Cookie, UserAgent } from 'src/decorators';
+import { GoogleGuard } from './guards/google.guard';
+import { HttpService } from '@nestjs/axios';
+import { FRONT_ACCESS, GOOGLE_AUTH_INFO } from 'src/const';
+import { map, mergeMap } from 'rxjs';
+import { handleTimeoutAndErrors } from 'src/lib/common/helper';
+import { YandexGuard } from './guards/yandex.guard';
 
 const REFRESH_TOKEN = 'refreshToken';
 
 @Controller('auth')
 export class AuthController {
 
-    constructor(private readonly authService: AuthService) { }
+    constructor(private readonly authService: AuthService, private readonly httpService: HttpService) { }
 
     @Post('/login')
     async login(@Body() dto: LoginDto, @Res() res: Response, @UserAgent() agent: string) {
@@ -50,20 +56,56 @@ export class AuthController {
             return;
         }
         await this.authService.deleteRefreshToken(refreshToken);
-        res.cookie(REFRESH_TOKEN, '', { httpOnly: true, secure: true, expires: new Date() });
+        res.cookie(REFRESH_TOKEN, '', { httpOnly: true, sameSite: 'none', secure: true, expires: new Date(), path: '/' });
         res.sendStatus(HttpStatus.OK);
     }
 
-    @Get('google')
-    googleAuth() { }
 
+    @UseGuards(GoogleGuard)
+    @Get('google')
+    authGoogle() { }
+
+    @UseGuards(GoogleGuard)
     @Get('google/callback')
-    googleAuthCallback(@Req() req: Request) {
-        return req.user;
+    googleAuthCallback(@Req() req: Request, @Res() res: Response, @UserAgent() agent: string) {
+        const googleToken = req.user['accessToken']
+        if (googleToken) {
+            return this.httpService
+                .get(`${GOOGLE_AUTH_INFO}${googleToken}`)
+                .pipe(
+                    mergeMap(({ data: { name } }) => this.authService.googleAuth(name, agent)),
+                    handleTimeoutAndErrors(),
+                    map((tokens) => {
+                        this.setRefreshTokenToCookies(tokens, res, false);
+                        res.redirect(`${FRONT_ACCESS}${tokens.accessToken}`)
+                    })
+                );
+        };
     }
 
+    @UseGuards(YandexGuard)
+    @Get('yandex')
+    yandexAuth() { }
 
-    private setRefreshTokenToCookies(tokens: Tokens, res: Response) {
+    @UseGuards(YandexGuard)
+    @Get('yandex/callback')
+    yandexAuthCallback(@Req() req: Request, @Res() res: Response, @UserAgent() agent: string) {
+        const googleToken = req.user['accessToken']
+        if (googleToken) {
+            return this.httpService
+                .get(`${GOOGLE_AUTH_INFO}${googleToken}`)
+                .pipe(
+                    mergeMap(({ data: { name } }) => this.authService.googleAuth(name, agent)),
+                    handleTimeoutAndErrors(),
+                    map((tokens) => {
+                        this.setRefreshTokenToCookies(tokens, res, false);
+                        res.redirect(`${FRONT_ACCESS}${tokens.accessToken}`)
+                    })
+                );
+        };
+    }
+
+    private setRefreshTokenToCookies(tokens: Tokens, res: Response, isSend: boolean = true): void {
         if (!tokens) {
             throw new UnauthorizedException();
         };
@@ -71,9 +113,9 @@ export class AuthController {
             httpOnly: true,
             sameSite: 'none',
             expires: new Date(tokens.refreshToken.exp),
-            secure: false,
+            secure: true,
             path: '/'
         });
-        res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
+        isSend ? res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken }) : '';
     }
 }

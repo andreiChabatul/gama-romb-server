@@ -8,11 +8,12 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { UserModule } from 'src/user/user.module';
 import { STRATIGIES } from './strategies';
 import { GUARDS } from './guards';
+import { HttpModule } from '@nestjs/axios/dist';
 
 @Module({
   providers: [AuthService, ...STRATIGIES, ...GUARDS],
   controllers: [AuthController],
-  imports: [PassportModule, UserModule, PrismaModule,
+  imports: [PassportModule, UserModule, PrismaModule, HttpModule,
     JwtModule.registerAsync(options())
   ]
 })
