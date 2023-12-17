@@ -7,7 +7,7 @@ export class CellTax implements CellDefault {
     _cellValue: number;
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private _nameCell: string, private roomWS: Room_WS) { }
+    constructor(private _index: number, private roomWS: Room_WS, private _nameCell: string) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;

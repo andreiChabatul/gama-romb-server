@@ -1,21 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { RoomGame } from 'src/game/room/room';
-import { rooms } from 'src/types';
+import { playersOffline, rooms } from 'src/types';
 import { v4 as uuidv4 } from 'uuid'
-import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, myWebSocket, payloadSocket } from 'src/types/websocket';
+import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, StateGamePayload, myWebSocket, payloadSocket } from 'src/types/websocket';
 import { UserService } from 'src/user/user.service';
+import { TIME_DISCONNECT } from 'src/const';
+import { WebSocket } from "ws";
 
 @Injectable()
 export class RoomsService {
 
     constructor(private userService: UserService) { }
 
-    rooms: rooms = {};
-    sockets: myWebSocket[] = [];
+    private rooms: rooms = {};
+    private sockets: myWebSocket[] = [];
+    private playersOffline: playersOffline = {};
 
     processing(client: myWebSocket, [action, data]: payloadSocket): void {
         const idRoom = data.idRoom;
         switch (action) {
+
+            case EACTION_WEBSOCKET.CONNECT:
+                this.connect(data.idUser, client);
+                break;
 
             case EACTION_WEBSOCKET.CONTROL_ROOM:
                 this.controlRoom(data as ControlRoomPayload, client);
@@ -47,7 +54,7 @@ export class RoomsService {
 
             case EACTION_WEBSOCKET.END_GAME:
                 this.rooms[idRoom]
-                    ? this.rooms[idRoom].endGame(data as EndGamePayload)
+                    ? this.rooms[idRoom].stateGame(data as StateGamePayload)
                     : '';
                 break;
 
@@ -76,11 +83,11 @@ export class RoomsService {
             default:
                 break;
         }
-        this.filterEmptyRoom();
         this.sendRooms();
     }
 
     async sendRooms(): Promise<void> {
+        this.filterEmptyRoom();
         const payload = await Promise.all(Object.keys(this.rooms).map((key) =>
             (this.rooms[key].returnInfoRoom())
         ));
@@ -92,7 +99,24 @@ export class RoomsService {
     disconnected(client: myWebSocket): void {
         const index: number = this.sockets.indexOf(client);
         index > -1 ? this.sockets.splice(index, 1) : '';
-        Object.values(this.rooms).forEach((room) => room.disconnectPlayer(client.idPlayer));
+        Object.values(this.rooms).forEach((room) => {
+            const idUser = client.idPlayer;
+            const player = room.getPlayer(idUser)
+            if (idUser && player) {
+                player.online = false;
+                this.playersOffline[idUser] = setTimeout(() => {
+                    room.disconnectPlayer(idUser);
+                    this.sendRooms();
+                }, TIME_DISCONNECT)
+            }
+        });
+    }
+
+    connect(idUser: string, client: WebSocket): void {
+        clearTimeout(this.playersOffline[idUser]);
+        Object.values(this.rooms).forEach((room) =>
+            room.getPlayer(idUser) ? room.reconnectPlayer(idUser, client) : ''
+        );
     }
 
     addSocket(client: myWebSocket): void {

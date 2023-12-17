@@ -1,5 +1,5 @@
 import { EMESSAGE_CLIENT } from "src/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EndGamePayload, MessageChatGamePayload, OfferDealPayload, myWebSocket, payloadSocket } from "./websocket";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload, StateGamePayload, myWebSocket, payloadSocket } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
@@ -21,7 +21,6 @@ export type fullPlayer = mainPlayer & updatePlayer;
 export type mainPlayer = {
     nickName: string;
     image: string;
-    color: string;
     numberGame: number;
     numberWin: number;
 }
@@ -30,6 +29,7 @@ export type updatePlayer = {
     id: string;
     total: number;
     capital: number;
+    color: string;
     cellPosition: number;
     prison: prisonPlayer;
     bankrupt: boolean;
@@ -45,6 +45,10 @@ export type playersGame = {
     [id: string]: PlayerDefaultI;
 }
 
+export type playersOffline = {
+    [id: string]: NodeJS.Timeout;
+}
+
 export interface PrisonI {
     addPrisoner(player: PlayerDefaultI): void;
     deletePrisoner(player: PlayerDefaultI): void;
@@ -53,10 +57,11 @@ export interface PrisonI {
 }
 
 export interface ChatI {
-    readonly messages: chatMessage[];
+    readonly _messages: chatMessage[];
     addMessage(message: string, senderId: string): void;
     addSystemMessage(systemMessage: SystemMessage): void;
     updateChat(): void;
+    get messages(): chatMessage[]
 }
 
 export interface PlayerDefaultI {
@@ -64,7 +69,6 @@ export interface PlayerDefaultI {
     get total(): number;
     set position(value: number);
     get userId(): string;
-    get color(): string;
     set addTotal(value: number);
     minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
     get prison(): boolean;
@@ -75,6 +79,7 @@ export interface PlayerDefaultI {
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
     set online(value: boolean);
+    get player(): updatePlayer;
 }
 
 export interface CellDefault {
@@ -127,10 +132,12 @@ export interface RoomI {
     controlAuction(controlAuctionPayload: ControlAuctionPayload): void;
     controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
-    endGame(endGamePayload: EndGamePayload): void
+    stateGame(stateGamePayload: StateGamePayload): void
     returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
+    reconnectPlayer(idUser: string, client: WebSocket): Promise<void>
     get amountPlayers(): number;
+    getPlayer(idUser: string) : PlayerDefaultI | undefined;
 }
 
 export interface OfferServiceI {
@@ -168,15 +175,11 @@ export interface SystemMessage {
     valueroll?: number,
 }
 
-export interface gameCell extends createCell {
-    indexCell: number;
-    company?: CompanyInfo;
-}
-
-export interface createCell {
-    location: location;
-    nameCell: nameCell;
+export interface gameCell {
     type: cellType;
+    location: location;
+    indexCell: number;
+    nameCell: string;
     company?: CompanyInfo;
 }
 

@@ -6,7 +6,11 @@ export class CellEmpty implements CellDefault {
 
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private _nameCell: string, private roomWS: Room_WS, private prison: PrisonI) { }
+    constructor(
+        private _index: number,
+        private roomWS: Room_WS,
+        private _nameCell: string,
+        private prison: PrisonI) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;

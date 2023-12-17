@@ -1,4 +1,4 @@
-import { PlayerDefaultI, cells, prisonPlayer } from "src/types";
+import { PlayerDefaultI, cells, prisonPlayer, updatePlayer } from "src/types";
 import { Chat } from "../chatGame";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/const";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
@@ -28,7 +28,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._prison.state
             ? this.cellPosition = value
             : this.cellPosition = this.positionCellCalc(value);
-        this.updatePlayer();
+        this.player;
     }
 
     get position(): number {
@@ -41,7 +41,11 @@ export class PlayerDefault implements PlayerDefaultI {
 
     set bankrupt(value: boolean) {
         this._bankrupt = value;
-        this.updatePlayer();
+        this.cells.forEach((cell) =>
+            'owned' in cell && cell.owned === this.userId
+                ? cell.owned = undefined
+                : '');
+        this.player;
     }
 
     get bankrupt(): boolean {
@@ -62,32 +66,31 @@ export class PlayerDefault implements PlayerDefaultI {
         return resultPosition;
     }
 
-    get color(): string {
-        return this._color;
-    }
-
-    updatePlayer(): void {
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, {
+    get player(): updatePlayer {
+        const updatePlayer = {
             id: this.id,
+            color: this._color,
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
             prison: this._prison,
             bankrupt: this._bankrupt,
             online: this._isOnline
-        })
+        }
+        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, updatePlayer);
+        return updatePlayer;
     }
 
     set addTotal(value: number) {
         this._total += value;
         this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
-        this.updatePlayer();
+        this.player;
     }
 
     minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
         this._total -= valueroll;
         this.chat.addSystemMessage({ action, idUser: this.id, valueroll, cellId });
-        this.updatePlayer();
+        this.player;
     }
 
     get prison(): boolean {
@@ -98,17 +101,17 @@ export class PlayerDefault implements PlayerDefaultI {
         value
             ? this._prison = { state: true, attempt: 3 }
             : this._prison = { state: false, attempt: 0 }
-        this.updatePlayer();
+        this.player;
     }
 
     set attemptPrison(value: number) {
         this._prison.attempt = value;
-        this.updatePlayer();
+        this.player;
     }
 
     set online(value: boolean) {
         this._isOnline = value;
-        this.updatePlayer();
+        this.player;
     }
 
     get attemptPrison(): number {

@@ -5,7 +5,7 @@ import { EMESSAGE_CLIENT } from "src/const/enum";
 export class CellCompany implements CellCompanyI {
 
     private _pledge: boolean;
-    private _owned: string | null;
+    private _owned: string | undefined;
     private _rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
@@ -13,11 +13,11 @@ export class CellCompany implements CellCompanyI {
     private _player: PlayerDefaultI;
 
     constructor(
+        private _index: number,
         private roomWS: Room_WS,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionI,
-        private players: playersGame,
-        private _index: number,
+        private players: playersGame
     ) {
         this._quantityStock = 0;
         this._monopoly = false;
@@ -99,8 +99,8 @@ export class CellCompany implements CellCompanyI {
     }
 
 
-    get owned(): string | null {
-        return this._owned ? this._owned : null;
+    get owned(): string | undefined {
+        return this._owned ? this._owned : undefined;
     }
 
     set owned(userId: string) {
