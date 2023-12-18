@@ -167,12 +167,14 @@ export class CellCompany implements CellCompanyI {
         this.sendInfoPLayer();
     }
 
-    sendInfoPLayer(): void {
+    sendInfoPLayer(idUser?: string): void {
         const payload = {
             indexCell: this._index,
             company: this.info,
         };
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
+        idUser
+            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_CELL, payload)
+            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
 }

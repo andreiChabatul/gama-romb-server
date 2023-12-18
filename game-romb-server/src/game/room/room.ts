@@ -48,9 +48,9 @@ export class RoomGame implements RoomI {
     }
 
     private async checkStartGame(): Promise<void> {
-        if (this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
+        if (true || this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
             this.isStart = true;
-            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, await this.startGameInfo());
+            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, await this.startGameInfo(false));
             this.turnService.firstTurn();
         };
     }
@@ -148,7 +148,7 @@ export class RoomGame implements RoomI {
     async fillPlayers(): Promise<fullPlayer[]> {
         const playersPrisma = await this.userService.findMany(Object.keys(this.players));
         const players = playersPrisma.map((player) => {
-            return { ...player, ...this.players[player.id].player }
+            return { ...player, ...this.players[player.id].playerInfo }
         });
         return players;
     }
@@ -160,7 +160,15 @@ export class RoomGame implements RoomI {
     async reconnectPlayer(idUser: string, client: WebSocket): Promise<void> {
         this.players[idUser].online = true;
         this.roomWS.addWebSocket(idUser, client);
-        this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.RECONNECT);
+        this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.RECONNECT, await this.startGameInfo(true));
+    }
+
+    reconnectPlayerAccess(idUser: string): void {
+        this.turnService.updateTurn(idUser);
+        this.players[idUser].online = true;
+        this.cellsGame.forEach((cell) =>
+            'controlCompany' in cell ? cell.sendInfoPLayer(idUser) : '');
+        Object.values(this.players).forEach((player) => player.updatePlayer(idUser));
     }
 
     private leavePlayerGame(idUser: string): void {
@@ -176,14 +184,16 @@ export class RoomGame implements RoomI {
     }
 
     getPlayer(idUser: string): PlayerDefaultI | undefined {
-        return this.players[idUser].bankrupt ? undefined : this.players[idUser];
+        return (this.players[idUser] && !this.players[idUser].bankrupt)
+            ? this.players[idUser]
+            : undefined;
     }
 
-    private async startGameInfo(): Promise<gameRoom> {
+    private async startGameInfo(reconnect: boolean): Promise<gameRoom> {
         return {
             idRoom: this.idRoom,
             players: (await this.fillPlayers()).reduce((res, curr) => {
-                res[curr.id] = curr;
+                res[curr.id] = reconnect ? { ...curr, cellPosition: 0 } : curr;
                 return res;
             }, {}),
             board: defaultCell,

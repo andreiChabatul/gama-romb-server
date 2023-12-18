@@ -17,11 +17,11 @@ export class RoomsService {
     private playersOffline: playersOffline = {};
 
     processing(client: myWebSocket, [action, data]: payloadSocket): void {
-        const idRoom = data.idRoom;
+        const { idRoom, idUser } = data;
         switch (action) {
 
             case EACTION_WEBSOCKET.CONNECT:
-                this.connect(data.idUser, client);
+                this.connect(idUser, client);
                 break;
 
             case EACTION_WEBSOCKET.CONTROL_ROOM:
@@ -37,7 +37,7 @@ export class RoomsService {
                 break;
 
             case EACTION_WEBSOCKET.ACTIVE_CELL:
-                this.rooms[idRoom].activeCell(data.idUser);
+                this.rooms[idRoom].activeCell(idUser);
                 break;
 
             case EACTION_WEBSOCKET.CONTROL_COMPANY:
@@ -56,6 +56,10 @@ export class RoomsService {
                 this.rooms[idRoom]
                     ? this.rooms[idRoom].stateGame(data as StateGamePayload)
                     : '';
+                break;
+
+            case EACTION_WEBSOCKET.RECONNECT_ACCESS:
+                this.rooms[idRoom].reconnectPlayerAccess(idUser);
                 break;
 
             default:

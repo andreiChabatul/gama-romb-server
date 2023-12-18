@@ -79,7 +79,8 @@ export interface PlayerDefaultI {
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
     set online(value: boolean);
-    get player(): updatePlayer;
+    updatePlayer(idUser?: string): void;
+    get playerInfo(): updatePlayer;
 }
 
 export interface CellDefault {
@@ -87,7 +88,7 @@ export interface CellDefault {
     movePlayer(player: PlayerDefaultI, valueRoll?: number): void;
     get index(): number;
     activateCell(): void;
-    sendInfoPLayer(): void;
+    sendInfoPLayer(idUser?: string): void;
 }
 
 export interface CellCompanyI extends CellDefault {
@@ -136,6 +137,7 @@ export interface RoomI {
     returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
     reconnectPlayer(idUser: string, client: WebSocket): Promise<void>
+    reconnectPlayerAccess(idUser: string): void
     get amountPlayers(): number;
     getPlayer(idUser: string) : PlayerDefaultI | undefined;
 }

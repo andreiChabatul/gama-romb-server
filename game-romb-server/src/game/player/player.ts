@@ -28,7 +28,7 @@ export class PlayerDefault implements PlayerDefaultI {
         this._prison.state
             ? this.cellPosition = value
             : this.cellPosition = this.positionCellCalc(value);
-        this.player;
+        this.updatePlayer();
     }
 
     get position(): number {
@@ -45,7 +45,7 @@ export class PlayerDefault implements PlayerDefaultI {
             'owned' in cell && cell.owned === this.userId
                 ? cell.owned = undefined
                 : '');
-        this.player;
+        this.updatePlayer();
     }
 
     get bankrupt(): boolean {
@@ -66,7 +66,13 @@ export class PlayerDefault implements PlayerDefaultI {
         return resultPosition;
     }
 
-    get player(): updatePlayer {
+    updatePlayer(idUser?: string): void {
+        idUser
+            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo)
+            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo);
+    }
+
+    get playerInfo(): updatePlayer {
         const updatePlayer = {
             id: this.id,
             color: this._color,
@@ -76,21 +82,20 @@ export class PlayerDefault implements PlayerDefaultI {
             prison: this._prison,
             bankrupt: this._bankrupt,
             online: this._isOnline
-        }
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, updatePlayer);
+        };
         return updatePlayer;
     }
 
     set addTotal(value: number) {
         this._total += value;
         this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
-        this.player;
+        this.updatePlayer();
     }
 
     minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
         this._total -= valueroll;
         this.chat.addSystemMessage({ action, idUser: this.id, valueroll, cellId });
-        this.player;
+        this.updatePlayer();
     }
 
     get prison(): boolean {
@@ -101,17 +106,17 @@ export class PlayerDefault implements PlayerDefaultI {
         value
             ? this._prison = { state: true, attempt: 3 }
             : this._prison = { state: false, attempt: 0 }
-        this.player;
+        this.updatePlayer();
     }
 
     set attemptPrison(value: number) {
         this._prison.attempt = value;
-        this.player;
+        this.updatePlayer();
     }
 
     set online(value: boolean) {
         this._isOnline = value;
-        this.player;
+        this.updatePlayer();
     }
 
     get attemptPrison(): number {
