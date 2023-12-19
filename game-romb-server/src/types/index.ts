@@ -1,5 +1,5 @@
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, EndGamePayload, MessageChatGamePayload, OfferDealPayload, myWebSocket, payloadSocket } from "./websocket";
+import { EMESSAGE_CLIENT } from "src/const/enum";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload, StateGamePayload, myWebSocket, payloadSocket } from "./websocket";
 import { WebSocket } from "ws";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
@@ -16,17 +16,20 @@ export type nameCell = nameCompany | nameCellEmpty;
 export type dealPerson = 'offerPerson' | 'receivePerson';
 export type statePlayer = 'active' | 'wait' | 'inactive';
 export type nameCellEmpty = 'loss' | 'profit' | 'tax5' | 'tax10' | 'inJail' | 'parking' | 'start' | 'goJail' | 'security';
+export type fullPlayer = mainPlayer & updatePlayer;
 
-export interface Player extends UpdatePlayer {
-    name: string;
+export type mainPlayer = {
+    nickName: string;
     image: string;
-    color: string;
+    numberGame: number;
+    numberWin: number;
 }
 
-export interface UpdatePlayer {
+export type updatePlayer = {
     id: string;
     total: number;
     capital: number;
+    color: string;
     cellPosition: number;
     prison: prisonPlayer;
     bankrupt: boolean;
@@ -42,6 +45,10 @@ export type playersGame = {
     [id: string]: PlayerDefaultI;
 }
 
+export type playersOffline = {
+    [id: string]: NodeJS.Timeout;
+}
+
 export interface PrisonI {
     addPrisoner(player: PlayerDefaultI): void;
     deletePrisoner(player: PlayerDefaultI): void;
@@ -50,20 +57,18 @@ export interface PrisonI {
 }
 
 export interface ChatI {
-    readonly messages: chatMessage[];
-    addMessage(message: string, player: PlayerDefaultI): void;
+    readonly _messages: chatMessage[];
+    addMessage(message: string, senderId: string): void;
     addSystemMessage(systemMessage: SystemMessage): void;
     updateChat(): void;
+    get messages(): chatMessage[]
 }
 
 export interface PlayerDefaultI {
     get position(): number;
     get total(): number;
-    get name(): string;
     set position(value: number);
     get userId(): string;
-    get player(): Player;
-    get color(): string;
     set addTotal(value: number);
     minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
     get prison(): boolean;
@@ -74,6 +79,8 @@ export interface PlayerDefaultI {
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
     set online(value: boolean);
+    updatePlayer(idUser?: string): void;
+    get playerInfo(): updatePlayer;
 }
 
 export interface CellDefault {
@@ -81,7 +88,7 @@ export interface CellDefault {
     movePlayer(player: PlayerDefaultI, valueRoll?: number): void;
     get index(): number;
     activateCell(): void;
-    sendInfoPLayer(): void;
+    sendInfoPLayer(idUser?: string): void;
 }
 
 export interface CellCompanyI extends CellDefault {
@@ -126,10 +133,13 @@ export interface RoomI {
     controlAuction(controlAuctionPayload: ControlAuctionPayload): void;
     controlDeal(offerDealPayload: OfferDealPayload): void;
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
-    endGame(endGamePayload: EndGamePayload): void
-    returnInfoRoom(): infoRoom;
+    stateGame(stateGamePayload: StateGamePayload): void
+    returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
+    reconnectPlayer(idUser: string, client: WebSocket): Promise<void>
+    reconnectPlayerAccess(idUser: string): void
     get amountPlayers(): number;
+    getPlayer(idUser: string) : PlayerDefaultI | undefined;
 }
 
 export interface OfferServiceI {
@@ -147,7 +157,7 @@ export type infoRoom = {
     maxPlayers: number,
     idRoom: string,
     roomName: string,
-    players: Player[],
+    players: mainPlayer[],
 }
 
 export type UpdateRoom = {
@@ -157,8 +167,7 @@ export type UpdateRoom = {
 
 export interface chatMessage extends SystemMessage {
     message?: string;
-    senderName?: string;
-    senderColor?: string;
+    senderId?: string;
 }
 
 export interface SystemMessage {
@@ -168,15 +177,11 @@ export interface SystemMessage {
     valueroll?: number,
 }
 
-export interface gameCell extends createCell {
-    indexCell: number;
-    company?: CompanyInfo;
-}
-
-export interface createCell {
-    location: location;
-    nameCell: nameCell;
+export interface gameCell {
     type: cellType;
+    location: location;
+    indexCell: number;
+    nameCell: string;
     company?: CompanyInfo;
 }
 
@@ -237,15 +242,10 @@ export type infoAuction = {
 export type gameRoom = {
     chat: chatMessage[];
     idRoom: string;
-    players: playersGameFront,
+    players: playersGame,
     board: gameCell[];
     turnId: string;
     timeTurn: number;
     offerDealInfo?: offerDealInfo;
     infoAuction?: infoAuction;
 }
-
-export type playersGameFront = {
-    [key: string]: Player
-}
-

@@ -1,4 +1,4 @@
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
@@ -7,7 +7,7 @@ export class CellTax implements CellDefault {
     _cellValue: number;
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private _nameCell: string, private roomWS: Room_WS) { }
+    constructor(private _index: number, private roomWS: Room_WS, private _nameCell: string) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;

@@ -1,8 +1,8 @@
-import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/app/const";
+import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/const";
 import { CellCompanyI, PlayerDefaultI, playersGame, cells, companyCheckNoMonopoly } from "src/types";
 import { Chat } from "../chatGame";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/app/const/enum";
+import { EMESSAGE_CLIENT } from "src/const/enum";
 
 export class TurnService {
 
@@ -60,13 +60,15 @@ export class TurnService {
         this.nextTurn() //template
     };
 
-    updateTurn(): void {
+    updateTurn(idUser?: string): void {
         this.updateMonopolyCompany();
         this.updateNoMonopolyCompany();
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN,
-            {
-                turnId: this.activePlayer.userId
-            });
+        const payload = {
+            turnId: this.activePlayer.userId
+        };
+        idUser
+            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_TURN, payload)
+            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN, payload);
     }
 
     private updateMonopolyCompany(): void {
@@ -78,10 +80,10 @@ export class TurnService {
             checkMonopoly(companyMonopoly);
         })
 
-        function checkMonopoly(country: CellCompanyI[]) {
+        function checkMonopoly(country: CellCompanyI[]): void {
             let isMonopoly = true;
             for (let index = 0; index < country.length - 1; index++) {
-                if (country[index].owned === null || country[index].owned !== country[index + 1].owned) {
+                if (!country[index].owned || country[index].owned !== country[index + 1].owned) {
                     isMonopoly = false;
                     break;
                 }
@@ -101,7 +103,7 @@ export class TurnService {
         companyNoMonopoly.map((company) => {
             const owned = company.owned;
             const indexCompany = company.index;
-            if (company.owned !== null) {
+            if (company.owned) {
                 (cellResult[owned])
                     ? cellResult[owned].push(indexCompany)
                     : cellResult[owned] = new Array(1).fill(indexCompany);

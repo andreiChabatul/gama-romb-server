@@ -6,6 +6,9 @@ export interface myWebSocket extends WebSocket {
 }
 
 export enum EACTION_WEBSOCKET {
+    CONNECT = 'connect',
+    RECONNECT = 'reconnect',
+    RECONNECT_ACCESS = 'reconnect_access',
     LIST_ROOM = 'list room',
     CONTROL_ROOM = 'control room',
     UPDATE_CHAT = 'update chat',
@@ -24,7 +27,7 @@ export enum EACTION_WEBSOCKET {
 }
 
 export type controlRoom = 'create' | 'leave' | 'join' | 'list';
-export type endGameAction = 'leave' | 'stay' | 'endGame' | 'endTime';
+export type stateGameAction = 'leave' | 'stay' | 'endGame';
 export type gameCreate = {
     roomName: string
     maxPlayers: number
@@ -68,8 +71,8 @@ export interface ControlAuctionPayload extends DefaultPayload {
     action: controlAuction;
 }
 
-export interface EndGamePayload extends DefaultPayload {
-    action: endGameAction;
+export interface StateGamePayload extends DefaultPayload {
+    action: stateGameAction;
 }
 
 export interface OfferDealPayload extends DefaultPayload {
@@ -79,7 +82,7 @@ export interface OfferDealPayload extends DefaultPayload {
 
 export interface Room_WS {
     webSockets: { [id: string]: WebSocket };
-    addWebSocket(is: string, webSocket: WebSocket): void;
+    addWebSocket(idUser: string, webSocket: WebSocket): void;
     sendAllPlayers(action: EACTION_WEBSOCKET, payload?: {}): void;
     sendOnePlayer(id: string, action: EACTION_WEBSOCKET, payload?: {}): void;
     leavePlayer(idUser: string): void;

@@ -1,8 +1,9 @@
-import { createCell } from "src/types";
+import { gameCell } from "src/types";
 
-export const defaultCell: createCell[] = [
+export const defaultCell: gameCell[] = [
     {
         type: 'empty',
+        indexCell: 0,
         nameCell: 'start',
         location: {
             gridArea: '1/1/3/3',
@@ -11,6 +12,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 1,
         nameCell: 'hsbc',
         location: {
             gridArea: '1/3/3/4',
@@ -28,6 +30,7 @@ export const defaultCell: createCell[] = [
     {
         type: 'company',
         nameCell: 'fujitsu',
+        indexCell: 2,
         location: {
             gridArea: '1/4/3/5',
             cellDirections: 'top'
@@ -43,6 +46,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 3,
         nameCell: 'rr',
         location: {
             gridArea: '1/5/3/6',
@@ -59,6 +63,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 4,
         nameCell: 'bp',
         location: {
             gridArea: '1/6/3/7',
@@ -75,6 +80,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'profit',
+        indexCell: 5,
         nameCell: 'profit',
         location: {
             gridArea: '1/7/3/8',
@@ -83,6 +89,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 6,
         nameCell: 'uia',
         location: {
             gridArea: '1/8/3/9',
@@ -99,6 +106,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'loss',
+        indexCell: 7,
         nameCell: 'loss',
         location: {
             gridArea: '1/9/3/10',
@@ -107,6 +115,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 8,
         nameCell: 'ericsson',
         location: {
             gridArea: '1/10/3/11',
@@ -123,6 +132,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 9,
         nameCell: 'volvo',
         location: {
             gridArea: '1/11/3/12',
@@ -139,6 +149,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 10,
         nameCell: 'mitsubishi',
         location: {
             gridArea: '1/12/3/13',
@@ -155,6 +166,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 11,
         nameCell: "essity",
         location: {
             gridArea: '1/13/3/14',
@@ -171,6 +183,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'empty',
+        indexCell: 12,
         nameCell: 'inJail',
         location: {
             gridArea: '1/14/3/16',
@@ -179,6 +192,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 13,
         nameCell: 'rbc',
         location: {
             gridArea: '3/14/4/16',
@@ -195,6 +209,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 14,
         nameCell: 'telus',
         location: {
             gridArea: '4/14/5/16',
@@ -211,6 +226,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 15,
         nameCell: 'ttc',
         location: {
             gridArea: '5/14/6/16',
@@ -227,6 +243,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'tax',
+        indexCell: 16,
         nameCell: 'tax5',
         location: {
             gridArea: '6/14/7/16',
@@ -235,6 +252,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 17,
         nameCell: 'kaz',
         location: {
             gridArea: '7/14/8/16',
@@ -251,6 +269,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 18,
         nameCell: 'kazAzot',
         location: {
             gridArea: '8/14/9/16',
@@ -267,6 +286,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'empty',
+        indexCell: 19,
         nameCell: 'parking',
         location: {
             gridArea: '9/14/11/16',
@@ -275,6 +295,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 20,
         nameCell: 'ferrari',
         location: {
             gridArea: '9/13/11/14',
@@ -291,6 +312,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 21,
         nameCell: 'canon',
         location: {
             gridArea: '9/12/11/13',
@@ -307,6 +329,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 22,
         nameCell: 'uniCredit',
         location: {
             gridArea: '9/11/11/12',
@@ -323,6 +346,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 23,
         nameCell: 'posteItaliane',
         location: {
             gridArea: '9/10/11/11',
@@ -339,6 +363,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'profit',
+        indexCell: 24,
         nameCell: 'profit',
         location: {
             gridArea: '9/9/11/10',
@@ -347,6 +372,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 25,
         nameCell: "ukranafta",
         location: {
             gridArea: '9/8/11/9',
@@ -363,6 +389,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'loss',
+        indexCell: 26,
         nameCell: 'loss',
         location: {
             gridArea: '9/7/11/8',
@@ -372,6 +399,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 27,
         nameCell: 'volkswagen',
         location: {
             gridArea: '9/6/11/7',
@@ -388,6 +416,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 28,
         nameCell: 'allianz',
         location: {
             gridArea: '9/5/11/6',
@@ -404,6 +433,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 29,
         nameCell: 'honda',
         location: {
             gridArea: '9/4/11/5',
@@ -420,6 +450,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 30,
         nameCell: 'continental',
         location: {
             gridArea: '9/3/11/4',
@@ -436,6 +467,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'empty',
+        indexCell: 31,
         nameCell: 'goJail',
         location: {
             gridArea: '9/3/11/1',
@@ -444,6 +476,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 32,
         nameCell: 'aliexpress',
         location: {
             gridArea: '9/1/8/3',
@@ -460,6 +493,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 33,
         nameCell: 'xiaomi',
         location: {
             gridArea: '8/1/7/3',
@@ -476,6 +510,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 34,
         nameCell: 'google',
         location: {
             gridArea: '7/1/6/3',
@@ -492,6 +527,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'tax',
+        indexCell: 35,
         nameCell: 'tax10',
         location: {
             gridArea: '6/1/5/3',
@@ -500,6 +536,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 36,
         nameCell: 'WD',
         location: {
             gridArea: '5/1/4/3',
@@ -516,6 +553,7 @@ export const defaultCell: createCell[] = [
     },
     {
         type: 'company',
+        indexCell: 37,
         nameCell: 'ibm',
         location: {
             gridArea: '3/1/3/3',

@@ -1,31 +1,29 @@
-import { ChatI, chatMessage, PlayerDefaultI, SystemMessage } from "src/types";
+import { ChatI, chatMessage, SystemMessage } from "src/types";
 import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
 
 export class Chat implements ChatI {
 
-    readonly messages: chatMessage[] = [];
+    readonly _messages: chatMessage[] = [];
 
     constructor(private roomWS: Room_WS) { }
 
-    addMessage(message: string, player: PlayerDefaultI): void {
-        this.messages.push(
-            {
-                message,
-                senderName: player.name,
-                senderColor: player.color
-
-            });
+    addMessage(message: string, senderId: string): void {
+        this._messages.push({ message, senderId });
         this.updateChat();
     }
 
     addSystemMessage(systemMessage: SystemMessage): void {
-        this.messages.push(systemMessage);
+        this._messages.push(systemMessage);
         this.updateChat();
     }
 
     updateChat(): void {
         this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CHAT, {
-            chat: this.messages[this.messages.length - 1]
+            chat: this._messages[this._messages.length - 1]
         });
+    }
+
+    get messages(): chatMessage[] {
+        return this._messages;
     }
 }
