@@ -1,6 +1,7 @@
 import { AuctionI, CellCompanyI, playersGame, controlAuction, infoAuction, statePlayer } from "src/types";
 import { AUCTION_STEP } from "src/const";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "../socketStorage";
 
 export class AuctionCompany implements AuctionI {
 
@@ -11,7 +12,7 @@ export class AuctionCompany implements AuctionI {
     action: controlAuction;
     playersId: string[];
 
-    constructor(private players: playersGame, private roomWS: Room_WS) { }
+    constructor(private idRoom: string, private players: playersGame) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
         this.playersId = Object.keys(this.players);
@@ -63,7 +64,7 @@ export class AuctionCompany implements AuctionI {
             action: this.action,
             statePlayer
         };
-        this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.AUCTION, payload);
+        storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.AUCTION, payload);
     }
 
     private sendAllPlayers(): void {

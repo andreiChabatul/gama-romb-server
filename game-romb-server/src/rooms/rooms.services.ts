@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { RoomGame } from 'src/game/room/room';
-import { playersOffline, rooms } from 'src/types';
+import { RoomI, infoRoom, rooms } from 'src/types';
 import { v4 as uuidv4 } from 'uuid'
-import { ContorolCompanyPayload, ControlAuctionPayload, ControlRoomPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, StateGamePayload, myWebSocket, payloadSocket } from 'src/types/websocket';
+import { ControlRoomPayload, EACTION_WEBSOCKET, myWebSocket } from 'src/types/websocket';
 import { UserService } from 'src/user/user.service';
+import { storage_WS } from 'src/game/socketStorage';
+import { CreateRoomDto } from './dto/create.room.dto';
+import { playersOffline } from 'src/types/socketStorage';
 import { TIME_DISCONNECT } from 'src/const';
 import { WebSocket } from "ws";
 
@@ -13,125 +16,81 @@ export class RoomsService {
     constructor(private userService: UserService) { }
 
     private rooms: rooms = {};
-    private sockets: myWebSocket[] = [];
-    private playersOffline: playersOffline = {};
+    private playersOffline: playersOffline[] = [];
 
-    processing(client: myWebSocket, [action, data]: payloadSocket): void {
-        const { idRoom, idUser } = data;
+    async controlRoom({ action, idUser, idRoom, colorPlayer }: ControlRoomPayload, client: myWebSocket): Promise<void> {
         switch (action) {
-
-            case EACTION_WEBSOCKET.CONNECT:
-                this.connect(idUser, client);
-                break;
-
-            case EACTION_WEBSOCKET.CONTROL_ROOM:
-                this.controlRoom(data as ControlRoomPayload, client);
-                break;
-
-            case EACTION_WEBSOCKET.UPDATE_CHAT:
-                this.rooms[idRoom].addChatMessage(data as MessageChatGamePayload);
-                break;
-
-            case EACTION_WEBSOCKET.DICE_ROLL:
-                this.rooms[idRoom].playerMove(data as DiceRollGamePayload);
-                break;
-
-            case EACTION_WEBSOCKET.ACTIVE_CELL:
-                this.rooms[idRoom].activeCell(idUser);
-                break;
-
-            case EACTION_WEBSOCKET.CONTROL_COMPANY:
-                this.rooms[idRoom].controlCompany(data as ContorolCompanyPayload);
-                break;
-
-            case EACTION_WEBSOCKET.CONTROL_DEAL:
-                this.rooms[idRoom].controlDeal(data as OfferDealPayload);
-                break;
-
-            case EACTION_WEBSOCKET.AUCTION:
-                this.rooms[idRoom].controlAuction(data as ControlAuctionPayload);
-                break;
-
-            case EACTION_WEBSOCKET.END_GAME:
-                this.rooms[idRoom]
-                    ? this.rooms[idRoom].stateGame(data as StateGamePayload)
-                    : '';
-                break;
-
-            case EACTION_WEBSOCKET.RECONNECT_ACCESS:
-                this.rooms[idRoom].reconnectPlayerAccess(idUser);
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
-    controlRoom({ action, gameCreate, idUser, idRoomJoin, colorPlayer }: ControlRoomPayload, client: myWebSocket): void {
-        switch (action) {
-            case 'create':
-                const idRoom = uuidv4();
-                const room = new RoomGame(gameCreate, idRoom, this.userService);
-                this.rooms[idRoom] = room;
-                room.addPlayer(idUser, gameCreate.colorPlayer, client);
-                break;
-            case "list":
-                break;
             case "join":
-                this.rooms[idRoomJoin].addPlayer(idUser, colorPlayer, client);
+                this.rooms[idRoom].addPlayer(idUser, colorPlayer);
+                storage_WS.addWebSocketGame(idRoom, idUser, client);
                 break;
             case "leave":
-                this.rooms[idRoomJoin].deletePlayer(idUser);
+                this.rooms[idRoom].deletePlayer(idUser);
+                storage_WS.leavePlayerGame(idRoom, idUser);
                 break;
             default:
                 break;
         }
-        this.sendRooms();
+        await this.sendRooms();
     }
 
     async sendRooms(): Promise<void> {
-        this.filterEmptyRoom();
-        const payload = await Promise.all(Object.keys(this.rooms).map((key) =>
-            (this.rooms[key].returnInfoRoom())
-        ));
-        this.sockets.map((client) =>
-            client.send(JSON.stringify({ action: EACTION_WEBSOCKET.LIST_ROOM, payload }))
-        );
+        const payload = await this.getAllRooms();
+        storage_WS.sendAllSockets(EACTION_WEBSOCKET.CONTROL_ROOM, payload);
     }
 
-    disconnected(client: myWebSocket): void {
-        const index: number = this.sockets.indexOf(client);
-        index > -1 ? this.sockets.splice(index, 1) : '';
-        Object.values(this.rooms).forEach((room) => {
-            const idUser = client.idPlayer;
-            const player = room.getPlayer(idUser)
-            if (idUser && player) {
-                player.online = false;
-                this.playersOffline[idUser] = setTimeout(() => {
-                    room.disconnectPlayer(idUser);
-                    this.sendRooms();
-                }, TIME_DISCONNECT)
+    async getAllRooms(): Promise<infoRoom[]> {
+        this.filterEmptyRoom();
+        return await Promise.all(Object.keys(this.rooms).map((key) =>
+            this.rooms[key].returnInfoRoom()
+        ));
+    }
+
+    createRoom(createRoomDto: CreateRoomDto): string {
+        const idRoom = uuidv4();
+        this.rooms[idRoom] = new RoomGame(createRoomDto, idRoom, this.userService);
+        return idRoom;
+    }
+
+    getRoom(idRoom: string): RoomI | undefined {
+        const room = this.rooms[idRoom];
+        return room ? room : undefined;
+    }
+
+    disconnectPlayer(idRoom: string, idUser: string): void {
+        const room = this.rooms[idRoom];
+        if (room && idUser) {
+            const timer = setTimeout(() => {
+                room.disconnectPlayer(idUser);
+                this.sendRooms();
+                this.playersOffline = this.playersOffline.filter((player) => player && player.idUser !== idUser);
+            }, TIME_DISCONNECT);
+            room.oflinePlayer(idUser);
+            this.playersOffline.push({ idRoom, idUser, timer })
+        };
+    }
+
+    reconnectPlayerId(idUser: string): string {
+        const player = this.playersOffline.filter((player) => (player && player.idUser === idUser))[0];
+        return player ? player.idRoom : '';
+    }
+
+    reconnectPlayer(idRoom: string, idUser: string, client: WebSocket): void {
+        this.playersOffline = this.playersOffline.map((playersOffline) => {
+            if (playersOffline.idUser && playersOffline.idUser === idUser) {
+                clearTimeout(playersOffline.timer);
+                return;
+            } else {
+                return playersOffline;
             }
         });
+        storage_WS.addWebSocketGame(idRoom, idUser, client);
+        this.rooms[idRoom].reconnectPlayer(idUser);
     }
 
-    connect(idUser: string, client: WebSocket): void {
-        clearTimeout(this.playersOffline[idUser]);
-        Object.values(this.rooms).forEach((room) =>
-            room.getPlayer(idUser) ? room.reconnectPlayer(idUser, client) : ''
-        );
-    }
-
-    addSocket(client: myWebSocket): void {
-        this.sockets.push(client);
-    }
-
-    filterEmptyRoom(): void {
+    private filterEmptyRoom(): void {
         Object.keys(this.rooms).map((key) =>
-            this.rooms[key].amountPlayers
-                ? ''
-                : delete this.rooms[key]);
+            this.rooms[key].amountPlayers ? '' : delete this.rooms[key]);
     }
 
 }

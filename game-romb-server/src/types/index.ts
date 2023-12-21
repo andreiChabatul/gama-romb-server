@@ -1,6 +1,6 @@
-import { EMESSAGE_CLIENT } from "src/const/enum";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload, StateGamePayload, myWebSocket, payloadSocket } from "./websocket";
-import { WebSocket } from "ws";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload, StateGamePayload } from "./websocket";
+import { chatMessage } from "./chat";
+import { PlayerDefaultI, updatePlayer } from "./player";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
@@ -25,17 +25,6 @@ export type mainPlayer = {
     numberWin: number;
 }
 
-export type updatePlayer = {
-    id: string;
-    total: number;
-    capital: number;
-    color: string;
-    cellPosition: number;
-    prison: prisonPlayer;
-    bankrupt: boolean;
-    online: boolean;
-}
-
 export type prisonPlayer = {
     state: boolean;
     attempt: number;
@@ -43,44 +32,6 @@ export type prisonPlayer = {
 
 export type playersGame = {
     [id: string]: PlayerDefaultI;
-}
-
-export type playersOffline = {
-    [id: string]: NodeJS.Timeout;
-}
-
-export interface PrisonI {
-    addPrisoner(player: PlayerDefaultI): void;
-    deletePrisoner(player: PlayerDefaultI): void;
-    turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void;
-    payDebt(player: PlayerDefaultI): void;
-}
-
-export interface ChatI {
-    readonly _messages: chatMessage[];
-    addMessage(message: string, senderId: string): void;
-    addSystemMessage(systemMessage: SystemMessage): void;
-    updateChat(): void;
-    get messages(): chatMessage[]
-}
-
-export interface PlayerDefaultI {
-    get position(): number;
-    get total(): number;
-    set position(value: number);
-    get userId(): string;
-    set addTotal(value: number);
-    minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
-    get prison(): boolean;
-    set prison(value: boolean);
-    set attemptPrison(value: number);
-    get attemptPrison(): number;
-    get capital(): number;
-    set bankrupt(value: boolean);
-    get bankrupt(): boolean;
-    set online(value: boolean);
-    updatePlayer(idUser?: string): void;
-    get playerInfo(): updatePlayer;
 }
 
 export interface CellDefault {
@@ -118,15 +69,10 @@ export type rooms = {
     [id: string]: RoomI;
 }
 
-export interface RoomsControllerI {
-    processing(client: WebSocket, payload: payloadSocket): void;
-    disconnected(client: myWebSocket): void;
-    addSocket(client: WebSocket): void
-}
-
 export interface RoomI {
-    addPlayer(id: string, color: string, client: WebSocket): void;
+    addPlayer(id: string, color: string): void;
     deletePlayer(idUser: string): void;
+    oflinePlayer(idUser: string): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
     activeCell(idUser: string): void;
     addChatMessage(messageChatGamePayload: MessageChatGamePayload): void;
@@ -136,10 +82,8 @@ export interface RoomI {
     stateGame(stateGamePayload: StateGamePayload): void
     returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
-    reconnectPlayer(idUser: string, client: WebSocket): Promise<void>
-    reconnectPlayerAccess(idUser: string): void
+    reconnectPlayer(idUser: string): Promise<void>;
     get amountPlayers(): number;
-    getPlayer(idUser: string) : PlayerDefaultI | undefined;
 }
 
 export interface OfferServiceI {
@@ -158,23 +102,6 @@ export type infoRoom = {
     idRoom: string,
     roomName: string,
     players: mainPlayer[],
-}
-
-export type UpdateRoom = {
-    idRoom: string;
-    turnId: string;
-}
-
-export interface chatMessage extends SystemMessage {
-    message?: string;
-    senderId?: string;
-}
-
-export interface SystemMessage {
-    action?: EMESSAGE_CLIENT,
-    idUser?: string,
-    cellId?: number,
-    valueroll?: number,
 }
 
 export interface gameCell {

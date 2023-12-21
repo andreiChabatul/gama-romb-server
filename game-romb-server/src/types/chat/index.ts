@@ -1,3 +1,22 @@
+export interface ChatI {
+    readonly messagesChat: messagesChat;
+    addChatMessage(idRoom: string, chatMessage: chatMessage): void;
+    getAllMessages(idRoom: string): chatMessage[];
+}
+
+export type messagesChat = {
+    [idRoom: string]: chatMessage[]
+}
+
+export type chatMessage = {
+    message?: string;
+    senderId?: string;
+    action?: EMESSAGE_CLIENT,
+    idUser?: string,
+    cellId?: number,
+    valueroll?: number,
+}
+
 export enum EMESSAGE_CLIENT {
     FIRST_TURN = 'firstTurn',
     TURN = "turn",
@@ -19,8 +38,8 @@ export enum EMESSAGE_CLIENT {
     ACCEPT_DEAL = 'acceptDealInfo',
     LEAVE_PRISON = 'leavePrison',
     GET_IN_PRISON = 'getInPrison',
-    START_AUCTION ='startAuction',
-    LEAVE_AUCTION ='leaveAuction',
-    STEP_AUCTION ='stepAuction',
-    END_AUCTION ='endAuction',
+    START_AUCTION = 'startAuction',
+    LEAVE_AUCTION = 'leaveAuction',
+    STEP_AUCTION = 'stepAuction',
+    END_AUCTION = 'endAuction',
 }

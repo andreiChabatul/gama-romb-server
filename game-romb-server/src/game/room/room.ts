@@ -1,45 +1,41 @@
-import { Chat } from "../chatGame";
-import { AuctionI, PlayerDefaultI, PrisonI, RoomI, cells, fullPlayer, gameRoom, infoRoom, playersGame } from "src/types";
-import { WebSocket } from "ws";
+import { chatGame } from "../chatGame";
+import { AuctionI, RoomI, cells, fullPlayer, gameRoom, infoRoom, playersGame } from "src/types";
 import { PlayerDefault } from "../player/player";
 import { AuctionCompany } from "../auction.service";
 import { TurnService } from "../turn.service";
-import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, Room_WS, StateGamePayload, gameCreate } from "src/types/websocket";
-import { ROOM_WS } from "../roomWS";
+import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, StateGamePayload } from "src/types/websocket";
 import { Prison } from "../prison";
 import { OfferService } from "../offer.service";
-import { EMESSAGE_CLIENT } from "src/const/enum";
 import { UserService } from "src/user/user.service";
 import { cellsGame } from "../cells";
 import { defaultCell } from "../cells/defaultCell";
+import { storage_WS } from "../socketStorage";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { CreateRoomDto } from "src/rooms/dto/create.room.dto";
+import { PrisonI } from "src/types/player";
 
 export class RoomGame implements RoomI {
 
     private players: playersGame = {};
     private cellsGame: cells[];
-    private chat: Chat;
     private auction: AuctionI;
     private turnService: TurnService;
     private prison: PrisonI;
-    private roomWS: Room_WS;
     private offerService: OfferService;
-    private infoRoom: gameCreate;
+    private infoRoom: CreateRoomDto;
     private isStart: boolean;
 
-    constructor(gameCreateDto: gameCreate, private idRoom: string, private userService: UserService) {
-        this.infoRoom = gameCreateDto;
-        this.roomWS = new ROOM_WS();
-        this.chat = new Chat(this.roomWS);
-        this.auction = new AuctionCompany(this.players, this.roomWS);
-        this.prison = new Prison(this.turnService, this.chat);
-        this.cellsGame = cellsGame(this.roomWS, this.auction, this.players, this.prison);
-        this.offerService = new OfferService(this.players, this.roomWS, this.cellsGame);
-        this.turnService = new TurnService(this.roomWS, this.players, this.cellsGame, this.chat);
+    constructor(createRoomDto: CreateRoomDto, private idRoom: string, private userService: UserService) {
+        this.infoRoom = createRoomDto;
+        this.auction = new AuctionCompany(idRoom, this.players);
+        this.prison = new Prison(idRoom, this.turnService);
+        this.cellsGame = cellsGame(idRoom, this.auction, this.players, this.prison);
+        this.offerService = new OfferService(idRoom, this.players, this.cellsGame);
+        this.turnService = new TurnService(idRoom, this.players, this.cellsGame);
     }
 
-    addPlayer(id: string, color: string, client: WebSocket): void {
-        this.roomWS.addWebSocket(id, client);
-        this.players[id] = new PlayerDefault(id, color, this.roomWS, this.chat, this.cellsGame);
+    addPlayer(id: string, color: string): void {
+        this.players[id] = new PlayerDefault(id, this.idRoom, color, this.cellsGame);
         this.checkStartGame();
     }
 
@@ -47,10 +43,14 @@ export class RoomGame implements RoomI {
         delete this.players[idUser];
     }
 
+    oflinePlayer(idUser: string): void {
+        this.players[idUser].online = false;
+    }
+
     private async checkStartGame(): Promise<void> {
-        if (true || this.amountPlayers === Number(this.infoRoom.maxPlayers)) { //убрать труе потом, временно чтобы тестть
+        if (this.amountPlayers === Number(this.infoRoom.maxPlayers) && this.amountPlayers > 0) { //убрать труе потом, временно чтобы тестть
             this.isStart = true;
-            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.START_GAME, await this.startGameInfo(false));
+            storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
             this.turnService.firstTurn();
         };
     }
@@ -80,19 +80,19 @@ export class RoomGame implements RoomI {
                 const cellId = this.players[idUser].position;
                 const cell = this.cellsGame[cellId];
                 ('controlCompany' in cell) ? this.auction.startAuction(cell, idUser) : '';
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.START_AUCTION, cellId });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.START_AUCTION, cellId });
                 break;
             case "leaveAuction":
                 this.auction.leaveAuction(idUser);
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_AUCTION, idUser });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.LEAVE_AUCTION, idUser });
                 break;
             case "stepAuction":
                 this.auction.stepAuction(idUser);
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.STEP_AUCTION, idUser });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.STEP_AUCTION, idUser });
                 break;
             case "endAuction":
                 this.turnService.updateTurn();
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.END_AUCTION });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.END_AUCTION });
                 break;
             default:
                 break;
@@ -105,11 +105,11 @@ export class RoomGame implements RoomI {
                 this.offerService.newOffer(offerDealInfo);
                 break;
             case "refuse":
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.REFUSE_DEAL, idUser });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.REFUSE_DEAL, idUser });
                 this.turnService.updateTurn();
                 break;
             case "accept":
-                this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ACCEPT_DEAL, idUser });
+                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.ACCEPT_DEAL, idUser });
                 this.offerService.acceptDeal();
                 this.turnService.updateTurn();
                 break;
@@ -133,8 +133,8 @@ export class RoomGame implements RoomI {
         };
     }
 
-    addChatMessage({ message, idUser }: MessageChatGamePayload): void {
-        this.chat.addMessage(message, idUser);
+    addChatMessage({ idRoom, message, idUser }: MessageChatGamePayload): void {
+        chatGame.addChatMessage(idRoom, { message, idUser });
     }
 
     async returnInfoRoom(): Promise<infoRoom> {
@@ -157,22 +157,15 @@ export class RoomGame implements RoomI {
         this.isStart ? this.leavePlayerGame(idUser) : this.deletePlayer(idUser);
     }
 
-    async reconnectPlayer(idUser: string, client: WebSocket): Promise<void> {
+    async reconnectPlayer(idUser: string): Promise<void> {
         this.players[idUser].online = true;
-        this.roomWS.addWebSocket(idUser, client);
-        this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.RECONNECT, await this.startGameInfo(true));
-    }
-
-    reconnectPlayerAccess(idUser: string): void {
+        storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
+        this.cellsGame.forEach((cell) => ('controlCompany' in cell) ? cell.sendInfoPLayer(idUser) : '');
         this.turnService.updateTurn(idUser);
-        this.players[idUser].online = true;
-        this.cellsGame.forEach((cell) =>
-            'controlCompany' in cell ? cell.sendInfoPLayer(idUser) : '');
-        Object.values(this.players).forEach((player) => player.updatePlayer(idUser));
     }
 
     private leavePlayerGame(idUser: string): void {
-        this.roomWS.leavePlayer(idUser);
+        storage_WS.leavePlayerGame(this.idRoom, idUser);
         this.players[idUser].bankrupt = true;
         this.players[idUser].online = false;
         this.activeCell(idUser);
@@ -183,21 +176,15 @@ export class RoomGame implements RoomI {
         return Object.keys(this.players).length;
     }
 
-    getPlayer(idUser: string): PlayerDefaultI | undefined {
-        return (this.players[idUser] && !this.players[idUser].bankrupt)
-            ? this.players[idUser]
-            : undefined;
-    }
-
-    private async startGameInfo(reconnect: boolean): Promise<gameRoom> {
+    private async gameInfo(): Promise<gameRoom> {
         return {
             idRoom: this.idRoom,
             players: (await this.fillPlayers()).reduce((res, curr) => {
-                res[curr.id] = reconnect ? { ...curr, cellPosition: 0 } : curr;
+                res[curr.id] = curr;
                 return res;
             }, {}),
             board: defaultCell,
-            chat: this.chat.messages,
+            chat: chatGame.getAllMessages(this.idRoom),
             turnId: '',
             timeTurn: this.infoRoom.timeTurn
         };

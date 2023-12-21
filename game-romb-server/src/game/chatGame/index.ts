@@ -1,29 +1,29 @@
-import { ChatI, chatMessage, SystemMessage } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { ChatI, chatMessage, messagesChat } from "src/types/chat";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "../socketStorage";
 
-export class Chat implements ChatI {
+class Chat implements ChatI {
 
-    readonly _messages: chatMessage[] = [];
+    readonly messagesChat: messagesChat = {};
 
-    constructor(private roomWS: Room_WS) { }
-
-    addMessage(message: string, senderId: string): void {
-        this._messages.push({ message, senderId });
-        this.updateChat();
+    addChatMessage(idRoom: string, chatMessage: chatMessage): void {
+        const chatGame = this.messagesChat[idRoom];
+        chatGame
+            ? chatGame.push(chatMessage)
+            : this.messagesChat[idRoom] = [chatMessage]
+        this.updateChat(idRoom);
     }
 
-    addSystemMessage(systemMessage: SystemMessage): void {
-        this._messages.push(systemMessage);
-        this.updateChat();
+    getAllMessages(idRoom: string): chatMessage[] {
+        return this.messagesChat[idRoom] ? this.messagesChat[idRoom] : [];
     }
 
-    updateChat(): void {
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CHAT, {
-            chat: this._messages[this._messages.length - 1]
+    private updateChat(idRoom: string): void {
+        storage_WS.sendAllPlayersGame(idRoom, EACTION_WEBSOCKET.UPDATE_CHAT, {
+            chat: this.messagesChat[idRoom].at(-1)
         });
     }
 
-    get messages(): chatMessage[] {
-        return this._messages;
-    }
 }
+
+export const chatGame = new Chat();

@@ -1,6 +1,8 @@
-import { AuctionI, CellCompanyI, CompanyInfo, PlayerDefaultI, playersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/const/enum";
+import { AuctionI, CellCompanyI, CompanyInfo, playersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "src/game/socketStorage";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { PlayerDefaultI } from "src/types/player";
 
 export class CellCompany implements CellCompanyI {
 
@@ -14,7 +16,7 @@ export class CellCompany implements CellCompanyI {
 
     constructor(
         private _index: number,
-        private roomWS: Room_WS,
+        private _idRoom: string,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionI,
         private players: playersGame
@@ -46,7 +48,7 @@ export class CellCompany implements CellCompanyI {
             payload.description = EMESSAGE_CLIENT.AUCTION_COMPANY;
         };
 
-        this.roomWS.sendOnePlayer(player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     activateCell(): void {
@@ -173,8 +175,8 @@ export class CellCompany implements CellCompanyI {
             company: this.info,
         };
         idUser
-            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_CELL, payload)
-            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_CELL, payload);
+            ? storage_WS.sendOnePlayerGame(this._idRoom, idUser, EACTION_WEBSOCKET.UPDATE_CELL, payload)
+            : storage_WS.sendAllPlayersGame(this._idRoom, EACTION_WEBSOCKET.UPDATE_CELL, payload);
     }
 
 }

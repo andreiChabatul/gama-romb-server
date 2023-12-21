@@ -1,22 +1,23 @@
-import { PlayerDefaultI, cells, prisonPlayer, updatePlayer } from "src/types";
-import { Chat } from "../chatGame";
+import { cells, prisonPlayer } from "src/types";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/const";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/const/enum";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "../socketStorage";
+import { chatGame } from "../chatGame";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { PlayerDefaultI, updatePlayer } from "src/types/player";
 
 export class PlayerDefault implements PlayerDefaultI {
 
-    private _total: number;
-    private _bankrupt: boolean;
-    private _prison: prisonPlayer;
-    private _isOnline: boolean;
-    private cellPosition: number;
+    _total: number;
+    _bankrupt: boolean;
+    _prison: prisonPlayer;
+    _isOnline: boolean;
+    cellPosition: number;
 
     constructor(
         private id: string,
+        private idRoom: string,
         private _color: string,
-        private roomWS: Room_WS,
-        private chat: Chat,
         private cells: cells[]) {
         this._total = INIT_TOTAL;
         this.cellPosition = 0;
@@ -42,7 +43,7 @@ export class PlayerDefault implements PlayerDefaultI {
     set bankrupt(value: boolean) {
         this._bankrupt = value;
         this.cells.forEach((cell) =>
-            'owned' in cell && cell.owned === this.userId
+            ('owned' in cell && cell.owned === this.userId)
                 ? cell.owned = undefined
                 : '');
         this.updatePlayer();
@@ -68,12 +69,12 @@ export class PlayerDefault implements PlayerDefaultI {
 
     updatePlayer(idUser?: string): void {
         idUser
-            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo)
-            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo);
+            ? storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo)
+            : storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo);
     }
 
     get playerInfo(): updatePlayer {
-        const updatePlayer = {
+        return {
             id: this.id,
             color: this._color,
             total: this._total,
@@ -83,18 +84,17 @@ export class PlayerDefault implements PlayerDefaultI {
             bankrupt: this._bankrupt,
             online: this._isOnline
         };
-        return updatePlayer;
     }
 
     set addTotal(value: number) {
         this._total += value;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
+        chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
         this.updatePlayer();
     }
 
     minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
         this._total -= valueroll;
-        this.chat.addSystemMessage({ action, idUser: this.id, valueroll, cellId });
+        chatGame.addChatMessage(this.idRoom, { action, idUser: this.id, valueroll, cellId });
         this.updatePlayer();
     }
 

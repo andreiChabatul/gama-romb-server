@@ -1,5 +1,7 @@
-import { CellDefault, PlayerDefaultI, PrisonI, infoCellTurn } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { storage_WS } from "src/game/socketStorage";
+import { CellDefault, infoCellTurn } from "src/types";
+import { PlayerDefaultI, PrisonI } from "src/types/player";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 
 export class CellEmpty implements CellDefault {
@@ -8,7 +10,7 @@ export class CellEmpty implements CellDefault {
 
     constructor(
         private _index: number,
-        private roomWS: Room_WS,
+        private _idRoom: string,
         private _nameCell: string,
         private prison: PrisonI) { }
 
@@ -27,7 +29,7 @@ export class CellEmpty implements CellDefault {
             description: this._nameCell + 'Desc',
             buttons: 'none',
         };
-        this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     activateCell(): void {

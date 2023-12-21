@@ -1,13 +1,15 @@
-import { EMESSAGE_CLIENT } from "src/const/enum";
-import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { storage_WS } from "src/game/socketStorage";
+import { CellDefault, infoCellTurn } from "src/types";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { PlayerDefaultI } from "src/types/player";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class CellTax implements CellDefault {
 
     _cellValue: number;
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private roomWS: Room_WS, private _nameCell: string) { }
+    constructor(private _index: number, private _idRoom: string, private _nameCell: string) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;
@@ -26,7 +28,7 @@ export class CellTax implements CellDefault {
             buttons: 'pay',
             value: this._cellValue
         };
-        this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     activateCell(): void {

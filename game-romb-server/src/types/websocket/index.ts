@@ -2,14 +2,12 @@ import { WebSocket } from "ws";
 import { controlAuction, controlCompany, controlDeal, offerDealInfo } from "..";
 
 export interface myWebSocket extends WebSocket {
-    idPlayer: string;
+    idUser?: string;
+    idRoom?: string;
 }
 
 export enum EACTION_WEBSOCKET {
-    CONNECT = 'connect',
     RECONNECT = 'reconnect',
-    RECONNECT_ACCESS = 'reconnect_access',
-    LIST_ROOM = 'list room',
     CONTROL_ROOM = 'control room',
     UPDATE_CHAT = 'update chat',
     UPDATE_CELL = 'update cell',
@@ -26,31 +24,18 @@ export enum EACTION_WEBSOCKET {
     END_GAME = 'end game'
 }
 
-export type controlRoom = 'create' | 'leave' | 'join' | 'list';
+export type controlRoom = 'leave' | 'join';
 export type stateGameAction = 'leave' | 'stay' | 'endGame';
-export type gameCreate = {
-    roomName: string
-    maxPlayers: number
-    timeTurn: number
-    idUser: string
-    colorPlayer: string;
-}
 export type payloadSocket = [EACTION_WEBSOCKET, DefaultPayload];
 
 export interface ControlRoomPayload extends DefaultPayload {
     action: controlRoom;
-    gameCreate: gameCreate;
-    idRoomJoin?: string;
     colorPlayer?: string;
 }
 
 export interface DefaultPayload {
     idRoom: string;
     idUser: string;
-}
-
-export interface PayloadJoinGame extends DefaultPayload {
-    idRoomJoin: string;
 }
 
 export interface MessageChatGamePayload extends DefaultPayload {
@@ -78,12 +63,4 @@ export interface StateGamePayload extends DefaultPayload {
 export interface OfferDealPayload extends DefaultPayload {
     offerDealInfo?: offerDealInfo;
     action: controlDeal;
-}
-
-export interface Room_WS {
-    webSockets: { [id: string]: WebSocket };
-    addWebSocket(idUser: string, webSocket: WebSocket): void;
-    sendAllPlayers(action: EACTION_WEBSOCKET, payload?: {}): void;
-    sendOnePlayer(id: string, action: EACTION_WEBSOCKET, payload?: {}): void;
-    leavePlayer(idUser: string): void;
 }

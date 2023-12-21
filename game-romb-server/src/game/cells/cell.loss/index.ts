@@ -1,7 +1,9 @@
 import { VALUE_CELL } from "src/const";
-import { EMESSAGE_CLIENT } from "src/const/enum";
-import { CellDefault, PlayerDefaultI, infoCellTurn } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { storage_WS } from "src/game/socketStorage";
+import { CellDefault, infoCellTurn } from "src/types";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { PlayerDefaultI } from "src/types/player";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class CellLoss implements CellDefault {
 
@@ -9,7 +11,7 @@ export class CellLoss implements CellDefault {
     _randomIndex: number;
     player: PlayerDefaultI;
 
-    constructor(private _index: number, private roomWS: Room_WS) { }
+    constructor(private _index: number, private _idRoom: string) { }
 
     movePlayer(player: PlayerDefaultI): void {
         this.player = player;
@@ -30,7 +32,7 @@ export class CellLoss implements CellDefault {
             buttons: this.player.bankrupt ? 'bankrupt' : 'pay',
             value: this._cellValue
         };
-        this.roomWS.sendOnePlayer(this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     activateCell(): void {

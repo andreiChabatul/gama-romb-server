@@ -1,8 +1,10 @@
 import { MONOPOLY_COMPANY, NO_MONOPOY_COMPANY } from "src/const";
-import { CellCompanyI, PlayerDefaultI, playersGame, cells, companyCheckNoMonopoly } from "src/types";
-import { Chat } from "../chatGame";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
-import { EMESSAGE_CLIENT } from "src/const/enum";
+import { CellCompanyI, playersGame, cells, companyCheckNoMonopoly } from "src/types";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "../socketStorage";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { chatGame } from "../chatGame";
+import { PlayerDefaultI } from "src/types/player";
 
 export class TurnService {
 
@@ -11,17 +13,12 @@ export class TurnService {
     private doubleCounter: number = 0;
     private playersActive: playersGame = {};
 
-    constructor(
-        private roomWS: Room_WS,
-        private players: playersGame,
-        private cellsGame: cells[],
-        private chat: Chat,
-    ) { }
+    constructor(private idRoom: string, private players: playersGame, private cellsGame: cells[]) { }
 
     firstTurn(): void {
         this.filterBankrupt();
         this.indexActive = Math.floor(Math.random() * Object.keys(this.players).length);
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer.userId });
+        chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer.userId });
         this.updateTurn();
     }
 
@@ -30,7 +27,7 @@ export class TurnService {
         const cell = this.cellsGame[player.position];
         this.isDouble = isDouble;
         if (cell) {
-            this.chat.addSystemMessage({
+            chatGame.addChatMessage(this.idRoom, {
                 action: EMESSAGE_CLIENT.INTO_CELL,
                 idUser: player.userId,
                 cellId: cell.index,
@@ -44,17 +41,17 @@ export class TurnService {
         if (this.isDouble) {
             this.doubleCounter++;
             this.checkDouble();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
+            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
         } else {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
+            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer.userId });
         }
         this.updateTurn();
     }
 
     endTurn(): void {
-        this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_TURN);
+        storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_TURN);
         this.filterBankrupt();
         // this.checkWinner() ? this.nextTurn() : '';
         this.nextTurn() //template
@@ -67,8 +64,8 @@ export class TurnService {
             turnId: this.activePlayer.userId
         };
         idUser
-            ? this.roomWS.sendOnePlayer(idUser, EACTION_WEBSOCKET.UPDATE_TURN, payload)
-            : this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.UPDATE_TURN, payload);
+            ? storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.UPDATE_TURN, payload)
+            : storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.UPDATE_TURN, payload);
     }
 
     private updateMonopolyCompany(): void {
@@ -147,7 +144,7 @@ export class TurnService {
     checkWinner(): boolean {
         const userIds = Object.keys(this.playersActive);
         if (userIds.length === 1) {
-            this.roomWS.sendAllPlayers(EACTION_WEBSOCKET.END_GAME, { winUser: userIds[0] })
+            storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_GAME, { winUser: userIds[0] })
             return false;
         } else {
             return true;

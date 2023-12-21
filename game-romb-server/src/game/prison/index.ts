@@ -1,21 +1,22 @@
-import { ChatI, PlayerDefaultI, PrisonI } from "src/types";
 import { TurnService } from "../turn.service";
 import { DEBT_PRISON } from "src/const";
-import { EMESSAGE_CLIENT } from "src/const/enum";
+import { EMESSAGE_CLIENT } from "src/types/chat";
+import { chatGame } from "../chatGame";
+import { PlayerDefaultI, PrisonI } from "src/types/player";
 
 export class Prison implements PrisonI {
 
-    constructor(private turnService: TurnService, private chat: ChatI) { }
+    constructor(private idRoom: string, private turnService: TurnService) { }
 
     addPrisoner(player: PlayerDefaultI): void {
         player.prison = true;
         player.position = 12;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.GET_IN_PRISON, idUser: player.userId });
+        chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.GET_IN_PRISON, idUser: player.userId });
     }
 
     deletePrisoner(player: PlayerDefaultI): void {
         player.prison = false;
-        this.chat.addSystemMessage({ action: EMESSAGE_CLIENT.LEAVE_PRISON, idUser: player.userId });
+        chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.LEAVE_PRISON, idUser: player.userId });
         this.turnService.endTurn();
     }
 
@@ -36,6 +37,5 @@ export class Prison implements PrisonI {
             this.turnService.endTurn();
         };
     }
-
 
 }

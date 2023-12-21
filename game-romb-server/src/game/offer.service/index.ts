@@ -1,15 +1,16 @@
 import { OfferServiceI, playersGame, cells, offerDealInfo, offerInfo } from "src/types";
-import { EACTION_WEBSOCKET, Room_WS } from "src/types/websocket";
+import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { storage_WS } from "../socketStorage";
 
 export class OfferService implements OfferServiceI {
 
     offerDealInfo: offerDealInfo;
 
-    constructor(private players: playersGame, private roomWS: Room_WS, private cellsGame: cells[]) { }
+    constructor(private idRoom: string, private players: playersGame, private cellsGame: cells[]) { }
 
     newOffer(offerDealInfo: offerDealInfo): void {
         this.offerDealInfo = offerDealInfo;
-        this.roomWS.sendOnePlayer(offerDealInfo.receivePerson.idPerson,
+        storage_WS.sendOnePlayerGame(this.idRoom, offerDealInfo.receivePerson.idPerson,
             EACTION_WEBSOCKET.CONTROL_DEAL,
             this.offerDealInfo
         );
