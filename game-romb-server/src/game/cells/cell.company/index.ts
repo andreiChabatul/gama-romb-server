@@ -1,8 +1,9 @@
-import { AuctionI, CellCompanyI, CompanyInfo, playersGame, controlCompany, infoCellTurn, updateInfoCompany } from "src/types";
+import { AuctionI, CellCompanyI, CompanyInfo, controlCompany, infoCellTurn, updateInfoCompany, countryCompany } from "src/types";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "src/game/socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { PlayerDefaultI } from "src/types/player";
+import { storage_players } from "src/game/playerStorage";
 
 export class CellCompany implements CellCompanyI {
 
@@ -19,14 +20,15 @@ export class CellCompany implements CellCompanyI {
         private _idRoom: string,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionI,
-        private players: playersGame
+        // private players: playersGame,
+        private updateMonopoly: (countryCompany: countryCompany) => void
     ) {
         this._quantityStock = 0;
         this._monopoly = false;
     }
 
-    movePlayer(player: PlayerDefaultI, valueRoll?: number): void {
-        this._player = player;
+    movePlayer(idUser: string, valueRoll?: number): void {
+        this._player = storage_players.getPlayer(this._idRoom, idUser);
         this._valueRoll = valueRoll;
         const payload: infoCellTurn = {
             indexCompany: this._index,
@@ -34,21 +36,21 @@ export class CellCompany implements CellCompanyI {
             buttons: 'none',
         };
 
-        if (player.userId === this._owned) {
+        if (idUser === this._owned) {
             payload.description = EMESSAGE_CLIENT.OWNED_COMPANY;
         } else if (this._pledge) {
             payload.description = EMESSAGE_CLIENT.PLEDGE_COMPANY;
-        } else if (this._owned && player.userId !== this._owned && !this._pledge) {
+        } else if (this._owned && idUser !== this._owned && !this._pledge) {
             payload.description = EMESSAGE_CLIENT.RENT_COMPANY;
             payload.buttons = 'pay';
-        } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
+        } else if (!this._owned && this._player.total > this.compnanyInfo.priceCompany) {
             payload.description = EMESSAGE_CLIENT.BUY_COMPANY;
             payload.buttons = 'buy';
         } else {
             payload.description = EMESSAGE_CLIENT.AUCTION_COMPANY;
         };
 
-        storage_WS.sendOnePlayerGame(this._idRoom, player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, idUser, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
     activateCell(): void {
@@ -65,17 +67,16 @@ export class CellCompany implements CellCompanyI {
     }
 
     buyCompany(player: PlayerDefaultI = this._player, price: number = this.compnanyInfo.priceCompany): void {
-        this._owned = player.userId;
+        this.owned = player.userId;
         player.minusTotal(price, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this._index);
         this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
         this.sendInfoPLayer();
     }
 
     payRent(): void {
-        const rentDebt = this._player.bankrupt ? this._player.capital : this.rentCompany;
-        const ownedPlayer = this.players[this.owned];
-        ownedPlayer.addTotal = rentDebt;
-        this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
+        // const rentDebt = this._player.bankrupt ? this._player.capital : this.rentCompany;
+        // ownedPlayer.addTotal = rentDebt;
+        // this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
     }
 
     get info(): updateInfoCompany {
@@ -107,6 +108,7 @@ export class CellCompany implements CellCompanyI {
 
     set owned(userId: string) {
         this._owned = userId;
+        this.updateMonopoly(this.compnanyInfo.countryCompany);
         this.sendInfoPLayer();
     }
 
@@ -144,8 +146,8 @@ export class CellCompany implements CellCompanyI {
         return this._quantityStock;
     }
 
-    controlCompany(action: controlCompany, player: PlayerDefaultI): void {
-
+    controlCompany(action: controlCompany, idUser: string): void {
+        const player = storage_players.getPlayer(this._idRoom, idUser);
         switch (action) {
             case 'buyStock':
                 this._quantityStock += 1;

@@ -36,15 +36,16 @@ export type playersGame = {
 
 export interface CellDefault {
     _cellValue?: number;
-    movePlayer(player: PlayerDefaultI, valueRoll?: number): void;
+    movePlayer(idUser: string, valueRoll?: number): void;
     get index(): number;
     activateCell(): void;
     sendInfoPLayer(idUser?: string): void;
 }
 
 export interface CellCompanyI extends CellDefault {
-    controlCompany(action: controlCompany, player: PlayerDefaultI): void;
-    buyCompany(player: PlayerDefaultI, price: number): void
+    controlCompany(action: controlCompany, idUser: string): void;
+    buyCompany(player: PlayerDefaultI, price: number): void;
+    payRent(ownedPlayer: PlayerDefaultI): void;
     get owned(): string | null;
     get info(): updateInfoCompany;
     get infoCompany(): CompanyInfo;
@@ -71,8 +72,6 @@ export type rooms = {
 
 export interface RoomI {
     addPlayer(id: string, color: string): void;
-    deletePlayer(idUser: string): void;
-    oflinePlayer(idUser: string): void;
     playerMove(diceRollGamePayload: DiceRollGamePayload): void
     activeCell(idUser: string): void;
     addChatMessage(messageChatGamePayload: MessageChatGamePayload): void;
@@ -83,7 +82,6 @@ export interface RoomI {
     returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
     reconnectPlayer(idUser: string): Promise<void>;
-    get amountPlayers(): number;
 }
 
 export interface OfferServiceI {

@@ -25,17 +25,11 @@ export class Prison implements PrisonI {
         this.deletePrisoner(player);
     }
 
-    turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void {
-
-        if (isDouble) {
-            this.deletePrisoner(player);
-            this.turnService.turn(player, value, false);
-        } else {
-            player.attemptPrison = player.attemptPrison - 1;
-            ((DEBT_PRISON > player.capital || DEBT_PRISON === player.capital) && player.attemptPrison === 0)
-                ? player.bankrupt = true : '';
-            this.turnService.endTurn();
-        };
+    turnPrison(player: PlayerDefaultI): void {
+        player.attemptPrison = player.attemptPrison - 1;
+        ((DEBT_PRISON > player.capital || DEBT_PRISON === player.capital) && player.attemptPrison === 0)
+            ? player.bankrupt = true : '';
+        this.turnService.endTurn();
     }
 
 }

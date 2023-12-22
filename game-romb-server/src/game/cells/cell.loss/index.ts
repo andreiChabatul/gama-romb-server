@@ -1,4 +1,5 @@
 import { VALUE_CELL } from "src/const";
+import { storage_players } from "src/game/playerStorage";
 import { storage_WS } from "src/game/socketStorage";
 import { CellDefault, infoCellTurn } from "src/types";
 import { EMESSAGE_CLIENT } from "src/types/chat";
@@ -13,11 +14,11 @@ export class CellLoss implements CellDefault {
 
     constructor(private _index: number, private _idRoom: string) { }
 
-    movePlayer(player: PlayerDefaultI): void {
-        this.player = player;
+    movePlayer(idUser: string): void {
+        this.player = storage_players.getPlayer(this._idRoom, idUser);
         this._randomIndex = Math.floor(Math.random() * VALUE_CELL.length)
         this._cellValue = VALUE_CELL[this._randomIndex];
-        (this._cellValue > player.capital || this._cellValue === player.capital) ? player.bankrupt = true : '';
+        (this._cellValue > this.player.capital || this._cellValue === this.player.capital) ? this.player.bankrupt = true : '';
         this.sendInfoPLayer();
     }
 

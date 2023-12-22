@@ -1,7 +1,8 @@
-import { AuctionI, CellCompanyI, playersGame, controlAuction, infoAuction, statePlayer } from "src/types";
+import { AuctionI, CellCompanyI, controlAuction, infoAuction, statePlayer } from "src/types";
 import { AUCTION_STEP } from "src/const";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "../socketStorage";
+import { storage_players } from "../playerStorage";
 
 export class AuctionCompany implements AuctionI {
 
@@ -12,10 +13,10 @@ export class AuctionCompany implements AuctionI {
     action: controlAuction;
     playersId: string[];
 
-    constructor(private idRoom: string, private players: playersGame) { }
+    constructor(private idRoom: string) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
-        this.playersId = Object.keys(this.players);
+        this.playersId = [...storage_players.getPlayersActive(this.idRoom)];
         this.cell = cell;
         this.indexActive = 0;
         this.currentPrice = cell.infoCompany.priceCompany;
@@ -41,7 +42,7 @@ export class AuctionCompany implements AuctionI {
         const index = this.playersId.indexOf(idUser);
         this.playersId.splice(index, 1);
         this.playersId.map((id, index) =>
-            (this.players[id].total < this.currentPrice) ? this.playersId.splice(index, 1) : '');
+            (storage_players.getPlayer(this.idRoom, id).total < this.currentPrice) ? this.playersId.splice(index, 1) : '');
     }
 
     private nextStep(): void {
@@ -52,15 +53,17 @@ export class AuctionCompany implements AuctionI {
     }
 
     private endAuction(): void {
-        this.auctionWinner ? this.cell.buyCompany(this.players[this.auctionWinner], this.currentPrice) : '';
-        this.action = 'endAuction'
+        this.auctionWinner
+            ? this.cell.buyCompany(storage_players.getPlayer(this.idRoom, this.auctionWinner), this.currentPrice)
+            : '';
+        this.action = 'endAuction';
     }
 
     private sendInfoPlayer(idUser: string, statePlayer: statePlayer): void {
         const payload: infoAuction = {
             indexCompany: this.cell.index,
             currentPrice: this.currentPrice,
-            currentPlayer: this.auctionWinner ? this.players[this.auctionWinner].userId : '',
+            currentPlayer: this.auctionWinner ?? this.auctionWinner,
             action: this.action,
             statePlayer
         };
@@ -68,13 +71,10 @@ export class AuctionCompany implements AuctionI {
     }
 
     private sendAllPlayers(): void {
-        Object.values(this.players).map((player) => {
-            if (!player.bankrupt) {
-                let desc: statePlayer = this.playersId.includes(player.userId) ? 'wait' : 'inactive';
-                player.userId === this.playersId[this.indexActive] ? desc = 'active' : '';
-                this.sendInfoPlayer(player.userId, desc);
-            }
+        storage_players.getPlayersActive(this.idRoom).map((idUser) => {
+            let desc: statePlayer = this.playersId.includes(idUser) ? 'wait' : 'inactive';
+            idUser === this.playersId[this.indexActive] ? desc = 'active' : '';
+            this.sendInfoPlayer(idUser, desc);
         });
     }
-
 }

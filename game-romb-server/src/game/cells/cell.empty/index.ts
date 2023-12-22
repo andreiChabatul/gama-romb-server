@@ -1,3 +1,4 @@
+import { storage_players } from "src/game/playerStorage";
 import { storage_WS } from "src/game/socketStorage";
 import { CellDefault, infoCellTurn } from "src/types";
 import { PlayerDefaultI, PrisonI } from "src/types/player";
@@ -14,8 +15,8 @@ export class CellEmpty implements CellDefault {
         private _nameCell: string,
         private prison: PrisonI) { }
 
-    movePlayer(player: PlayerDefaultI): void {
-        this.player = player;
+    movePlayer(idUser: string): void {
+        this.player = storage_players.getPlayer(this._idRoom, idUser);
         this.sendInfoPLayer();
     }
 

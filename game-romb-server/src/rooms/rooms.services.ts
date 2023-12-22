@@ -9,6 +9,7 @@ import { CreateRoomDto } from './dto/create.room.dto';
 import { playersOffline } from 'src/types/socketStorage';
 import { TIME_DISCONNECT } from 'src/const';
 import { WebSocket } from "ws";
+import { storage_players } from 'src/game/playerStorage';
 
 @Injectable()
 export class RoomsService {
@@ -25,7 +26,7 @@ export class RoomsService {
                 storage_WS.addWebSocketGame(idRoom, idUser, client);
                 break;
             case "leave":
-                this.rooms[idRoom].deletePlayer(idUser);
+                storage_players.deletePlayer(idRoom, idUser);
                 storage_WS.leavePlayerGame(idRoom, idUser);
                 break;
             default:
@@ -65,7 +66,7 @@ export class RoomsService {
                 this.sendRooms();
                 this.playersOffline = this.playersOffline.filter((player) => player && player.idUser !== idUser);
             }, TIME_DISCONNECT);
-            room.oflinePlayer(idUser);
+            storage_players.getPlayer(idRoom, idUser).online = false;
             this.playersOffline.push({ idRoom, idUser, timer })
         };
     }
@@ -90,7 +91,7 @@ export class RoomsService {
 
     private filterEmptyRoom(): void {
         Object.keys(this.rooms).map((key) =>
-            this.rooms[key].amountPlayers ? '' : delete this.rooms[key]);
+            storage_players.getAmountPlayers(key) ? '' : delete this.rooms[key]);
     }
 
 }

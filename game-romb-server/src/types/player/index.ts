@@ -1,4 +1,4 @@
-import { prisonPlayer } from "..";
+import { cells, prisonPlayer } from "..";
 import { EMESSAGE_CLIENT } from "../chat";
 
 export interface PlayerDefaultI {
@@ -28,7 +28,7 @@ export interface PlayerDefaultI {
 export interface PrisonI {
     addPrisoner(player: PlayerDefaultI): void;
     deletePrisoner(player: PlayerDefaultI): void;
-    turnPrison(player: PlayerDefaultI, value: number, isDouble: boolean): void;
+    turnPrison(player: PlayerDefaultI): void;
     payDebt(player: PlayerDefaultI): void;
 }
 

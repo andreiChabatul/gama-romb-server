@@ -1,3 +1,4 @@
+import { storage_players } from "src/game/playerStorage";
 import { storage_WS } from "src/game/socketStorage";
 import { CellDefault, infoCellTurn } from "src/types";
 import { EMESSAGE_CLIENT } from "src/types/chat";
@@ -11,9 +12,9 @@ export class CellTax implements CellDefault {
 
     constructor(private _index: number, private _idRoom: string, private _nameCell: string) { }
 
-    movePlayer(player: PlayerDefaultI): void {
-        this.player = player;
-        this._cellValue = Math.round(player.total * (this._nameCell === 'tax5' ? 0.05 : 0.1));
+    movePlayer(idUser: string): void {
+        this.player = storage_players.getPlayer(this._idRoom, idUser);
+        this._cellValue = Math.round(this.player.total * (this._nameCell === 'tax5' ? 0.05 : 0.1));
         this.sendInfoPLayer();
     }
 
