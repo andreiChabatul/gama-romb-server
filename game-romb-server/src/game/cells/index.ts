@@ -1,4 +1,4 @@
-import { AuctionI, cells, countryCompany } from "src/types"
+import { AuctionI, countryCompany } from "src/types"
 import { defaultCell } from "./defaultCell";
 import { CellEmpty } from "./cell.empty";
 import { CellCompany } from "./cell.company";
@@ -6,7 +6,7 @@ import { CellTax } from "./cell.tax";
 import { CellProfit } from "./cell.profit";
 import { CellLoss } from "./cell.loss";
 import { PrisonI } from "src/types/player";
-import { CellsServiceI } from "src/types/cellsServices";
+import { CellsServiceI, cells } from "src/types/cellsServices";
 
 export class CellsService implements CellsServiceI {
 
@@ -50,7 +50,7 @@ export class CellsService implements CellsServiceI {
     updateMonopoly(countryCompany: countryCompany): void {
         const cells = this.cells.filter((cell) =>
             'controlCompany' in cell && cell.infoCompany.countryCompany === countryCompany)
-        console.log(cells.length)
+
 
     }
 

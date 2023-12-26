@@ -1,38 +1,38 @@
 import { storage_players } from "src/game/playerStorage";
 import { storage_WS } from "src/game/socketStorage";
-import { CellDefault, infoCellTurn } from "src/types";
+import { infoCellTurn } from "src/types";
+import { CellDefault } from "src/types/cellsServices";
 import { EMESSAGE_CLIENT } from "src/types/chat";
-import { PlayerDefaultI } from "src/types/player";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class CellTax implements CellDefault {
 
     _cellValue: number;
-    player: PlayerDefaultI;
 
     constructor(private _index: number, private _idRoom: string, private _nameCell: string) { }
 
     movePlayer(idUser: string): void {
-        this.player = storage_players.getPlayer(this._idRoom, idUser);
-        this._cellValue = Math.round(this.player.total * (this._nameCell === 'tax5' ? 0.05 : 0.1));
-        this.sendInfoPLayer();
+        const playerTotal = storage_players.getPlayer(this._idRoom, idUser).total;
+        this._cellValue = Math.round(playerTotal * (this._nameCell === 'tax5' ? 0.05 : 0.1));
+        this.sendInfoPlayer(idUser);
     }
 
     get index(): number {
         return this._index;
     }
 
-    sendInfoPLayer(): void {
+    sendInfoPlayer(idUser: string): void {
         const payload: infoCellTurn = {
             indexCompany: this._index,
             description: 'desc' + this._nameCell,
             buttons: 'pay',
             value: this._cellValue
         };
-        storage_WS.sendOnePlayerGame(this._idRoom, this.player.userId, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
+        storage_WS.sendOnePlayerGame(this._idRoom, idUser, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
-    activateCell(): void {
-        this.player.minusTotal(this._cellValue, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_DEBT);
+    activateCell(idUser: string): void {
+        const player = storage_players.getPlayer(this._idRoom, idUser);
+        player.minusTotal(this._cellValue, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_DEBT);
     }
 }

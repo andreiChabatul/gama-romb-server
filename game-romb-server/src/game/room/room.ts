@@ -67,7 +67,7 @@ export class RoomGame implements RoomI {
 
     activeCell(idUser: string): void {
         const indexCell = storage_players.getPlayer(this.idRoom, idUser).position;
-        this.cellsService.activateCell(indexCell);
+        this.cellsService.activateCell(indexCell, idUser);
         this.turnService.endTurn();
     }
 

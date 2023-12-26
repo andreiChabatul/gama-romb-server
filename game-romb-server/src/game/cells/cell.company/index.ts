@@ -1,9 +1,10 @@
-import { AuctionI, CellCompanyI, CompanyInfo, controlCompany, infoCellTurn, updateInfoCompany, countryCompany } from "src/types";
+import { AuctionI, CompanyInfo, controlCompany, infoCellTurn, updateInfoCompany, countryCompany } from "src/types";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "src/game/socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { PlayerDefaultI } from "src/types/player";
 import { storage_players } from "src/game/playerStorage";
+import { CellCompanyI } from "src/types/cellsServices";
 
 export class CellCompany implements CellCompanyI {
 
@@ -13,14 +14,12 @@ export class CellCompany implements CellCompanyI {
     private _monopoly: boolean;
     private _quantityStock: number;
     private _valueRoll: number;
-    private _player: PlayerDefaultI;
 
     constructor(
         private _index: number,
         private _idRoom: string,
         private compnanyInfo: CompanyInfo,
         private auction: AuctionI,
-        // private players: playersGame,
         private updateMonopoly: (countryCompany: countryCompany) => void
     ) {
         this._quantityStock = 0;
@@ -28,7 +27,7 @@ export class CellCompany implements CellCompanyI {
     }
 
     movePlayer(idUser: string, valueRoll?: number): void {
-        this._player = storage_players.getPlayer(this._idRoom, idUser);
+        const player = storage_players.getPlayer(this._idRoom, idUser);
         this._valueRoll = valueRoll;
         const payload: infoCellTurn = {
             indexCompany: this._index,
@@ -43,7 +42,7 @@ export class CellCompany implements CellCompanyI {
         } else if (this._owned && idUser !== this._owned && !this._pledge) {
             payload.description = EMESSAGE_CLIENT.RENT_COMPANY;
             payload.buttons = 'pay';
-        } else if (!this._owned && this._player.total > this.compnanyInfo.priceCompany) {
+        } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
             payload.description = EMESSAGE_CLIENT.BUY_COMPANY;
             payload.buttons = 'buy';
         } else {
@@ -53,24 +52,24 @@ export class CellCompany implements CellCompanyI {
         storage_WS.sendOnePlayerGame(this._idRoom, idUser, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
     }
 
-    activateCell(): void {
-
-        if (this._player.userId === this._owned || this._pledge) {
+    activateCell(idUser: string): void {
+        const player = storage_players.getPlayer(this._idRoom, idUser);
+        if (idUser === this._owned || this._pledge) {
             return;
-        } else if (this._owned && this._player.userId !== this._owned && !this._pledge) {
+        } else if (this._owned && idUser !== this._owned && !this._pledge) {
             this.payRent();
-        } else if (!this._owned && this._player.total > this.compnanyInfo.priceCompany) {
-            this.buyCompany();
+        } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
+            this.buyCompany(player);
         } else {
-            setTimeout(() => this.auction.startAuction(this, this._player.userId), 0);
+            setTimeout(() => this.auction.startAuction(this, idUser), 0);
         };
     }
 
-    buyCompany(player: PlayerDefaultI = this._player, price: number = this.compnanyInfo.priceCompany): void {
+    buyCompany(player: PlayerDefaultI, price: number = this.compnanyInfo.priceCompany): void {
         this.owned = player.userId;
         player.minusTotal(price, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this._index);
         this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
-        this.sendInfoPLayer();
+        this.sendInfoPlayer();
     }
 
     payRent(): void {
@@ -109,7 +108,7 @@ export class CellCompany implements CellCompanyI {
     set owned(userId: string) {
         this._owned = userId;
         this.updateMonopoly(this.compnanyInfo.countryCompany);
-        this.sendInfoPLayer();
+        this.sendInfoPlayer();
     }
 
     get rentCompany(): number {
@@ -133,13 +132,13 @@ export class CellCompany implements CellCompanyI {
     set monopoly(value: boolean) {
         if (value !== this._monopoly) {
             this._monopoly = value;
-            this.sendInfoPLayer();
+            this.sendInfoPlayer();
         };
     }
 
     set quantityStock(value: number) {
         this._quantityStock = value;
-        this.sendInfoPLayer();
+        this.sendInfoPlayer();
     }
 
     get quantityStock(): number {
@@ -168,10 +167,10 @@ export class CellCompany implements CellCompanyI {
             default:
                 break;
         };
-        this.sendInfoPLayer();
+        this.sendInfoPlayer();
     }
 
-    sendInfoPLayer(idUser?: string): void {
+    sendInfoPlayer(idUser?: string): void {
         const payload = {
             indexCell: this._index,
             company: this.info,

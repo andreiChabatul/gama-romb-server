@@ -21,6 +21,7 @@ export class Prison implements PrisonI {
     }
 
     payDebt(player: PlayerDefaultI): void {
+        console.log(player.playerInfo)
         player.minusTotal(DEBT_PRISON, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_PRISON);
         this.deletePrisoner(player);
     }

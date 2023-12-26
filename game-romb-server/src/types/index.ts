@@ -1,12 +1,13 @@
 import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, MessageChatGamePayload, OfferDealPayload, StateGamePayload } from "./websocket";
 import { chatMessage } from "./chat";
 import { PlayerDefaultI, updatePlayer } from "./player";
+import { CellCompanyI } from "./cellsServices";
 
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
 export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
-export type cells = CellCompanyI | CellDefault;
+
 export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
 export type countryCompanyNoMonopoly = 'japan';
@@ -32,29 +33,6 @@ export type prisonPlayer = {
 
 export type playersGame = {
     [id: string]: PlayerDefaultI;
-}
-
-export interface CellDefault {
-    _cellValue?: number;
-    movePlayer(idUser: string, valueRoll?: number): void;
-    get index(): number;
-    activateCell(): void;
-    sendInfoPLayer(idUser?: string): void;
-}
-
-export interface CellCompanyI extends CellDefault {
-    controlCompany(action: controlCompany, idUser: string): void;
-    buyCompany(player: PlayerDefaultI, price: number): void;
-    payRent(ownedPlayer: PlayerDefaultI): void;
-    get owned(): string | null;
-    get info(): updateInfoCompany;
-    get infoCompany(): CompanyInfo;
-    get rentCompany(): number;
-    get pledge(): boolean;
-    get quantityStock(): number;
-    set monopoly(value: boolean);
-    set quantityStock(value: number);
-    set owned(player: string);
 }
 
 export interface companyCheckNoMonopoly {

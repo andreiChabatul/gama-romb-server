@@ -1,9 +1,9 @@
-import { cells } from "src/types";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "../socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { chatGame } from "../chatGame";
 import { storage_players } from "../playerStorage";
+import { cells } from "src/types/cellsServices";
 
 export class TurnService {
 
