@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { defaultAvatar } from './dto/default.avatar';
-import * as bcrypt from 'bcryptjs';
+import { compareSync, hashSync } from 'bcryptjs';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -44,8 +45,30 @@ export class UserService {
         );
     }
 
+    async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+        const userRepeat = await this.findOne(updateUserDto.newNickName);
+        if (userRepeat) {
+            throw new BadRequestException('Ошибка обновления. Пользователь с новым никнеймом существует.');
+        };
+        const user = await this.findOne(id);
+        const userUpdate = await this.prismaServices.user.update({
+            where: {
+                id
+            },
+            data: {
+                nickName: user.nickName === updateUserDto.newNickName ? undefined : updateUserDto.newNickName,
+                image: user.image === updateUserDto.newAvatar ? undefined : updateUserDto.newAvatar,
+                password: updateUserDto.newPassword === '*******' ? undefined : this.hashPassword(updateUserDto.newPassword)
+            }
+        });
+        if (user && compareSync(updateUserDto.password, user.password)) {
+            return userUpdate;
+        };
+        throw new BadRequestException('Пользователя не существует или пароль неверный');
+    }
+
     private hashPassword(password: string): string {
-        return bcrypt.hashSync(password, 5);
+        return hashSync(password, 5);
     }
 
 }

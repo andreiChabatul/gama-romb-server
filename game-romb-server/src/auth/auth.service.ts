@@ -50,7 +50,6 @@ export class AuthService {
         return this.generateTokens(user, agent);
     }
 
-
     private async generateTokens(user: User, agent: string): Promise<Tokens> {
         const accessToken = 'Bearer ' + this.jwtService.sign({
             id: user.id,
