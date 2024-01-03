@@ -6,7 +6,6 @@ export interface StoragePlayersI {
     deletePlayer(idRoom: string, idUser: string): void;
     deleteRoom(idRoom: string): void;
     getPlayersActive(idRoom: string): string[];
-    getAmountPlayers(idRoom: string): number;
     getPlayersRoom(idRoom: string): string[];
 }
 

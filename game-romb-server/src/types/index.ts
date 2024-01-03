@@ -3,16 +3,13 @@ import { chatMessage } from "./chat";
 import { PlayerDefaultI, updatePlayer } from "./player";
 import { CellCompanyI } from "./cellsServices";
 
-export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt';
+export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt' | 'auction';
 export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany';
 export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
-
 export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
-export type countryCompanyNoMonopoly = 'japan';
-export type countryCompanyMonopoly = 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
-export type countryCompany = countryCompanyNoMonopoly | countryCompanyMonopoly;
+export type countryCompany = 'japan' | 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
 export type nameCell = nameCompany | nameCellEmpty;
 export type dealPerson = 'offerPerson' | 'receivePerson';
 export type statePlayer = 'active' | 'wait' | 'inactive';
@@ -60,6 +57,7 @@ export interface RoomI {
     returnInfoRoom(): Promise<infoRoom>
     disconnectPlayer(idUser: string): void;
     reconnectPlayer(idUser: string): Promise<void>;
+    get stateRoom(): boolean;
 }
 
 export interface OfferServiceI {
@@ -77,6 +75,7 @@ export type infoRoom = {
     maxPlayers: number,
     idRoom: string,
     roomName: string,
+    isStart: Boolean,
     players: mainPlayer[],
 }
 
@@ -96,8 +95,7 @@ export interface updateInfoCompany {
     rentCompany: number;
 }
 
-export type nameCompany =
-    'volkswagen' | 'allianz' | 'continental'
+export type nameCompany = 'volkswagen' | 'allianz' | 'continental'
     | 'ferrari' | 'posteItaliane' | 'uniCredit'
     | 'ukranafta' | 'uia'
     | 'honda' | 'canon' | 'fujitsu' | 'mitsubishi'

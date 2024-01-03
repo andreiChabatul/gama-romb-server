@@ -1,8 +1,9 @@
-import { AuctionI, CellCompanyI, controlAuction, infoAuction, statePlayer } from "src/types";
+import { AuctionI, controlAuction, infoAuction, statePlayer } from "src/types";
 import { AUCTION_STEP } from "src/const";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "../socketStorage";
 import { storage_players } from "../playerStorage";
+import { CellCompanyI } from "src/types/cellsServices";
 
 export class AuctionCompany implements AuctionI {
 

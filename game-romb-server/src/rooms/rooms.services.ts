@@ -26,7 +26,6 @@ export class RoomsService {
                 storage_WS.addWebSocketGame(idRoom, idUser, client);
                 break;
             case "leave":
-                storage_players.deletePlayer(idRoom, idUser);
                 storage_WS.leavePlayerGame(idRoom, idUser);
                 break;
             default:
@@ -91,7 +90,14 @@ export class RoomsService {
 
     private filterEmptyRoom(): void {
         Object.keys(this.rooms).map((key) =>
-            storage_players.getAmountPlayers(key) ? '' : delete this.rooms[key]);
+            storage_players.getPlayersRoom(key).length ? '' : delete this.rooms[key]);
     }
+
+    // private filterStartRoom(): string[] {
+    //     const r = Object.keys(this.rooms).filter((key) =>
+    //         !this.rooms[key].stateRoom
+    //     );
+    //     return r;
+    // }
 
 }

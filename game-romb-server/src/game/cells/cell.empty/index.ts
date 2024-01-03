@@ -1,17 +1,13 @@
 import { storage_players } from "src/game/playerStorage";
+import { prison } from "src/game/prison.service";
 import { storage_WS } from "src/game/socketStorage";
 import { infoCellTurn } from "src/types";
 import { CellDefault } from "src/types/cellsServices";
-import { PrisonI } from "src/types/player";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 
 export class CellEmpty implements CellDefault {
 
-    constructor(
-        private _index: number,
-        private _idRoom: string,
-        private _nameCell: string,
-        private prison: PrisonI) { }
+    constructor(private _index: number, private _idRoom: string, private _nameCell: string) { }
 
     movePlayer(idUser: string): void {
         this.sendInfoPlayer(idUser);
@@ -32,7 +28,7 @@ export class CellEmpty implements CellDefault {
 
     activateCell(idUser: string): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
-        this._nameCell === 'goJail' ? this.prison.addPrisoner(player) : '';
-        player && player.prison && this._nameCell === 'inJail' ? this.prison.payDebt(player) : '';
+        this._nameCell === 'goJail' ? prison.addPrisoner(this._idRoom, idUser) : '';
+        player && player.prison && this._nameCell === 'inJail' ? prison.payDebt(this._idRoom, idUser) : '';
     }
 }

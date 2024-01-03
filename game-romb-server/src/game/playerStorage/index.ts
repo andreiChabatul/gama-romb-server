@@ -18,12 +18,8 @@ export class StoragePlayers implements StoragePlayersI {
         return Object.keys(playersActive);
     }
 
-    getAmountPlayers(idRoom: string): number {
-        return Object.keys(this.storagePlayers[idRoom]).length;
-    }
-
     getPlayersRoom(idRoom: string): string[] {
-        return Object.keys(this.storagePlayers[idRoom]);
+        return this.storagePlayers[idRoom] ? Object.keys(this.storagePlayers[idRoom]) : [];
     }
 
     getPlayer(idRoom: string, idUser: string): PlayerDefaultI {

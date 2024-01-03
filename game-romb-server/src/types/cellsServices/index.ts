@@ -3,11 +3,12 @@ import { PlayerDefaultI } from "../player";
 
 export type cells = CellCompanyI | CellDefault;
 export interface CellsServiceI {
-    getAllCells(): cells[]
     getOneCell(index: number): cells;
     activateCell(index: number, idUser: string): void;
     reconnectPlayer(idUser: string): void;
     updateMonopoly(countryCompany: countryCompany): void;
+    playerBankrupt(idUser: string): void;
+    calcCapitalCells(idUser: string): number;
 }
 
 export interface CellDefault {
@@ -21,7 +22,7 @@ export interface CellDefault {
 export interface CellCompanyI extends CellDefault {
     controlCompany(action: controlCompany, idUser: string): void;
     buyCompany(player: PlayerDefaultI, price: number): void;
-    payRent(ownedPlayer: PlayerDefaultI): void;
+    payRent(idUser: string): void;
     get owned(): string | null;
     get info(): updateInfoCompany;
     get infoCompany(): CompanyInfo;

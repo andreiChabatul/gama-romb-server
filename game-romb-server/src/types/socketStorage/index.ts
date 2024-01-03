@@ -10,6 +10,7 @@ export interface IStorageWS {
     leavePlayerGame(idRoom: string, idUser: string): void;
     addWebSocket(webSocket: myWebSocket): void;
     deleteWebSocket(webSocket: myWebSocket): void;
+    deleteRoom(idRoom: string): void;
 }
 
 export type storageWS = {

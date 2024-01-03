@@ -1,4 +1,4 @@
-import { cells, prisonPlayer } from "..";
+import { prisonPlayer } from "..";
 import { EMESSAGE_CLIENT } from "../chat";
 
 export interface PlayerDefaultI {
@@ -23,13 +23,6 @@ export interface PlayerDefaultI {
     set online(value: boolean);
     updatePlayer(idUser?: string): void;
     get playerInfo(): updatePlayer;
-}
-
-export interface PrisonI {
-    addPrisoner(player: PlayerDefaultI): void;
-    deletePrisoner(player: PlayerDefaultI): void;
-    turnPrison(player: PlayerDefaultI): void;
-    payDebt(player: PlayerDefaultI): void;
 }
 
 export type updatePlayer = {

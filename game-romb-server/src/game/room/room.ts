@@ -4,7 +4,6 @@ import { PlayerDefault } from "../player/player";
 import { AuctionCompany } from "../auction.service";
 import { TurnService } from "../turn.service";
 import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EACTION_WEBSOCKET, MessageChatGamePayload, OfferDealPayload, StateGamePayload } from "src/types/websocket";
-import { Prison } from "../prison";
 import { OfferService } from "../offer.service";
 import { UserService } from "src/user/user.service";
 import { CellsService } from "../cells";
@@ -12,37 +11,33 @@ import { defaultCell } from "../cells/defaultCell";
 import { storage_WS } from "../socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { CreateRoomDto } from "src/rooms/dto/create.room.dto";
-import { PrisonI } from "src/types/player";
 import { CellsServiceI } from "src/types/cellsServices";
 import { storage_players } from "../playerStorage";
+import { prison } from "../prison.service";
 
 export class RoomGame implements RoomI {
 
     private auction: AuctionI;
     private turnService: TurnService;
     private cellsService: CellsServiceI;
-    private prison: PrisonI;
     private offerService: OfferService;
-    private infoRoom: CreateRoomDto;
     private isStart: boolean;
 
-    constructor(createRoomDto: CreateRoomDto, private idRoom: string, private userService: UserService) {
-        this.infoRoom = createRoomDto;
-        this.auction = new AuctionCompany(idRoom);
-        this.turnService = new TurnService(idRoom);
-        this.prison = new Prison(idRoom, this.turnService);
-        this.cellsService = new CellsService(idRoom, this.auction, this.prison);
-        this.offerService = new OfferService(idRoom, this.cellsService);
+    constructor(private infoRoom: CreateRoomDto, private idRoom: string, private userService: UserService) {
+        this.auction = new AuctionCompany(this.idRoom);
+        this.turnService = new TurnService(this.idRoom);
+        this.cellsService = new CellsService(this.idRoom);
+        this.offerService = new OfferService(this.idRoom, this.cellsService);
     }
 
     addPlayer(idUser: string, color: string): void {
-        const player = new PlayerDefault(idUser, this.idRoom, color, this.cellsService.getAllCells());
+        const player = new PlayerDefault(idUser, this.idRoom, color, this.cellsService);
         storage_players.addPlayer(this.idRoom, idUser, player);
         this.checkStartGame();
     }
 
     private async checkStartGame(): Promise<void> {
-        const amountPlayers = storage_players.getAmountPlayers(this.idRoom);
+        const amountPlayers = storage_players.getPlayersRoom(this.idRoom).length;
         if (amountPlayers === this.infoRoom.maxPlayers && amountPlayers > 0) { //убрать труе потом, временно чтобы тестть
             this.isStart = true;
             storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
@@ -54,15 +49,17 @@ export class RoomGame implements RoomI {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         if (player.prison) {
             if (isDouble) {
-                this.prison.deletePrisoner(player);
+                prison.deletePrisoner(this.idRoom, idUser);
             } else {
-                this.prison.turnPrison(player);
+                prison.turnPrison(this.idRoom, idUser);
+                this.turnService.endTurn();
                 return;
             }
         };
         player.position = value;
         const cell = this.cellsService.getOneCell(player.position);
-        this.turnService.turn(idUser, value, isDouble, cell);
+        cell.movePlayer(idUser, value);
+        this.turnService.turn(idUser, value, isDouble, cell.index);
     }
 
     activeCell(idUser: string): void {
@@ -129,6 +126,7 @@ export class RoomGame implements RoomI {
                 this.turnService.endTurn();
             case "endGame":
                 storage_players.deleteRoom(this.idRoom);
+                storage_WS.deleteRoom(this.idRoom);
                 break;
             default:
                 break;
@@ -143,6 +141,7 @@ export class RoomGame implements RoomI {
         return {
             ...this.infoRoom,
             idRoom: this.idRoom,
+            isStart: this.isStart,
             players: await this.fillPlayers(),
         };
     }
@@ -157,6 +156,10 @@ export class RoomGame implements RoomI {
             }
         });
         return players;
+    }
+
+    get stateRoom(): boolean {
+        return this.isStart;
     }
 
     disconnectPlayer(idUser: string): void {
@@ -179,7 +182,6 @@ export class RoomGame implements RoomI {
         player.bankrupt = true;
         player.online = false;
         this.activeCell(idUser);
-        this.turnService.updateTurn();
     }
 
     private async gameInfo(): Promise<gameRoom> {

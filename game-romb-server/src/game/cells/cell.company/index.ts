@@ -1,4 +1,4 @@
-import { AuctionI, CompanyInfo, controlCompany, infoCellTurn, updateInfoCompany, countryCompany } from "src/types";
+import { CompanyInfo, controlCompany, infoCellTurn, updateInfoCompany, countryCompany } from "src/types";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "src/game/socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
@@ -10,7 +10,6 @@ export class CellCompany implements CellCompanyI {
 
     private _pledge: boolean;
     private _owned: string | undefined;
-    private _rentIndex: number;
     private _monopoly: boolean;
     private _quantityStock: number;
     private _valueRoll: number;
@@ -19,7 +18,6 @@ export class CellCompany implements CellCompanyI {
         private _index: number,
         private _idRoom: string,
         private compnanyInfo: CompanyInfo,
-        private auction: AuctionI,
         private updateMonopoly: (countryCompany: countryCompany) => void
     ) {
         this._quantityStock = 0;
@@ -47,6 +45,7 @@ export class CellCompany implements CellCompanyI {
             payload.buttons = 'buy';
         } else {
             payload.description = EMESSAGE_CLIENT.AUCTION_COMPANY;
+            payload.buttons = 'auction';
         };
 
         storage_WS.sendOnePlayerGame(this._idRoom, idUser, EACTION_WEBSOCKET.INFO_CELL_TURN, payload);
@@ -57,31 +56,29 @@ export class CellCompany implements CellCompanyI {
         if (idUser === this._owned || this._pledge) {
             return;
         } else if (this._owned && idUser !== this._owned && !this._pledge) {
-            this.payRent();
+            this.payRent(idUser);
         } else if (!this._owned && player.total > this.compnanyInfo.priceCompany) {
             this.buyCompany(player);
-        } else {
-            setTimeout(() => this.auction.startAuction(this, idUser), 0);
         };
     }
 
     buyCompany(player: PlayerDefaultI, price: number = this.compnanyInfo.priceCompany): void {
         this.owned = player.userId;
         player.minusTotal(price, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this._index);
-        this.compnanyInfo.countryCompany === 'ukraine' ? this._quantityStock = 1 : '';
         this.sendInfoPlayer();
     }
 
-    payRent(): void {
-        // const rentDebt = this._player.bankrupt ? this._player.capital : this.rentCompany;
-        // ownedPlayer.addTotal = rentDebt;
-        // this._player.minusTotal(rentDebt, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
+    payRent(idUser: string): void {
+        const payer = storage_players.getPlayer(this._idRoom, idUser)
+        const owned = storage_players.getPlayer(this._idRoom, this._owned);
+        const debtRent = this.rentCompany >= payer.capital ? payer.capital : this.rentCompany;
+        owned.addTotal = debtRent;
+        payer.minusTotal(debtRent, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
     }
 
     get info(): updateInfoCompany {
-        this.updateRentCompany();
         return {
-            rentCompany: this.compnanyInfo.rentCompanyInfo[this._rentIndex],
+            rentCompany: this.rentCompany,
             isPledge: this._pledge,
             isMonopoly: this._monopoly,
             shares: this._quantityStock,
@@ -89,17 +86,10 @@ export class CellCompany implements CellCompanyI {
         }
     }
 
-    private updateRentCompany() {
-        this._rentIndex = 0;
-        if (this._monopoly) {
-            this._rentIndex = 1;
-            (this.compnanyInfo.countryCompany === 'ukraine') ? this._quantityStock = 2 : '';
-        };
-        (this.compnanyInfo.countryCompany === 'ukraine')
-            ? this._rentIndex = this._quantityStock
-            : this._rentIndex += this._quantityStock;
+    get rentCompany(): number {
+        const rentIndex = Number(this._monopoly) + this._quantityStock;
+        return this.compnanyInfo.rentCompanyInfo[rentIndex];
     }
-
 
     get owned(): string | undefined {
         return this._owned ? this._owned : undefined;
@@ -111,11 +101,10 @@ export class CellCompany implements CellCompanyI {
         this.sendInfoPlayer();
     }
 
-    get rentCompany(): number {
-        this.updateRentCompany();
-        const rentCompany = this.compnanyInfo.rentCompanyInfo[this._rentIndex];
-        return this.compnanyInfo.countryCompany !== 'ukraine' ? rentCompany : rentCompany * this._valueRoll;
-    }
+    // get resultRentCompany(): number {
+    //     const rentCompany = this.compnanyInfo.rentCompanyInfo[this._rentIndex];
+    //     return this.compnanyInfo.countryCompany !== 'ukraine' ? rentCompany : rentCompany * this._valueRoll;
+    // }
 
     get infoCompany(): CompanyInfo {
         return this.compnanyInfo;

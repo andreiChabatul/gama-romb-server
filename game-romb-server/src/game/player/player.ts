@@ -1,10 +1,11 @@
-import { cells, prisonPlayer } from "src/types";
+import { prisonPlayer } from "src/types";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/const";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "../socketStorage";
 import { chatGame } from "../chatGame";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { PlayerDefaultI, updatePlayer } from "src/types/player";
+import { CellsServiceI } from "src/types/cellsServices";
 
 export class PlayerDefault implements PlayerDefaultI {
 
@@ -18,7 +19,7 @@ export class PlayerDefault implements PlayerDefaultI {
         private id: string,
         private idRoom: string,
         private _color: string,
-        private cells: cells[]) {
+        private cellsService: CellsServiceI) {
         this._total = INIT_TOTAL;
         this.cellPosition = 0;
         this._prison = { state: false, attempt: 0 };
@@ -42,10 +43,7 @@ export class PlayerDefault implements PlayerDefaultI {
 
     set bankrupt(value: boolean) {
         this._bankrupt = value;
-        this.cells.forEach((cell) =>
-            ('owned' in cell && cell.owned === this.userId)
-                ? cell.owned = undefined
-                : '');
+        this.cellsService.playerBankrupt(this.id);
         this.updatePlayer();
     }
 
@@ -103,9 +101,12 @@ export class PlayerDefault implements PlayerDefaultI {
     }
 
     set prison(value: boolean) {
-        value
-            ? this._prison = { state: true, attempt: 3 }
-            : this._prison = { state: false, attempt: 0 }
+        if (value) {
+            this.cellPosition = 12;
+            this._prison = { state: true, attempt: 3 }
+        } else {
+            this._prison = { state: false, attempt: 0 }
+        }
         this.updatePlayer();
     }
 
@@ -124,10 +125,6 @@ export class PlayerDefault implements PlayerDefaultI {
     }
 
     get capital(): number {
-        return this.cells.reduce((capital, cell) =>
-            ('controlCompany' in cell && cell.owned === this.userId && !cell.pledge)
-                ? capital + cell.infoCompany.collateralCompany + (cell.quantityStock * cell.infoCompany.priceStock)
-                : capital
-            , this.total);
+        return this.total + this.cellsService.calcCapitalCells(this.id);
     }
 }

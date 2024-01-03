@@ -14,7 +14,7 @@ export class StorageWS implements IStorageWS {
         };
     }
 
-    sendAllPlayersGame(idRoom: string, action: EACTION_WEBSOCKET, payload?: {}): void {
+    sendAllPlayersGame(idRoom: string, action: EACTION_WEBSOCKET, payload?: {} | string): void {
         if (this.storageWS[idRoom]) {
             Object.values(this.storageWS[idRoom]).map((webSocket: WebSocket) =>
                 webSocket.send(JSON.stringify({ action, payload }))
@@ -45,7 +45,11 @@ export class StorageWS implements IStorageWS {
         const index = this.headWS.indexOf(webSocket);
         (index > -1) ? this.headWS.splice(index, 1) : '';
     }
-    
+
+    deleteRoom(idRoom: string): void {
+        delete this.storageWS[idRoom];
+    }
+
 }
 
 export const storage_WS = new StorageWS();

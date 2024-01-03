@@ -34,7 +34,7 @@ export class OfferService implements OfferServiceI {
         function changeCompany(personOne: offerInfo, personTwo: offerInfo): void {
             personOne.indexCompany.map((index) => {
                 const cell = this.cellsService.getOneCell(index);
-                ('owned' in cell) ? cell.owned = personTwo.idPerson : '';
+                if ('owned' in cell) cell.owned = personTwo.idPerson;
             });
         };
     }
