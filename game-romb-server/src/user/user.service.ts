@@ -4,6 +4,7 @@ import { User } from '@prisma/client';
 import { defaultAvatar } from './dto/default.avatar';
 import { compareSync, hashSync } from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UserService {
@@ -39,18 +40,12 @@ export class UserService {
         return players;
     }
 
-    delete(id: string) {
-        return this.prismaServices.user.delete(
-            { where: { id } }
-        );
-    }
-
     async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
         const userRepeat = await this.findOne(updateUserDto.newNickName);
-        if (userRepeat) {
+        const user = await this.findOne(id);
+        if (userRepeat && userRepeat.id !== user.id) {
             throw new BadRequestException('Ошибка обновления. Пользователь с новым никнеймом существует.');
         };
-        const user = await this.findOne(id);
         const userUpdate = await this.prismaServices.user.update({
             where: {
                 id
@@ -65,6 +60,17 @@ export class UserService {
             return userUpdate;
         };
         throw new BadRequestException('Пользователя не существует или пароль неверный');
+    }
+
+    async deleteUser(deleteUserDto: DeleteUserDto): Promise<string> {
+        const user = await this.findOne(deleteUserDto.nickname);
+        if (user && user.nickName === deleteUserDto.nickname && compareSync(deleteUserDto.password, user.password)) {
+            await this.prismaServices.user.delete(
+                { where: { nickName: deleteUserDto.nickname } }
+            );
+            return deleteUserDto.nickname;
+        }
+        throw new BadRequestException('Введен неверный пароль или никнейм');
     }
 
     private hashPassword(password: string): string {
