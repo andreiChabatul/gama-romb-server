@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RoomGame } from 'src/game/room/room';
 import { RoomI, infoRoom, rooms } from 'src/types';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 import { ControlRoomPayload, EACTION_WEBSOCKET, myWebSocket } from 'src/types/websocket';
 import { UserService } from 'src/user/user.service';
 import { storage_WS } from 'src/game/socketStorage';
@@ -19,19 +19,20 @@ export class RoomsService {
     private rooms: rooms = {};
     private playersOffline: playersOffline[] = [];
 
-    async controlRoom({ action, idUser, idRoom, colorPlayer }: ControlRoomPayload, client: myWebSocket): Promise<void> {
+    controlRoom({ action, idUser, idRoom, colorPlayer }: ControlRoomPayload, client: myWebSocket): void {
         switch (action) {
             case "join":
+                this.checkActiveRoom(idUser);
                 this.rooms[idRoom].addPlayer(idUser, colorPlayer);
                 storage_WS.addWebSocketGame(idRoom, idUser, client);
+                this.sendRooms();
                 break;
             case "leave":
-                storage_WS.leavePlayerGame(idRoom, idUser);
+                this.deletePlayer(idRoom, idUser, true);
                 break;
             default:
                 break;
         }
-        await this.sendRooms();
     }
 
     async sendRooms(): Promise<void> {
@@ -53,26 +54,28 @@ export class RoomsService {
     }
 
     getRoom(idRoom: string): RoomI | undefined {
-        const room = this.rooms[idRoom];
-        return room ? room : undefined;
+        return this.rooms[idRoom];
     }
 
     disconnectPlayer(idRoom: string, idUser: string): void {
         const room = this.rooms[idRoom];
         if (room && idUser) {
-            const timer = setTimeout(() => {
-                room.disconnectPlayer(idUser);
-                this.sendRooms();
-                this.playersOffline = this.playersOffline.filter((player) => player && player.idUser !== idUser);
-            }, TIME_DISCONNECT);
-            storage_players.getPlayer(idRoom, idUser).online = false;
-            this.playersOffline.push({ idRoom, idUser, timer })
-        };
+            if (room.stateRoom) {
+                const timer = setTimeout(() => {
+                    room.leavePlayerGame(idUser);
+                    this.playersOffline = this.playersOffline.filter((player) => player && player.idUser !== idUser);
+                }, TIME_DISCONNECT);
+                storage_players.getPlayer(idRoom, idUser).online = false;
+                this.playersOffline.push({ idRoom, idUser, timer });
+            } else {
+                this.deletePlayer(idRoom, idUser, true);
+            };
+        }
     }
 
-    reconnectPlayerId(idUser: string): string {
+    async reconnectPlayerId(idUser: string): Promise<infoRoom | undefined> {
         const player = this.playersOffline.filter((player) => (player && player.idUser === idUser))[0];
-        return player ? player.idRoom : '';
+        return player ? this.rooms[player.idRoom].returnInfoRoom() : undefined;
     }
 
     reconnectPlayer(idRoom: string, idUser: string, client: WebSocket): void {
@@ -93,11 +96,17 @@ export class RoomsService {
             storage_players.getPlayersRoom(key).length ? '' : delete this.rooms[key]);
     }
 
-    // private filterStartRoom(): string[] {
-    //     const r = Object.keys(this.rooms).filter((key) =>
-    //         !this.rooms[key].stateRoom
-    //     );
-    //     return r;
-    // }
+    private deletePlayer(idRoom: string, idUser: string, isSend: Boolean): void {
+        storage_players.deletePlayer(idRoom, idUser);
+        storage_WS.leavePlayerGame(idRoom, idUser);
+        isSend ? this.sendRooms() : '';
+    }
+
+    private checkActiveRoom(idUser: string): void {
+        const activeRoomId = storage_players.searchActiveRoom(idUser);
+        if (activeRoomId) {
+            this.deletePlayer(activeRoomId, idUser, false);
+        };
+    }
 
 }

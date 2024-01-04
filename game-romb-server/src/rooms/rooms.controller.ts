@@ -3,6 +3,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { RoomsService } from './rooms.services';
 import { CreateRoomDto } from './dto/create.room.dto';
 import { ReconnectRoomDto } from './dto/reconnect.room.dto';
+import { infoRoom } from 'src/types';
 
 @UseGuards(JwtAuthGuard)
 @Controller('rooms')
@@ -16,8 +17,8 @@ export class RoomsController {
     }
 
     @Post('/reconnect')
-    reconnectPlayer(@Body() reconnectRoomDto: ReconnectRoomDto): string {
-        return this.roomsService.reconnectPlayerId(reconnectRoomDto.idUser);
+    async reconnectPlayer(@Body() reconnectRoomDto: ReconnectRoomDto): Promise<infoRoom | undefined> {
+        return await this.roomsService.reconnectPlayerId(reconnectRoomDto.idUser);
     }
 
     @Post()

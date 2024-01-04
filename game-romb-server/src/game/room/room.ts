@@ -162,12 +162,6 @@ export class RoomGame implements RoomI {
         return this.isStart;
     }
 
-    disconnectPlayer(idUser: string): void {
-        this.isStart
-            ? this.leavePlayerGame(idUser)
-            : storage_players.deletePlayer(this.idRoom, idUser);
-    }
-
     async reconnectPlayer(idUser: string): Promise<void> {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         player.online = true;
@@ -176,7 +170,7 @@ export class RoomGame implements RoomI {
         this.turnService.updateTurn(idUser);
     }
 
-    private leavePlayerGame(idUser: string): void {
+    leavePlayerGame(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         storage_WS.leavePlayerGame(this.idRoom, idUser);
         player.bankrupt = true;

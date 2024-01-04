@@ -55,8 +55,8 @@ export interface RoomI {
     controlCompany(contorolCompanyPayload: ContorolCompanyPayload): void;
     stateGame(stateGamePayload: StateGamePayload): void
     returnInfoRoom(): Promise<infoRoom>
-    disconnectPlayer(idUser: string): void;
     reconnectPlayer(idUser: string): Promise<void>;
+    leavePlayerGame(idUser: string): void;
     get stateRoom(): boolean;
 }
 
@@ -77,6 +77,7 @@ export type infoRoom = {
     roomName: string,
     isStart: Boolean,
     players: mainPlayer[],
+    timeTurn: number
 }
 
 export interface gameCell {

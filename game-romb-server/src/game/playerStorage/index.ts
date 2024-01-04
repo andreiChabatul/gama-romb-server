@@ -34,6 +34,15 @@ export class StoragePlayers implements StoragePlayersI {
         delete this.storagePlayers[idRoom];
     }
 
+    searchActiveRoom(idUser: string): string | undefined {
+        let result: string | undefined;
+        Object.keys(this.storagePlayers).forEach((idRoom) => {
+            const idUsers = Object.keys(this.storagePlayers[idRoom]).filter((element) => element === idUser);
+            idUsers.length > 0 ? result = idRoom : '';
+        })
+        return result;
+    }
+
 }
 
 export const storage_players = new StoragePlayers();
