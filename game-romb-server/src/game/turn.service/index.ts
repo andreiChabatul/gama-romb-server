@@ -9,13 +9,11 @@ export class TurnService {
     private indexActive: number;
     private isDouble: boolean;
     private doubleCounter: number = 0;
-    private playersActive: string[];
 
     constructor(private idRoom: string) { }
 
     firstTurn(): void {
-        this.playersActive = storage_players.getPlayersActive(this.idRoom);
-        this.indexActive = Math.floor(Math.random() * storage_players.getPlayersActive(this.idRoom).length);
+        this.indexActive = Math.floor(Math.random() * this.playersActive.length);
         chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.FIRST_TURN, idUser: this.activePlayer });
         this.updateTurn();
     }
@@ -44,7 +42,11 @@ export class TurnService {
     }
 
     get activePlayer(): string {
-        return this.playersActive[this.indexActive]
+        return this.playersActive[this.indexActive];
+    }
+
+    get playersActive(): string[] {
+        return storage_players.getPlayersActive(this.idRoom);
     }
 
     endTurn(): void {

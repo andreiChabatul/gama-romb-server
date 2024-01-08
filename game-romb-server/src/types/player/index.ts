@@ -23,6 +23,8 @@ export interface PlayerDefaultI {
     set online(value: boolean);
     updatePlayer(idUser?: string): void;
     get playerInfo(): updatePlayer;
+    get turn(): boolean;
+    set turn(value: boolean);
 }
 
 export type updatePlayer = {

@@ -57,15 +57,17 @@ export class RoomGame implements RoomI {
             }
         };
         player.position = value;
+        player.turn = true;
         const cell = this.cellsService.getOneCell(player.position);
         cell.movePlayer(idUser, value);
         this.turnService.turn(idUser, value, isDouble, cell.index);
     }
 
     activeCell(idUser: string): void {
-        const indexCell = storage_players.getPlayer(this.idRoom, idUser).position;
-        this.cellsService.activateCell(indexCell, idUser);
+        const player = storage_players.getPlayer(this.idRoom, idUser);
+        player.turn ? this.cellsService.activateCell(player.position, idUser) : '';
         this.turnService.endTurn();
+        player.turn = false;
     }
 
     controlCompany({ action, idUser, indexCompany }: ContorolCompanyPayload): void {
@@ -172,10 +174,10 @@ export class RoomGame implements RoomI {
 
     leavePlayerGame(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
-        storage_WS.leavePlayerGame(this.idRoom, idUser);
         player.bankrupt = true;
-        player.online = false;
         this.activeCell(idUser);
+        storage_WS.leavePlayerGame(this.idRoom, idUser);
+        storage_players.deletePlayer(this.idRoom, idUser);
     }
 
     private async gameInfo(): Promise<gameRoom> {

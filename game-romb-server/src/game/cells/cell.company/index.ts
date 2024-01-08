@@ -53,7 +53,7 @@ export class CellCompany implements CellCompanyI {
 
     activateCell(idUser: string): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
-        if (idUser === this._owned || this._pledge) {
+        if (idUser === this._owned || this._pledge || player.bankrupt) {
             return;
         } else if (this._owned && idUser !== this._owned && !this._pledge) {
             this.payRent(idUser);
@@ -100,11 +100,6 @@ export class CellCompany implements CellCompanyI {
         this.updateMonopoly(this.compnanyInfo.countryCompany);
         this.sendInfoPlayer();
     }
-
-    // get resultRentCompany(): number {
-    //     const rentCompany = this.compnanyInfo.rentCompanyInfo[this._rentIndex];
-    //     return this.compnanyInfo.countryCompany !== 'ukraine' ? rentCompany : rentCompany * this._valueRoll;
-    // }
 
     get infoCompany(): CompanyInfo {
         return this.compnanyInfo;

@@ -10,6 +10,7 @@ import { CellsServiceI } from "src/types/cellsServices";
 export class PlayerDefault implements PlayerDefaultI {
 
     _total: number;
+    _turn: boolean;
     _bankrupt: boolean;
     _prison: prisonPlayer;
     _isOnline: boolean;
@@ -126,5 +127,13 @@ export class PlayerDefault implements PlayerDefaultI {
 
     get capital(): number {
         return this.total + this.cellsService.calcCapitalCells(this.id);
+    }
+
+    get turn(): boolean {
+        return this._turn;
+    }
+
+    set turn(value: boolean) {
+        this._turn = value;
     }
 }
