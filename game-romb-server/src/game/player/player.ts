@@ -6,6 +6,7 @@ import { chatGame } from "../chatGame";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { PlayerDefaultI, updatePlayer } from "src/types/player";
 import { CellsServiceI } from "src/types/cellsServices";
+import { storage_players } from "../playerStorage";
 
 export class PlayerDefault implements PlayerDefaultI {
 

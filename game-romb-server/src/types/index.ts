@@ -69,6 +69,8 @@ export interface AuctionI {
     leaveAuction(idUser: string): void;
     startAuction(cell: CellCompanyI, idUser: string): void;
     stepAuction(idUser: string): void;
+    set isAuction(value: boolean);
+    get isAuction(): boolean;
 }
 
 export type infoRoom = {

@@ -19,7 +19,7 @@ export class CellLoss implements CellDefault {
         this.player = storage_players.getPlayer(this._idRoom, idUser);
         this._randomIndex = Math.floor(Math.random() * VALUE_CELL.length)
         this._cellValue = VALUE_CELL[this._randomIndex];
-        (this._cellValue >= this.player.capital) ? this.player.bankrupt = true : '';
+        this.player.bankrupt = this._cellValue >= this.player.capital;
         this.sendInfoPlayer(idUser);
     }
 

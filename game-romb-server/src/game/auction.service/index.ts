@@ -13,10 +13,12 @@ export class AuctionCompany implements AuctionI {
     indexActive: number;
     action: controlAuction;
     playersId: string[];
+    _isAuction: boolean;
 
     constructor(private idRoom: string) { }
 
     startAuction(cell: CellCompanyI, idUser: string): void {
+        this._isAuction = true;
         this.playersId = [...storage_players.getPlayersActive(this.idRoom)];
         this.cell = cell;
         this.indexActive = 0;
@@ -77,5 +79,13 @@ export class AuctionCompany implements AuctionI {
             idUser === this.playersId[this.indexActive] ? desc = 'active' : '';
             this.sendInfoPlayer(idUser, desc);
         });
+    }
+
+    set isAuction(value: boolean) {
+        this._isAuction = value;
+    }
+
+    get isAuction(): boolean {
+        return this._isAuction;
     }
 }

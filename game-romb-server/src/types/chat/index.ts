@@ -1,3 +1,5 @@
+import { controlAuction } from "..";
+
 export interface ChatI {
     readonly messagesChat: messagesChat;
     addChatMessage(idRoom: string, chatMessage: chatMessage): void;
@@ -11,7 +13,7 @@ export type messagesChat = {
 export type chatMessage = {
     message?: string;
     senderId?: string;
-    action?: EMESSAGE_CLIENT,
+    action?: EMESSAGE_CLIENT | controlAuction,
     idUser?: string,
     cellId?: number,
     valueroll?: number,
@@ -38,8 +40,4 @@ export enum EMESSAGE_CLIENT {
     ACCEPT_DEAL = 'acceptDealInfo',
     LEAVE_PRISON = 'leavePrison',
     GET_IN_PRISON = 'getInPrison',
-    START_AUCTION = 'startAuction',
-    LEAVE_AUCTION = 'leaveAuction',
-    STEP_AUCTION = 'stepAuction',
-    END_AUCTION = 'endAuction',
 }

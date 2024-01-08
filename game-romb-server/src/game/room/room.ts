@@ -60,7 +60,7 @@ export class RoomGame implements RoomI {
         player.turn = true;
         const cell = this.cellsService.getOneCell(player.position);
         cell.movePlayer(idUser, value);
-        this.turnService.turn(idUser, value, isDouble, cell.index);
+        this.turnService.turn(idUser, value, isDouble, player.position);
     }
 
     activeCell(idUser: string): void {
@@ -81,19 +81,22 @@ export class RoomGame implements RoomI {
                 const cellId = storage_players.getPlayer(this.idRoom, idUser).position;
                 const cell = this.cellsService.getOneCell(cellId);
                 ('controlCompany' in cell) ? this.auction.startAuction(cell, idUser) : '';
-                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.START_AUCTION, cellId });
+                chatGame.addChatMessage(this.idRoom, { action, cellId });
                 break;
             case "leaveAuction":
                 this.auction.leaveAuction(idUser);
-                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.LEAVE_AUCTION, idUser });
+                chatGame.addChatMessage(this.idRoom, { action, idUser });
                 break;
             case "stepAuction":
                 this.auction.stepAuction(idUser);
-                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.STEP_AUCTION, idUser });
+                chatGame.addChatMessage(this.idRoom, { action, idUser });
                 break;
             case "endAuction":
-                this.turnService.updateTurn();
-                chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.END_AUCTION });
+                if (this.auction.isAuction) {
+                    this.auction.isAuction = false;
+                    this.turnService.endTurn();
+                    chatGame.addChatMessage(this.idRoom, { action });
+                };
                 break;
             default:
                 break;
@@ -176,7 +179,6 @@ export class RoomGame implements RoomI {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         player.bankrupt = true;
         this.activeCell(idUser);
-        storage_WS.leavePlayerGame(this.idRoom, idUser);
         storage_players.deletePlayer(this.idRoom, idUser);
     }
 

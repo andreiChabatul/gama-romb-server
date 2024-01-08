@@ -98,7 +98,6 @@ export class RoomsService {
 
     private deletePlayer(idRoom: string, idUser: string, isSend: Boolean): void {
         storage_players.deletePlayer(idRoom, idUser);
-        storage_WS.leavePlayerGame(idRoom, idUser);
         isSend ? this.sendRooms() : '';
     }
 

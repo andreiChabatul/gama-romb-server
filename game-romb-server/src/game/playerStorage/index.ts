@@ -1,5 +1,6 @@
 import { PlayerDefaultI } from "src/types/player";
 import { StoragePlayersI, storagePlayers } from "src/types/storagePlayers";
+import { storage_WS } from "../socketStorage";
 
 export class StoragePlayers implements StoragePlayersI {
 
@@ -28,6 +29,7 @@ export class StoragePlayers implements StoragePlayersI {
 
     deletePlayer(idRoom: string, idUser: string): void {
         delete this.storagePlayers[idRoom][idUser];
+        storage_WS.leavePlayerGame(idRoom, idUser);
     }
 
     deleteRoom(idRoom: string): void {

@@ -36,7 +36,7 @@ export class TurnService {
         } else {
             this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
-            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer });
+            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.TURN, idUser: this.activePlayer });
         }
         this.updateTurn();
     }
