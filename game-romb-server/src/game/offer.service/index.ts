@@ -25,9 +25,9 @@ export class OfferService implements OfferServiceI {
         const receivePlayer = storage_players.getPlayer(this.idRoom, receivePerson.idPerson);
 
         offerPlayer.minusTotal(offerPerson.valueMoney);
-        offerPlayer.addTotal = receivePerson.valueMoney;
+        offerPlayer.addTotal(receivePerson.valueMoney);
         receivePlayer.minusTotal(receivePerson.valueMoney);
-        receivePlayer.addTotal = offerPerson.valueMoney;
+        receivePlayer.addTotal(offerPerson.valueMoney);
         changeCompany.bind(this)(offerPerson, receivePerson);
         changeCompany.bind(this)(receivePerson, offerPerson);
 

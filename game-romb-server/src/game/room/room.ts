@@ -7,7 +7,6 @@ import { ContorolCompanyPayload, ControlAuctionPayload, DiceRollGamePayload, EAC
 import { OfferService } from "../offer.service";
 import { UserService } from "src/user/user.service";
 import { CellsService } from "../cells";
-import { defaultCell } from "../cells/defaultCell";
 import { storage_WS } from "../socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { CreateRoomDto } from "src/rooms/dto/create.room.dto";
@@ -25,8 +24,8 @@ export class RoomGame implements RoomI {
 
     constructor(private infoRoom: CreateRoomDto, private idRoom: string, private userService: UserService) {
         this.auction = new AuctionCompany(this.idRoom);
-        this.turnService = new TurnService(this.idRoom);
         this.cellsService = new CellsService(this.idRoom);
+        this.turnService = new TurnService(this.idRoom, this.cellsService);
         this.offerService = new OfferService(this.idRoom, this.cellsService);
     }
 
@@ -38,7 +37,7 @@ export class RoomGame implements RoomI {
 
     private async checkStartGame(): Promise<void> {
         const amountPlayers = storage_players.getPlayersRoom(this.idRoom).length;
-        if (amountPlayers === this.infoRoom.maxPlayers && amountPlayers > 0) { //убрать труе потом, временно чтобы тестть
+        if (true || amountPlayers === this.infoRoom.maxPlayers && amountPlayers > 0) { //убрать труе потом, временно чтобы тестть
             this.isStart = true;
             storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
             this.turnService.firstTurn();
@@ -47,6 +46,7 @@ export class RoomGame implements RoomI {
 
     playerMove({ idUser, isDouble, value }: DiceRollGamePayload): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
+        player.turn = true;
         if (player.prison) {
             if (isDouble) {
                 prison.deletePrisoner(this.idRoom, idUser);
@@ -56,17 +56,13 @@ export class RoomGame implements RoomI {
                 return;
             }
         };
-        player.position = value;
-        player.turn = true;
-        const cell = this.cellsService.getOneCell(player.position);
-        cell.movePlayer(idUser, value);
-        this.turnService.turn(idUser, value, isDouble, player.position);
+        this.turnService.turn(idUser, value, isDouble);
     }
 
     activeCell(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         player.turn ? this.cellsService.activateCell(player.position, idUser) : '';
-        this.turnService.endTurn();
+        this.turnService.endTurn(player.bankrupt);
         player.turn = false;
     }
 
@@ -128,7 +124,8 @@ export class RoomGame implements RoomI {
                 this.leavePlayerGame(idUser);
                 break;
             case "stay":
-                this.turnService.endTurn();
+                this.activeCell(idUser);
+                break;
             case "endGame":
                 storage_players.deleteRoom(this.idRoom);
                 storage_WS.deleteRoom(this.idRoom);
@@ -153,13 +150,13 @@ export class RoomGame implements RoomI {
 
     async fillPlayers(): Promise<fullPlayer[]> {
         const playersIds = storage_players.getPlayersRoom(this.idRoom);
-        const playersPrisma = await this.userService.findMany(playersIds);
-        const players = playersPrisma.map((player) => {
+        const players = await Promise.all(playersIds.map(async (idUser) => {
             return {
-                ...player,
-                ...storage_players.getPlayer(this.idRoom, player.id).playerInfo
+                ...await this.userService.findOne(idUser),
+                ...storage_players.getPlayer(this.idRoom, idUser).playerInfo
             }
-        });
+        }))
+        players.forEach((player) => delete player.password);
         return players;
     }
 
@@ -177,9 +174,11 @@ export class RoomGame implements RoomI {
 
     leavePlayerGame(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
-        player.bankrupt = true;
-        this.activeCell(idUser);
-        storage_players.deletePlayer(this.idRoom, idUser);
+        if (player) {
+            player.bankrupt = true;
+            this.activeCell(idUser);
+            storage_players.deletePlayer(this.idRoom, idUser);
+        };
     }
 
     private async gameInfo(): Promise<gameRoom> {
@@ -189,7 +188,6 @@ export class RoomGame implements RoomI {
                 res[curr.id] = curr;
                 return res;
             }, {}),
-            board: defaultCell,
             chat: chatGame.getAllMessages(this.idRoom),
             turnId: '',
             timeTurn: this.infoRoom.timeTurn

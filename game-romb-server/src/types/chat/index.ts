@@ -23,6 +23,7 @@ export enum EMESSAGE_CLIENT {
     FIRST_TURN = 'firstTurn',
     TURN = "turn",
     DOUBLE_TURN = "doubleTurn",
+    DOUBLE_TURN_PRISON = "doubleTurnPrison",
     INTO_CELL = "intoCell",
     INFO_CELL_BUY_COMPANY = "infoCellbuyCompany",
     ADD_TOTAL = 'addTotal',

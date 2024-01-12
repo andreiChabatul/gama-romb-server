@@ -1,4 +1,3 @@
-import { prisonPlayer } from "src/types";
 import { CIRCLE_REWARD, INIT_TOTAL, MAX_INDEX_CELL_BOARD } from "src/const";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
 import { storage_WS } from "../socketStorage";
@@ -6,14 +5,13 @@ import { chatGame } from "../chatGame";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { PlayerDefaultI, updatePlayer } from "src/types/player";
 import { CellsServiceI } from "src/types/cellsServices";
-import { storage_players } from "../playerStorage";
 
 export class PlayerDefault implements PlayerDefaultI {
 
     _total: number;
     _turn: boolean;
     _bankrupt: boolean;
-    _prison: prisonPlayer;
+    _prison: number;
     _isOnline: boolean;
     cellPosition: number;
 
@@ -24,15 +22,15 @@ export class PlayerDefault implements PlayerDefaultI {
         private cellsService: CellsServiceI) {
         this._total = INIT_TOTAL;
         this.cellPosition = 0;
-        this._prison = { state: false, attempt: 0 };
+        this._prison = 0;
         this._isOnline = true;
     }
 
     set position(value: number) {
-        this._prison.state
+        this._prison
             ? this.cellPosition = value
             : this.cellPosition = this.positionCellCalc(value);
-        this.updatePlayer();
+        this.updatePlayer({ cellPosition: this.position });
     }
 
     get position(): number {
@@ -44,9 +42,11 @@ export class PlayerDefault implements PlayerDefaultI {
     }
 
     set bankrupt(value: boolean) {
-        this._bankrupt = value;
-        this.cellsService.playerBankrupt(this.id);
-        this.updatePlayer();
+        if (value) {
+            this._bankrupt = value;
+            this.cellsService.playerBankrupt(this.id);
+            this.updatePlayer({ bankrupt: this.bankrupt });
+        };
     }
 
     get bankrupt(): boolean {
@@ -60,17 +60,15 @@ export class PlayerDefault implements PlayerDefaultI {
     private positionCellCalc(value: number): number {
         let resultPosition = this.cellPosition + value;
         if (resultPosition >= MAX_INDEX_CELL_BOARD) {
-            this._total += CIRCLE_REWARD;
+            this.addTotal(CIRCLE_REWARD);
             // this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
             resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
         }
         return resultPosition;
     }
 
-    updatePlayer(idUser?: string): void {
-        idUser
-            ? storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo)
-            : storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.UPDATE_PLAYER, this.playerInfo);
+    updatePlayer(payload: {}): void {
+        storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.UPDATE_PLAYER, { id: this.id, ...payload });
     }
 
     get playerInfo(): updatePlayer {
@@ -80,50 +78,42 @@ export class PlayerDefault implements PlayerDefaultI {
             total: this._total,
             capital: this.capital,
             cellPosition: this.cellPosition,
-            prison: this._prison,
-            bankrupt: this._bankrupt,
+            prison: this.prison,
+            bankrupt: this.bankrupt,
             online: this._isOnline
         };
     }
 
-    set addTotal(value: number) {
-        this._total += value;
+    addTotal(value: number) {
+        this.total = value;
         chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.ADD_TOTAL, idUser: this.id, valueroll: value });
-        this.updatePlayer();
     }
 
     minusTotal(valueroll: number, action: EMESSAGE_CLIENT = EMESSAGE_CLIENT.MINUS_TOTAL, cellId?: number) {
-        this._total -= valueroll;
+        this.total = (-valueroll);
         chatGame.addChatMessage(this.idRoom, { action, idUser: this.id, valueroll, cellId });
-        this.updatePlayer();
     }
 
-    get prison(): boolean {
-        return this._prison.state;
+    set total(value) {
+        this._total += value;
+        this.updatePlayer({ total: this._total, capital: this.capital, });
     }
 
-    set prison(value: boolean) {
+    get prison(): number {
+        return this._prison;
+    }
+
+    set prison(value: number) {
         if (value) {
             this.cellPosition = 12;
-            this._prison = { state: true, attempt: 3 }
-        } else {
-            this._prison = { state: false, attempt: 0 }
-        }
-        this.updatePlayer();
-    }
-
-    set attemptPrison(value: number) {
-        this._prison.attempt = value;
-        this.updatePlayer();
+        };
+        this._prison = value;
+        this.updatePlayer({ prison: this.prison, cellPosition: this.position });
     }
 
     set online(value: boolean) {
         this._isOnline = value;
-        this.updatePlayer();
-    }
-
-    get attemptPrison(): number {
-        return this._prison.attempt;
+        this.updatePlayer({ online: this._isOnline });
     }
 
     get capital(): number {

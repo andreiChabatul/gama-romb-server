@@ -15,7 +15,6 @@ export enum EACTION_WEBSOCKET {
     UPDATE_TURN = 'update turn',
     DICE_ROLL = 'dice roll',
     INFO_CELL_TURN = 'info cell turn',
-    END_TURN = 'end turn',
     START_GAME = 'start game',
     CONTROL_COMPANY = 'control company',
     CONTROL_DEAL = 'control deal',

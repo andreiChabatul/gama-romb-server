@@ -21,7 +21,7 @@ export interface CellDefault {
 
 export interface CellCompanyI extends CellDefault {
     controlCompany(action: controlCompany, idUser: string): void;
-    buyCompany(player: PlayerDefaultI, price: number): void;
+    buyCompany(idUser: string, price: number): void;
     payRent(idUser: string): void;
     get owned(): string | null;
     get info(): updateInfoCompany;

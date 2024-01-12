@@ -30,16 +30,6 @@ export class UserService {
         })
     }
 
-    async findMany(idUsers: string[]) {
-        const players = await this.prismaServices.user.findMany({
-            where: {
-                id: { in: idUsers },
-            },
-        })
-        players.forEach((player) => delete player.password);
-        return players;
-    }
-
     async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
         const userRepeat = await this.findOne(updateUserDto.newNickName);
         const user = await this.findOne(id);

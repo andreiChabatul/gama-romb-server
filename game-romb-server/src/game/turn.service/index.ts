@@ -3,14 +3,16 @@ import { storage_WS } from "../socketStorage";
 import { EMESSAGE_CLIENT } from "src/types/chat";
 import { chatGame } from "../chatGame";
 import { storage_players } from "../playerStorage";
+import { prison } from "../prison.service";
+import { CellsServiceI } from "src/types/cellsServices";
 
 export class TurnService {
 
     private indexActive: number;
     private isDouble: boolean;
-    private doubleCounter: number = 0;
+    checkPrisonUser = this.checkPrison();
 
-    constructor(private idRoom: string) { }
+    constructor(private idRoom: string, private cellsService: CellsServiceI) { }
 
     firstTurn(): void {
         this.indexActive = Math.floor(Math.random() * this.playersActive.length);
@@ -18,23 +20,27 @@ export class TurnService {
         this.updateTurn();
     }
 
-    turn(idUser: string, valueroll: number, isDouble: boolean, cellId: number): void {
-        this.isDouble = isDouble;
-        chatGame.addChatMessage(this.idRoom, {
-            action: EMESSAGE_CLIENT.INTO_CELL,
-            idUser,
-            cellId,
-            valueroll
-        })
+    turn(idUser: string, valueroll: number, isDouble: boolean): void {
+        if (this.checkPrisonUser(idUser, isDouble)) {
+            this.isDouble = false;
+            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN_PRISON, idUser });
+            prison.addPrisoner(this.idRoom, idUser);
+            this.endTurn();
+        } else {
+            this.isDouble = isDouble;
+            const player = storage_players.getPlayer(this.idRoom, idUser);
+            player.position = valueroll;
+            const cellId = player.position;
+            const cell = this.cellsService.getOneCell(cellId);
+            cell.movePlayer(idUser, valueroll);
+            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.INTO_CELL, idUser, cellId, valueroll });
+        };
     }
 
     private nextTurn(): void {
         if (this.isDouble) {
-            this.doubleCounter++;
-            this.checkDouble();
             chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN, idUser: this.activePlayer });
         } else {
-            this.doubleCounter = 0;
             this.indexActive = this.calcIndexActive();
             chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.TURN, idUser: this.activePlayer });
         }
@@ -49,9 +55,10 @@ export class TurnService {
         return storage_players.getPlayersActive(this.idRoom);
     }
 
-    endTurn(): void {
-        storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_TURN);
-        this.checkWinner() ? this.nextTurn() : '';
+    endTurn(bankrupt: boolean = false): void {
+        this.indexActive -= Number(bankrupt);
+        // this.checkWinner() ? this.nextTurn() : '';
+        this.nextTurn();
     };
 
     updateTurn(idUser?: string): void {
@@ -66,21 +73,22 @@ export class TurnService {
         return futureIndexActive;
     }
 
-    private checkDouble(): void {
-        if (this.doubleCounter === 3) {
-            this.doubleCounter = 0;
-            this.indexActive = this.calcIndexActive();
-        }
-    }
-
     checkWinner(): boolean {
-        const userIds = storage_players.getPlayersActive(this.idRoom);
-        if (userIds.length === 1) {
-            storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_GAME, userIds[0]);
+        if (this.playersActive.length === 1) {
+            storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_GAME, this.playersActive[0]);
             return false;
         } else {
             return true;
         }
     };
 
+    checkPrison(): (idUser: string, isDouble: boolean) => boolean {
+        let amount: number = 0;
+        let prevIdUser: string;
+        return (idUser: string, isDouble: boolean) => {
+            (isDouble && prevIdUser === idUser) ? amount++ : amount = 0;
+            prevIdUser = idUser;
+            return amount === 2;
+        };
+    }
 }

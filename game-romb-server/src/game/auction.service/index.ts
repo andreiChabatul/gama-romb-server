@@ -42,10 +42,8 @@ export class AuctionCompany implements AuctionI {
     }
 
     private filterParticipants(idUser?: string): void {
-        const index = this.playersId.indexOf(idUser);
-        this.playersId.splice(index, 1);
-        this.playersId.map((id, index) =>
-            (storage_players.getPlayer(this.idRoom, id).total < this.currentPrice) ? this.playersId.splice(index, 1) : '');
+        this.playersId = this.playersId.filter((id) =>
+            id !== idUser && storage_players.getPlayer(this.idRoom, id).total >= this.currentPrice);
     }
 
     private nextStep(): void {
@@ -57,7 +55,7 @@ export class AuctionCompany implements AuctionI {
 
     private endAuction(): void {
         this.auctionWinner
-            ? this.cell.buyCompany(storage_players.getPlayer(this.idRoom, this.auctionWinner), this.currentPrice)
+            ? this.cell.buyCompany(this.auctionWinner, this.currentPrice)
             : '';
         this.action = 'endAuction';
     }

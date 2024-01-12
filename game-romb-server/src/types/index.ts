@@ -8,7 +8,6 @@ export type controlCompany = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOu
 export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';
 export type controlDeal = 'offer' | 'refuse' | 'accept';
 export type cellType = 'company' | 'empty' | 'tax' | 'profit' | 'loss';
-export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
 export type countryCompany = 'japan' | 'germany' | 'italia' | 'britania' | 'sweden' | 'canada' | 'kazah' | 'china' | 'usa' | 'ukraine';
 export type nameCell = nameCompany | nameCellEmpty;
 export type dealPerson = 'offerPerson' | 'receivePerson';
@@ -23,22 +22,12 @@ export type mainPlayer = {
     numberWin: number;
 }
 
-export type prisonPlayer = {
-    state: boolean;
-    attempt: number;
-}
-
 export type playersGame = {
     [id: string]: PlayerDefaultI;
 }
 
 export interface companyCheckNoMonopoly {
     [key: number]: number[]
-}
-
-export type location = {
-    gridArea: string,
-    cellDirections: cellDirections,
 }
 
 export type rooms = {
@@ -84,8 +73,6 @@ export type infoRoom = {
 
 export interface gameCell {
     type: cellType;
-    location: location;
-    indexCell: number;
     nameCell: string;
     company?: CompanyInfo;
 }
@@ -147,7 +134,6 @@ export type gameRoom = {
     chat: chatMessage[];
     idRoom: string;
     players: playersGame,
-    board: gameCell[];
     turnId: string;
     timeTurn: number;
     offerDealInfo?: offerDealInfo;

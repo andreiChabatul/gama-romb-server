@@ -34,6 +34,6 @@ export class CellProfit implements CellDefault {
 
     activateCell(idUser: string): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
-        player.addTotal = this._cellValue;
+        player.addTotal(this._cellValue);
     }
 }

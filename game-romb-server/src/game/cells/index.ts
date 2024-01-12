@@ -44,9 +44,7 @@ export class CellsService implements CellsServiceI {
 
     playerBankrupt(idUser: string): void {
         this.cells.forEach((cell) =>
-            ('owned' in cell && cell.owned === idUser)
-                ? cell.owned = undefined
-                : '');
+            ('owned' in cell && cell.owned === idUser) ? cell.owned = '' : '');
     }
 
     calcCapitalCells(idUser: string): number {
@@ -61,9 +59,10 @@ export class CellsService implements CellsServiceI {
         const cells = this.cells.filter((cell) =>
             'owned' in cell && cell.infoCompany.countryCompany === countryCompany) as CellCompanyI[];
         if (cells[0].infoCompany.countryCompany !== 'japan' && cells[0].infoCompany.countryCompany !== 'ukraine') {
-            const ownedCell = cells.map((cell) => cell.owned ? cell.owned : 'noOwned');
-            const result = [...new Set(ownedCell)].length;
-            cells.forEach((cell) => cell.monopoly = (result === 1));
+            const ownedCell = cells.map((cell) => cell.owned && !cell.pledge ? cell.owned : 'noOwned');
+            console.log(ownedCell)
+            const resultArr = [...new Set(ownedCell)];
+            cells.forEach((cell) => cell.monopoly = resultArr.length === 1 && !resultArr.includes('noOwned'));
         } else {
             const ownedCell = cells.reduce((res, cell) => {
                 if (cell.owned) {

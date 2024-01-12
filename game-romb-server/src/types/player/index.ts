@@ -1,22 +1,20 @@
-import { prisonPlayer } from "..";
 import { EMESSAGE_CLIENT } from "../chat";
 
 export interface PlayerDefaultI {
     _total: number;
     _bankrupt: boolean;
-    _prison: prisonPlayer;
+    _prison: number;
     _isOnline: boolean;
     cellPosition: number;
     get position(): number;
     get total(): number;
+    set total(value: number);
     set position(value: number);
     get userId(): string;
-    set addTotal(value: number);
+    addTotal(value: number): void;
     minusTotal(value: number, action?: EMESSAGE_CLIENT, cellId?: number): void;
-    get prison(): boolean;
-    set prison(value: boolean);
-    set attemptPrison(value: number);
-    get attemptPrison(): number;
+    get prison(): number;
+    set prison(value: number);
     get capital(): number;
     set bankrupt(value: boolean);
     get bankrupt(): boolean;
@@ -33,7 +31,7 @@ export type updatePlayer = {
     capital: number;
     color: string;
     cellPosition: number;
-    prison: prisonPlayer;
+    prison: number;
     bankrupt: boolean;
     online: boolean;
 }
