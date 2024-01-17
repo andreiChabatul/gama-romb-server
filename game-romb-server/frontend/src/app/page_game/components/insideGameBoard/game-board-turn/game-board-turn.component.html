@@ -16,7 +16,7 @@
         <app-auction-company *ngSwitchCase="'auction'" [gameRoom]="gameRoom"></app-auction-company>
         <app-winner-game *ngSwitchCase="'winner'" [gameRoom]="gameRoom"></app-winner-game>
         <app-control-company *ngIf="gameRoom.controlCompany" class="control-company-container"
-            [gameRoom]="gameRoom"></app-control-company>
+            [controlCompany]="gameRoom.controlCompany"></app-control-company>
     </div>
     <app-turn-timer class="turn-timer" [gameRoom]="gameRoom" *ngIf="isTurnTimer"></app-turn-timer>
 </div>

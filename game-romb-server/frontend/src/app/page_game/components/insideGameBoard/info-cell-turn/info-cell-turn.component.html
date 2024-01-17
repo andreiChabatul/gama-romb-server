@@ -18,7 +18,8 @@
                 </app-button-standart>
             </div>
         </div>
-        <p *ngIf="(gamePlayer$ | async)?.bankrupt" class="bankrupt-fon" [style.color]="(gamePlayer$ | async)?.color">
-            {{'bankrot' | transloco}}</p>
+        <div *ngIf="gamePlayer$ | async as player">
+            <p *ngIf="player.bankrupt" class="bankrupt-fon" [style.color]="player.color">{{'bankrot' | transloco}}</p>
+        </div>
     </div>
 </ng-template>

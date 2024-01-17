@@ -1,12 +1,14 @@
 <div class="page-room-container">
     <div class="page-room_title">
-        <p class="page-room_title__text">{{'listRoom' | transloco}} {{rooms.length}}</p>
+        <p class="page-room_title__text">{{'listRoom' | transloco}} {{(rooms$ | async)?.length}}</p>
         <div class="page-room-buttons">
             <app-button-materials *ngFor="let option of buttons" [option]="option"></app-button-materials>
             <app-page-room-search></app-page-room-search>
         </div>
     </div>
     <div class="page-room_rooms">
-        <app-room-item *ngFor="let infoRoom of rooms" [infoRoom]="infoRoom"></app-room-item>
+        <div *ngFor="let infoRoom of rooms$ | async">
+            <app-room-item *ngIf="!infoRoom.isStart" [infoRoom]="infoRoom"></app-room-item>
+        </div>
     </div>
 </div>

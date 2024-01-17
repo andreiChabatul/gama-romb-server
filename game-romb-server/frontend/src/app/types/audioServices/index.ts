@@ -6,4 +6,5 @@ export type eventAudio =
     'pieceMove' |
     'prisonMove' |
     'emptyCell' |
+    'receiveDeal' |
     'winner';

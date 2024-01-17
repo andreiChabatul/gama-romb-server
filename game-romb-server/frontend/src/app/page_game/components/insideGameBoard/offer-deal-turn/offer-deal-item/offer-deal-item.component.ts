@@ -65,7 +65,8 @@ export class OfferDealItemComponent implements OnInit {
 
   get companyPlayer(): Observable<gameCell[]> {
     return this.gameRoom$.pipe(
-      map((gameRoom) => gameRoom.board.filter((cell) => cell.company?.owned === this.idUser))
+      map((gameRoom) =>
+        gameRoom.board.filter((cell) => !cell.company?.isPledge && cell.company?.owned === this.idUser))
     );
   }
 

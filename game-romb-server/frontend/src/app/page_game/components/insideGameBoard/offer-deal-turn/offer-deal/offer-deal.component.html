@@ -17,7 +17,7 @@
         <div class="info-player-offer-container">
             <p class="balanse-offer-title">{{'choisePlayerTitle' | transloco}}</p>
             <div class="info-player-container">
-                <div class="info-player-offer-container_item" *ngFor="let player of players$ | async">
+                <div *ngFor="let player of players$ | async">
                     <div class="info-player_img-offer" *ngIf="player.id !== (turnId$ | async)"
                         (click)="selectPlayer(player.id)">
                         <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
@@ -28,9 +28,9 @@
         </div>
     </ng-template>
     <div class="offer-deal-buttons">
-        <app-button-standart (click)="clickButton(button.action)"
-            [ngClass]="{'button__disable': (button.action === 'sendDealButton' && textBalanse() === 'noBalanseDeal')}"
-            *ngFor="let button of buttonOffer" [button]="button"></app-button-standart>
+        <app-button-standart (click)="clickButton(button.action)" [ngClass]="{'button__disable': (button.action === 'sendDealButton' && (textBalanse() === 'noBalanseDeal' ||
+            !_offerDealInfo.offerPerson || !_offerDealInfo.receivePerson))}" *ngFor="let button of buttonOffer"
+            [button]="button"></app-button-standart>
     </div>
 </div>
 <ng-template #awaitSolution>

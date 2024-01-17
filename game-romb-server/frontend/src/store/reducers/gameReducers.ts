@@ -21,7 +21,7 @@ export const gameReducers = createReducer(initalState,
     on(gameActions.UpdateTurn, (state, { turnId }) => ({ ...state, infoCellTurn: undefined, turnId })),
     immerOn(gameActions.UpdateInfoPlayer, (state, { updatePlayer }) => {
         (Object.keys(updatePlayer) as keyUpdatePlayer[]).forEach((value) =>
-            state.players[updatePlayer.id][value] = updatePlayer[value]);
+            state.players[updatePlayer.id] ? state.players[updatePlayer.id][value] = updatePlayer[value] : '');
         return state;
     }),
     immerOn(gameActions.UpdateCell, (state, { updateCell }) => {

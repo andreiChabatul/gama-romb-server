@@ -8,7 +8,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class AnonimAuthComponent {
 
-
   @Input() size: string;
 
   constructor(private authService: AuthService) { }

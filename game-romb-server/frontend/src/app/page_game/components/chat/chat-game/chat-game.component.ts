@@ -13,10 +13,7 @@ export class ChatGameComponent implements OnChanges {
   scrolltop: number;
 
   ngOnChanges(): void {
-    if (this.messageBlock) {
-      this.scrolltop = this.messageBlock.nativeElement.scrollHeight;
-    };
+    if (this.messageBlock) this.scrolltop = this.messageBlock.nativeElement.scrollHeight;
   }
 
 }
-

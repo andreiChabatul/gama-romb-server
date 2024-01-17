@@ -61,6 +61,7 @@ export class OfferDealComponent {
 
   clickButton(action: ACTIONS_BUTTON): void {
     if (action === 'sendDealButton') {
+      console.log(this._offerDealInfo)
       this._isAwaitSoluton = false;
       this.webSocketController.sendMessage(EACTION_WEBSOCKET.CONTROL_DEAL, {
         action: 'offer',
