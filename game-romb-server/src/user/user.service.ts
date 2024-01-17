@@ -67,4 +67,19 @@ export class UserService {
         return hashSync(password, 5);
     }
 
+    addGameUser(idUsers: string[]): void {
+        idUsers.forEach(async (id) => await this.prismaServices.user.update({
+            where: { id },
+            data: { numberGame: { increment: 1 } },
+        })
+        );
+    }
+
+    async gameWinner(id: string): Promise<void> {
+        await this.prismaServices.user.update({
+            where: { id },
+            data: { numberWin: { increment: 1 } },
+        });
+    }
+
 }

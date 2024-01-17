@@ -60,7 +60,6 @@ export class CellsService implements CellsServiceI {
             'owned' in cell && cell.infoCompany.countryCompany === countryCompany) as CellCompanyI[];
         if (cells[0].infoCompany.countryCompany !== 'japan' && cells[0].infoCompany.countryCompany !== 'ukraine') {
             const ownedCell = cells.map((cell) => cell.owned && !cell.pledge ? cell.owned : 'noOwned');
-            console.log(ownedCell)
             const resultArr = [...new Set(ownedCell)];
             cells.forEach((cell) => cell.monopoly = resultArr.length === 1 && !resultArr.includes('noOwned'));
         } else {
