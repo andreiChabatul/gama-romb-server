@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Res, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
-import { Tokens, googleInfo } from 'src/types/auth';
+import { Tokens } from 'src/types/auth';
 import { Response, Request } from 'express';
 import { Cookie, UserAgent } from 'src/lib/common/decorators';
 import { GoogleGuard } from './guards/google.guard';

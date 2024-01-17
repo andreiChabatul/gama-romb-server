@@ -1,2 +1,5 @@
-node_modules
-npm-debug.log
+backend/dist
+backend/node_modules
+
+frontend/dist
+frontend/node_modules

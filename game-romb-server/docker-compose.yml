@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: yobasystems/alpine-postgres:16.1
-    restart: always
+    restart: unless-stopped
     container_name: nestBD
     environment:
       - POSTGRES_USER=sammy
@@ -12,12 +12,12 @@ services:
     ports:
       - '5432:5432'
 
-  nest-api:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: nest-api
-    restart: always
+    container_name: backend-monopoly
+    restart: unless-stopped
     ports:
       - 3000:3000
       - 3001:3001
@@ -25,6 +25,18 @@ services:
       - postgres
     env_file:
       - .env
+
+  frontend:
+    container_name: frontend-monopoly
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+    - postgres
+    - backend
 
 volumes:
   postgres:

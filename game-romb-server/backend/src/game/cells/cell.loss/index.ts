@@ -4,8 +4,8 @@ import { storage_WS } from "src/game/socketStorage";
 import { infoCellTurn } from "src/types";
 import { CellDefault } from "src/types/cellsServices";
 import { EMESSAGE_CLIENT } from "src/types/chat";
-import { PlayerDefaultI } from "src/types/player";
 import { EACTION_WEBSOCKET } from "src/types/websocket";
+import { PlayerDefaultI } from "src/types/player";
 
 export class CellLoss implements CellDefault {
 
