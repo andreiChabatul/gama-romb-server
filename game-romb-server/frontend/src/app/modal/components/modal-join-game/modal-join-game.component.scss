@@ -1,0 +1,16 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+
+.form-join-container {
+    @include flex_c_s;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.form-join-title {
+    @include font_default;
+    font-size: 1.5vw;
+    font-weight: 600;
+    margin: 1% 0;
+}

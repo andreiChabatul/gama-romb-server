@@ -1,0 +1,50 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.spinner-info-cell {
+    position: absolute;
+    bottom: calc(50% - 4vw);
+    left: calc(50% - 4vw);
+    width: 8vw !important;
+    height: 8vw !important;
+}
+
+.info-cell-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1vh;
+    position: relative;
+}
+
+.info-cell-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+
+
+.info-desc-container {
+    width: 95%;
+    @include flex_c_s;
+    gap: 2vw;
+}
+
+.company-info-text {
+    @include font_default;
+    font-size: 1vw;
+    text-align: center;
+}
+
+.bankrupt-fon {
+    @include font-default;
+    position: absolute;
+    font-size: 5vw;
+    border: thick double;
+    transform: rotate(335deg);
+    opacity: .2;
+    padding: 1% 4%;
+    font-weight: 800;
+    top: calc(50% - 2.5vw);
+}

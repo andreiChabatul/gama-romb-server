@@ -1,0 +1,46 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.dot {
+    position: absolute;
+    width: 1vw;
+    height: 1vw;
+    border-radius: 50%;
+    background-color: #2C2C2C;
+    @include box3D;
+}
+
+.dot_center {
+    top: calc(50% - 0.45vw);
+    left: calc(50% - 0.45vw);
+}
+
+.dot_one {
+    top: 15%;
+    left: 15%;
+}
+
+.dot_two {
+    top: calc(50% - 0.45vw);
+    left: 15%;
+}
+
+.dot_three {
+    bottom: 15%;
+    left: 15%;
+}
+
+.dot_four {
+    top: 15%;
+    right: 15%;
+}
+
+.dot_five {
+    top: calc(50% - 0.45vw);
+    right: 15%;
+}
+
+.dot_six {
+    bottom: 15%;
+    right: 15%;
+}

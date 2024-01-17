@@ -1,0 +1,28 @@
+[
+    {
+        "typeCell": "empty",
+        "nameCell": "Start",
+        "imageCell": "./../../../../assets/board/start.png",
+        "description": "Start game"
+    },
+    {
+        "typeCell": "company",
+        "nameCell": "hsbc",
+        "imageCell": "./../../../../assets/logo/hsbc.png",
+        "country": "britania",
+        "initalCost": 123,
+        "collateralValue": 321,
+        "sharePrice": 3123,
+        "companyProfit": {
+            "type": "stock",
+            "defaultPrice": 125,
+            "monopolyPrice": 253,
+            "quallity": [
+                1000,
+                1100,
+                1205,
+                2500
+            ]
+        }
+    }
+]

@@ -1,0 +1,55 @@
+@import "./../../../../scss/default-styles";
+@import "./../../../../scss/color-styles";
+
+.raiting-stars-container {
+    cursor: help;
+    position: relative;
+
+    &:hover .raiting-container {
+        transform: scale(1.05);
+        opacity: 0;
+    }
+
+    &:hover .raiting-info {
+        opacity: 1;
+    }
+}
+
+.raiting-container {
+    transition: all .5s;
+}
+
+.raiting-info {
+    @include flex_c_c;
+    align-items: flex-start;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    transition: all .5s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.raiting-info_text {
+    @include font-default;
+    font-size: .7vw;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.stars-container {
+    overflow: hidden;
+}
+
+.stars-container_wb {
+    filter: grayscale(1);
+}
+
+.stars-container_calc {
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: grayscale(0);
+}

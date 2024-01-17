@@ -1,0 +1,18 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.info-modal-container {
+    width: 45vw;
+}
+
+.info-modal-title-container {
+    @include flex_c_s;
+    justify-content: space-around;
+
+}
+
+.info-modal-text{
+    @include font_default;
+    font-weight: 600;
+    font-size: 1.2vw;
+}

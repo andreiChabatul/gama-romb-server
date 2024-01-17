@@ -1,0 +1,13 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.company-control-container {
+    @include flex_c_s;
+    flex-direction: column;
+    gap: 2vw;
+}
+
+.company-control_desc {
+    @include font-default;
+    font-size: 1vw;
+}

@@ -1,0 +1,77 @@
+@import "./../../../../scss/default-styles";
+@import "./../../../../scss/color-styles";
+
+.room-item_join {
+    @include flex-c_c;
+    @include font_default;
+    font-weight: 500;
+    color: $default_white;
+    position: absolute;
+    font-size: 1.7vw;
+    opacity: 0;
+    transition: all .4s;
+    width: 100%;
+    height: 100%;
+    background: rgba($purple, 0.3);
+    top: 0;
+    left: 0;
+    transform: scale(0);
+    z-index: 11;
+}
+
+.room-item-container {
+    width: 90%;
+    position: relative;
+    margin: 0 auto;
+    @include fon-white;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .4s;
+
+    &:hover {
+        box-shadow: 1px 1px 2px black, 0 0 1em $purple, 0 0 0.2em $purple;
+    }
+
+    &:hover .room-item_join {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.room-item_gradient {
+    padding: 0.5% 1%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+}
+
+.room-item_desc__title {
+    @include font_default;
+    font-size: 0.9vw;
+    font-weight: 600;
+}
+
+.room-item_desc {
+    font-weight: 300;
+}
+
+.room-item_title {
+    @include font_default;
+    font-size: 1.4vw;
+    font-weight: 600;
+}
+
+.cell-room-container {
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+}
+
+.loading-room {
+    grid-area: 2/1/2/3
+}
+
+.infoUser-container {
+    @include flex-c_c;
+    flex-direction: column;
+}

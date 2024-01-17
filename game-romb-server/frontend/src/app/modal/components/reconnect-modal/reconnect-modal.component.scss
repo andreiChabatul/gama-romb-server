@@ -1,0 +1,18 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.reconnect-text {
+    @include font-default;
+    font-size: 1.1vw;
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+.reconnect-buttons {
+    @include flex_c-c;
+    gap: 1vw;
+}
+
+.reconnect-buttons {
+    margin-bottom: 1vh;
+}

@@ -1,0 +1,30 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.piece-player-container {
+    width: calc(79.5vw / 15);
+    height: calc(47.5vw / 5);
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    padding: 1%;
+    top: 0;
+    left: 0;
+}
+
+.piece-player-item {
+    border-radius: 50%;
+    background: $cell_hover;
+    box-shadow: 0.05vw 0.05vw 0.5vw 0.2vw $cell_border;
+}
+
+.text-finish-circle {
+    position: absolute;
+    @include font-default;
+    font-size: 1.5vw;
+    color: $color_red;
+    top: 4vw;
+    left: 1vw;
+    font-weight: 600;
+}

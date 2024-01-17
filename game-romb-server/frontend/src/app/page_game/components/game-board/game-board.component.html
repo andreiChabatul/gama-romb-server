@@ -1,0 +1,11 @@
+<div class="game-board-container">
+    <app-game-cell *ngFor="let cell of gameRoom.board;trackBy:trackByFunction"
+        [style.grid-area]="cell.location.gridArea" [gameCell]="cell"></app-game-cell>
+    <app-piece-player *ngFor="let player of allPlayerArr$ | async; index as i;trackBy:trackByPlayer"
+        [cellPosition]="player.cellPosition" [index]="i" [prisonPlayer]="player.prison"
+        [color]="player.color"></app-piece-player>
+    <div class="game-board_inside-container">
+        <app-game-board-turn [gameRoom]="gameRoom" class="game-board-inside-player"></app-game-board-turn>
+        <app-chat-game [gameRoom]="gameRoom" class="game-board-chat"></app-chat-game>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.prison-info-container {
+    margin-top: 1vw;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-template-rows: repeat(2, auto);
+    padding: 0 5%;
+}
+
+.img-prison {
+    align-self: center;
+    width: 10vw;
+}
+
+.prison-buttons-container {
+    justify-self: right;
+    grid-area: 1/2/3/2;
+    @include flex-c_s;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.prison-title-text {
+    @include font-default;
+    font-size: 1vw;
+    font-weight: 500;
+}

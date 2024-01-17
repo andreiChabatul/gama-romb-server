@@ -1,0 +1,11 @@
+<div class="room-search-container">
+    <div class="button-standart">
+        <p class="material-symbols-outlined button-action search-text">search </p>
+        <div class="search-input-container">
+            <input type="text" class="input-search" [placeholder]="'placeholderRoom' | transloco"
+                [formControl]="searchForm">
+            <span class="material-symbols-outlined input-delete" (click)="clear()" >close</span>
+        </div>
+    </div>
+    <div class="animation-button"></div>
+</div>

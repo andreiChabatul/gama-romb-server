@@ -1,0 +1,24 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+
+.info-inside-container {
+    @include flex_c_c;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.info-inside-name {
+    @include font-default;
+    font-size: 1.5vw;
+    font-weight: 700;
+}
+
+.info-inside-text {
+    @include font-default;
+    font-size: 1vw;
+}
+
+.info-inside-text_value {
+    font-weight: 600;
+}

@@ -1,0 +1,74 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.info-player {
+    @include fon-white;
+    margin-bottom: 10px;
+}
+
+.info-player_gradient {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1vw;
+    padding: 1%;
+}
+
+.info-player-summary {
+    grid-area: 2/1/2/3;
+}
+
+.info-player_text {
+    color: $light_blue_text;
+    font-family: 'Tektur', cursive;
+    font-size: 12px;
+    white-space: nowrap;
+    display: flex;
+    gap: 5%;
+}
+
+.info-player_text_name {
+    @include font-default;
+    @include font_clip;
+    font-size: 1vw;
+    font-weight: 600;
+}
+
+.info-player_turn {
+    box-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+}
+
+.info-player_bankrupt {
+    @include font-default;
+    font-size: 1.7vw;
+    padding: 1% 4%;
+    border: thick double;
+    font-weight: 700;
+    transform: rotate(13deg);
+}
+
+.status-player {
+    display: inline-block;
+    border-radius: 50%;
+    height: 1vw;
+    width: 1vw;
+    background: radial-gradient(circle at 5px 5px, rgb(52, 219, 49), #000);
+    filter: grayscale(1);
+}
+
+.status-player_online {
+    filter: grayscale(0);
+    animation: rotate 5s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+      transform: rotateZ(360deg);
+    }
+  }
+
+.info-player_title {
+    display: flex;
+    gap: 0.5vw;
+    align-items: center;
+}

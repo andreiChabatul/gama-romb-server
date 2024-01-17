@@ -1,0 +1,46 @@
+@import "./../../scss/color-styles";
+@import "./../../scss/default-styles";
+
+.main-page_title {
+    @include font_default;
+    color: $color_turquoise;
+    font-size: 4vw;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px black, 0 0 0.3em $button_color, 0 0 0.1em $button_color;
+}
+
+.main-page-info_text {
+    @include font_default;
+    color: $button_color;
+    font-size: 1.1vw;
+    margin-bottom: 3vw;
+}
+
+.main-page-buttons {
+    @include flex-c_c;
+    gap: 5%;
+    padding-bottom: 5%;
+}
+
+.main-page-img {
+    width: 45%;
+}
+
+.main-page-container {
+    @include flex_c_s;
+    align-items: flex-end;
+}
+
+.main-page-info {
+    @include flex_c_s;
+    flex-direction: column;
+    gap: 2vw;
+    align-items: flex-start;
+    padding-left: 3%;
+}
+
+.main-page-line {
+    height: 0.2vw;
+    width: 75%;
+    background: $button_color;
+}

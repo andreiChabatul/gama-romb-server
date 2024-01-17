@@ -1,0 +1,25 @@
+@import './../../../../scss/default-styles';
+@import './../../../../scss/color-styles';
+
+.info-player_img-container {
+    @include flex_c_c;
+    border-radius: 50%;
+    box-shadow: inset 1px 1px 12px #00000080,
+        inset 1px 1px 3px #00000080, inset 1px 1px 5px #00000080,
+        inset 1px 1px 3px #00000080;
+    padding: 0.8%;
+}
+
+.info-player-inside {
+    background: $light_grey;
+    height: 75%;
+    width: 75%;
+    border-radius: 50%;
+    @include flex_c_c;
+    @include box3D;
+    overflow: hidden;
+}
+
+.info-player_img-type {
+    height: 100%;
+}

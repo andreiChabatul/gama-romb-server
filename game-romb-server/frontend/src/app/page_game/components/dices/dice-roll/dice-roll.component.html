@@ -1,0 +1,7 @@
+<div class="dice-roll-container">
+    <div @animationTriggerName class="dice-rool-wrapper">
+        <app-dice [side]="diceOne"></app-dice>
+        <app-dice [side]="diceTwo"></app-dice>
+    </div>
+    <p class="dice-rool_text">{{'resultDice' | transloco}} {{result}}</p>
+</div>

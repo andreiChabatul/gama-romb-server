@@ -1,0 +1,8 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.game-cell-container {
+    height: 100%;
+    border: 1px solid rgba($dark_purple, .5);
+    @include box3D;
+}

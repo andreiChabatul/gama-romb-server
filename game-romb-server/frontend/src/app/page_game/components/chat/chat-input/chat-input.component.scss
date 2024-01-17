@@ -1,0 +1,51 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.input-container {
+    @include flex-c_s;
+    position: relative;
+}
+
+.chat-input-full-width {
+    height: 50px;
+}
+
+.mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-floating-label {
+    font-size: 14px;
+    @include font_default;
+}
+
+.mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-text-field__input {
+    font-size: 12px;
+    @include font_default;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.mdc-text-field {
+    padding: 2px 8px;
+}
+
+.chat-send-button {
+    right: 0;
+    position: absolute;
+    font-size: 24px;
+    color: $dark_purple;
+    cursor: pointer;
+    transition: .4s;
+    border: none;
+    background: none;
+    outline: none;
+
+    &:hover {
+        color: $color_cell;
+        transform: scale(1.1);
+    }
+
+    &:active {
+        color: $orange_default;
+        transform: scale(0.9);
+    }
+}

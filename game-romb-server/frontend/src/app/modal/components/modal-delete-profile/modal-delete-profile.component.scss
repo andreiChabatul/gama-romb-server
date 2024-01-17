@@ -1,0 +1,8 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.form-delete-desc {
+    @include font-default;
+    font-weight: 600;
+    color: $dark_purple;
+}

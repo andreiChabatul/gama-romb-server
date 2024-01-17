@@ -1,0 +1,25 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.game-cell-square-container {
+    @include flex-c_c;
+    flex-direction: column;
+    height: 100%;
+}
+
+.game-cell-square-container__gorizontal {
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.game-cell-square_img {
+    height: 70%;
+    background-size: cover;
+}
+
+.game-cell-square_text {
+    @include font_default;
+    font-weight: 600;
+    font-size: 0.9vw;
+    white-space: nowrap;
+}

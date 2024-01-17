@@ -1,0 +1,4 @@
+<form class="form-join-container" [formGroup]="joinGame" (ngSubmit)="onSubmit()">
+    <app-input-material [optionForm]="choiseColor" [parentForm]="joinGame"></app-input-material>
+    <app-button-standart [button]="joinButton"></app-button-standart>
+</form>

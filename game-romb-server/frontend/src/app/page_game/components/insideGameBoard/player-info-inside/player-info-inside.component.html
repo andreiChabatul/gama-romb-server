@@ -1,0 +1,16 @@
+<div class="info-inside-container" *ngIf="player">
+        <app-foto-player [player]="player" [size]="'9vw'"></app-foto-player>
+        <p class="info-inside-name">{{player.nickName}}</p>
+        <app-raiting-stars [infoUser]="player" [width]="'10vw'"></app-raiting-stars>
+        <ng-template #elseBankrot>
+                <ol>
+                        <li class="info-inside-text">{{'total' | transloco}}: <span class="info-inside-text_value">
+                                        ${{player.total}}</span></li>
+                        <li class="info-inside-text">{{'capital' | transloco}}: <span class="info-inside-text_value">
+                                        ${{player.capital}}</span></li>
+                        <li class="info-inside-text">{{'totalCompany' | transloco}}: <span
+                                        class="info-inside-text_value">{{amountCompany}}</span></li>
+                </ol>
+        </ng-template>
+        <app-button-standart *ngIf="player.bankrupt; else elseBankrot" [button]="leaveGameButton"></app-button-standart>
+</div>

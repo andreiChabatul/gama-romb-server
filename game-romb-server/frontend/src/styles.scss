@@ -1,0 +1,278 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$romb_game-primary: mat.define-palette(mat.$indigo-palette);
+$romb_game-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$romb_game-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$romb_game-theme: mat.define-light-theme((color: (primary: $romb_game-primary,
+        accent: $romb_game-accent,
+        warn: $romb_game-warn,
+      )));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($romb_game-theme);
+
+@import "./scss/color-styles";
+@import "./scss/default-styles";
+
+div,
+ul,
+li,
+ol,
+p {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+}
+
+body {
+  margin: 0 !important;
+  padding: 3vh 2vw;
+  background: linear-gradient(125deg, rgba(216, 191, 248, 1) 0%, rgba(104, 33, 173, 1) 100%);
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.error-text {
+  @include font-default;
+  font-size: 12px;
+  color: $color_red;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba($color_cell, 0.7);
+}
+
+.animation-button {
+  width: 100%;
+  height: 2vw;
+  position: absolute;
+  background: $color_turquoise;
+  transition: all .6s;
+  opacity: 0;
+  z-index: 1;
+}
+
+.button-standart {
+  padding: 0;
+  @include flex-c_c;
+  background: url(./assets/buttonFon.png);
+  background-size: cover;
+  border: 0.2vw solid $default_white;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5vw;
+  color: $default_white;
+  cursor: pointer;
+  z-index: 11;
+  transition: all .4s;
+
+  &:active {
+    border: 2px solid $orange_default;
+    color: $orange_default;
+    transform: scale(0.97);
+  }
+
+  &:hover~.animation-button {
+    transform: rotate(180deg);
+    opacity: 1;
+    height: 100%;
+  }
+}
+
+.container-button {
+  background: $button_color;
+  @include flex-c_c;
+  position: relative;
+  overflow: hidden;
+  padding: 0.3vw;
+}
+
+.container-modal_switch {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.7vw;
+}
+
+.footer-modal_text {
+  @include font_default;
+  font-size: 1.1vw;
+  cursor: pointer;
+  transition: all .3s;
+  font-weight: 600;
+
+  &:hover {
+    color: $dark_purple;
+    text-decoration: underline
+  }
+
+  &:active {
+    transform: scale(0.95);
+    color: $light_grey;
+  }
+
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  border-radius: 1vw;
+  background: $default_white;
+  box-shadow:
+    inset 0 2px 9px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label.mdc-floating-label {
+  color: $dark_grey;
+  font-family: 'Tektur', cursive;
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: $dark_purple;
+  font-family: 'Tektur', cursive;
+}
+
+.mdc-line-ripple {
+  display: none;
+}
+
+.error-form-container {
+  position: absolute;
+  bottom: 0;
+}
+
+.form-container_material {
+  position: relative;
+}
+
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+
+.buy-company_info__title {
+  @include font_default;
+  font-weight: 600;
+}
+
+.buy-company_info__desc {
+  font-weight: 400;
+}
+
+.info-cell-text {
+  @include font_default;
+  font-size: 1vw;
+  text-align: center;
+  margin-bottom: 1vh;
+}
+
+.info-cell-text_money {
+  font-size: 0.8vw;
+}
+
+.info-cell-text_value {
+  font-weight: 600;
+}
+
+.info-cell-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.info-cell-img {
+  width: 8vw;
+  justify-self: center;
+}
+
+.frelly_text {
+  @include font-default;
+  @include font_clip;
+  font-size: 1vw;
+  font-weight: 500;
+  text-align: center;
+}
+
+.offer-company-li {
+  @include flex-c_c;
+  list-style: none;
+  width: 2vw;
+  height: 2vw;
+  border-radius: 50%;
+  background: rgba($cell_hover, .3);
+}
+
+.offer-company-li_img {
+  width: 90%;
+}
+
+.button__disable {
+  pointer-events: none;
+  filter: grayscale(.5);
+  opacity: .8;
+}
+
+.container-auth {
+  @include flex_c_c;
+  border-radius: 25%;
+  cursor: pointer;
+  opacity: .8;
+  transition: all .5s;
+
+  &:hover {
+    box-shadow:
+      inset 0 2px 9px rgba(255, 255, 255, 0.3),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+    background: $light_blue;
+    opacity: 1;
+    transform: translateY(-1vh);
+  }
+}
+
+.img-auth {
+  width: 80%;
+}
+
+.footer-modal-login {
+  @include flex_c_s;
+  align-items: flex-end;
+}
+
+.social-container {
+  @include flex_c_c;
+}

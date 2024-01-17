@@ -1,0 +1,31 @@
+<div class="room-item-container">
+    <div class="room-item_gradient">
+        <p class="room-item_join" *ngIf="idUser" (click)="clickControl()">
+            {{(isJoin ? 'leaveGame' : 'joinGame' ) | transloco}}
+        </p>
+        <ul>
+            <li class="room-item_title">{{'nameRoom'| transloco}}{{infoRoom.roomName}}</li>
+            <li class="room-item_desc__title">{{'maxPlayerRoom' | transloco}}
+                <span class="room-item_desc">{{infoRoom.maxPlayers}}</span>
+            </li>
+            <li class="room-item_desc__title">{{'playerOnline' | transloco}}
+                <span class="room-item_desc">{{infoRoom.players.length}}</span>
+            </li>
+            <li class="room-item_desc__title">{{'durationStep' | transloco}}
+                <span class="room-item_desc">{{infoRoom.timeTurn / 1000}}s</span>
+            </li>
+        </ul>
+        <div class="cell-room-container">
+            <div *ngFor="let cell of playerArr">
+                <div class="infoUser-container" *ngIf="cell; else freeCell">
+                    <app-foto-player [player]="cell" [size]="'5vw'"></app-foto-player>
+                    <p class="frelly_text">{{cell.nickName}}</p>
+                    <app-raiting-stars [infoUser]="cell" [width]="'5vw'"></app-raiting-stars>
+                </div>
+                <ng-template #freeCell><app-freely-cell-room></app-freely-cell-room></ng-template>
+            </div>
+        </div>
+        <app-loader-time class="loading-room" *ngIf="(idRoom$ | async) === infoRoom.idRoom"
+            [typeLoading]="'startGame'"></app-loader-time>
+    </div>
+</div>

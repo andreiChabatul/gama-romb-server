@@ -1,0 +1,123 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.game-cell-company_container {
+    position: relative;
+    @include flex-c_s;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 5%;
+}
+
+.game-cell-company_container__gorizontalLeft {
+    flex-direction: row-reverse;
+}
+
+.game-cell-company_container__gorizontalRight {
+    flex-direction: row;
+}
+
+.game-cell-company_container__gorizontalTop {
+    flex-direction: column-reverse;
+}
+
+.game-cell-company {
+    width: 2.5vw;
+    height: 1.7vw;
+    border-radius: 0.5vw;
+    box-shadow: 0 0 10px $light_blue_text;
+    border: 1px solid black;
+}
+
+.company-info-container {
+    @include flex_c_c;
+    flex-direction: column;
+    gap: 2%;
+}
+
+.game-cell-company_logo {
+    width: 85%;
+    background-size: cover;
+}
+
+.game-cell-company_logo__gorizontal {
+    width: 45%;
+}
+
+.game-cell-company_price {
+    @include font_default;
+    font-size: 0.9vw;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.game-cell-company_stock {
+    display: flex;
+    gap: 2px;
+}
+
+.game-cell-company_stock__gorizontal {
+    flex-direction: column;
+}
+
+.game-cell-company_stock__img {
+    width: 0.7vw;
+}
+
+
+.game-cell_content {
+    height: 100%;
+    position: relative;
+}
+
+.owned-shadow {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+
+}
+
+.owned-shadow_left {
+    transform: rotate(180deg);
+}
+
+.owned-shadow_right {
+    transform: rotate(360deg);
+}
+
+.owned-shadow_bottom {
+    transform: rotate(180deg);
+}
+
+.game-cell-container__grayscale {
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 111;
+    position: absolute;
+    background: rgba(0, 0, 0, .3);
+    @include flex_c_c;
+}
+
+.game-cell-pledge_img {
+    opacity: .8;
+    width: 4vw;
+}
+
+.game-cell-control {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: rgba($light_blue_text, .6);
+    z-index: 11111;
+    cursor: pointer;
+    @include font_default;
+    color: $default_white;
+    font-size: .8vw;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}

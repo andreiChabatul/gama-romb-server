@@ -1,0 +1,32 @@
+@import "./../../../scss/default-styles";
+@import "./../../../scss/color-styles";
+
+.page-room-container {
+    height: 92vh;
+}
+
+.page-room_title {
+    padding: 1% 7%;
+    @include flex-c_s;
+    justify-content: flex-start;
+    gap: 2vw;
+
+}
+
+.page-room_rooms {
+    width: 100%;
+    height: 85%;
+    overflow-y: auto;
+}
+
+.page-room_title__text {
+    @include font_default;
+    color: $button_color;
+    font-size: 2vw;
+    font-weight: 600;
+}
+
+.page-room-buttons {
+    @include flex-c_s;
+    gap: 1vw;
+}

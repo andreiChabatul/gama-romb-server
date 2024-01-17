@@ -1,0 +1,14 @@
+<div class="raiting-stars-container" [style.width]="width">
+    <div class="raiting-container">
+        <div class="stars-container stars-container_wb">
+            <img [style.width]="'100%'" src="assets/stars.png" alt="stars">
+        </div>
+        <div class="stars-container stars-container_calc" [style.width]="calcWidth()">
+            <img [style.width]="width" src="assets/stars.png" alt="stars">
+        </div>
+    </div>
+    <div class="raiting-info">
+        <p class="raiting-info_text">{{'totalGame' | transloco}}<span>{{infoUser.numberGame}}</span></p>
+        <p class="raiting-info_text">{{'winGame' | transloco}}<span>{{infoUser.numberWin}}</span></p>
+    </div>
+</div>

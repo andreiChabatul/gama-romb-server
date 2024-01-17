@@ -1,0 +1,62 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.room-search-container {
+    height: 3vw;
+    width: 3vw;
+    background: $button_color;
+    @include flex-c_c;
+    position: relative;
+    overflow: hidden;
+    padding: 0.3vw;
+    border-radius: 1.5vw;
+    cursor: pointer;
+    transition: all .4s;
+
+    &:hover {
+        width: 15vw;
+    }
+
+    &:hover .search-input-container {
+        width: 10vw;
+        opacity: 1;
+    }
+}
+
+.search-text {
+    width: 3vw;
+    font-size: 3vw;
+    transform: scale(.6);
+}
+
+.search-input-container {
+    position: relative;
+    width: 0;
+    opacity: 0;
+    transition: all .3s;
+}
+
+.input-search {
+    @include font_default;
+    outline: none;
+    border: none;
+    width: 95%;
+    border-radius: 0.5vw;
+}
+
+.input-room-container {
+    position: relative;
+}
+
+.input-delete {
+    position: absolute;
+    font-size: 1.5vw;
+    font-weight: 500;
+    color: $light_blue_text;
+    cursor: pointer;
+    right: 0.4vw;
+
+    &:hover {
+        color: $color_green;
+    }
+}

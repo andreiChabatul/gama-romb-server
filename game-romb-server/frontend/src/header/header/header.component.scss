@@ -1,0 +1,11 @@
+@import "./../../scss/default-styles";
+@import "./../../scss/color-styles";
+
+.header-container {
+    padding: 0 0.5%;
+    @include flex-c_s;
+}
+
+.header-logo {
+    width: 5vw;
+}

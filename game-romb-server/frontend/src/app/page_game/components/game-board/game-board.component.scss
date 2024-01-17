@@ -1,0 +1,38 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.game-board-container {
+    min-height: 340px;
+    min-width: 340px;
+    width: 80vw;
+    height: 47vw;
+    display: grid;
+    grid-template-columns: repeat(15, calc(79.5vw / 15));
+    grid-template-rows: repeat(10, calc(46.5vw / 10));
+    @include fon-white;
+    padding: 0;
+    position: relative;
+}
+
+.game-board_inside-container {
+    border: 1px solid rgba($dark_purple, .5);
+    grid-area: 3/3/9/14;
+    @include flex-c_s;
+    @include box3D;
+}
+
+.game-board-inside-player {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2%;
+}
+
+.game-board-chat {
+    height: 100%;
+    width: 30%;
+}
+
+.game-piece-container {
+    position: absolute;
+}

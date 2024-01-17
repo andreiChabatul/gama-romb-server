@@ -1,0 +1,18 @@
+@import "./../../../../scss/default-styles";
+@import "./../../../../scss/color-styles";
+
+.frelly-container {
+    background: $cell_hover;
+    height: 5vw;
+    width: 5vw;
+    @include flex_c_c;
+    border-radius: 50%;
+    box-shadow: inset 1px 1px 12px #00000080,
+        inset 1px 1px 3px #00000080, inset 1px 1px 5px #00000080,
+        inset 1px 1px 3px #00000080;
+    opacity: .5;
+}
+
+.frelly-container_img {
+    height: 75%;
+}

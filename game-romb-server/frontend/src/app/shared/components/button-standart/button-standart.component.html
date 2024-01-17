@@ -1,0 +1,7 @@
+<div *ngIf="isShow" [ngStyle]="{'width':button.width, 'height':button.height}"
+    class="container-button container-button_font">
+    <button class="button-standart " (click)="handlingClick()">
+        <span class="button-font" [style.font-size]="button.height"> {{button.action | transloco}}</span>
+    </button>
+    <div class="animation-button"></div>
+</div>

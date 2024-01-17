@@ -1,0 +1,30 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.chat-container {
+    margin: 2vh 0 1vh;
+    height: 93%;
+    border-left: 0.2vw solid $dark_purple;
+    padding: 0 1vw;
+}
+
+.chat-area_message {
+    width: 95%;
+    overflow-y: auto;
+    margin-bottom: 0.5vw;
+}
+
+.chat-title {
+    @include font_22px;
+}
+
+.chat-area {
+    height: 93%;
+    padding: 1%;
+    @include flex-s_s;
+    flex-direction: column;
+}
+
+.chat-input {
+    width: 100%;
+}

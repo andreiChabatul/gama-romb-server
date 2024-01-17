@@ -1,0 +1,13 @@
+<form class="form-container_material" [formGroup]="selectForm">
+    <mat-form-field>
+        <mat-label>{{optionForm.nameForm | transloco}}</mat-label>
+        <mat-select formControlName="value">
+            <mat-option *ngFor="let option of optionForm.optionSelect" value={{option.value}}>
+                {{option.option}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div class="error-form-container" *ngIf="_value?.invalid && (_value?.touched || _value?.dirty)">
+        <span class="error-text" *ngIf="_value?.errors?.required">Field From is required</span>
+    </div>
+</form>

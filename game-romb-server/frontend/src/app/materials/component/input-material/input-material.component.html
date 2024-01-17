@@ -1,0 +1,12 @@
+<form class="form-container_material" [formGroup]="inputForm">
+    <mat-form-field>
+        <mat-label>{{optionForm.nameForm | transloco}}</mat-label>
+        <input type={{type}} matInput formControlName="value"
+            placeholder="{{'placeholderInput' | transloco}} {{optionForm.nameForm | transloco}}">
+    </mat-form-field>
+    <span *ngIf="optionForm.type === 'password'" class="hide-password material-symbols-outlined"
+        (click)="hidePasword()">visibility</span>
+    <div class="error-form-container" *ngIf="_value?.invalid && (_value?.touched || _value?.dirty)">
+        <span class="error-text" *ngIf="_value?.errors?.required">Field From is required</span>
+    </div>
+</form>

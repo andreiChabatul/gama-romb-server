@@ -1,0 +1,9 @@
+<form class="input-container" [formGroup]="chatForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="chat-input-full-width">
+        <mat-label>{{'messageChat' | transloco}}</mat-label>
+        <input matInput formControlName="message" [placeholder]="'placeholderChat' | transloco">
+    </mat-form-field>
+    <button class="material-symbols-outlined chat-send-button">
+        send
+    </button>
+</form>

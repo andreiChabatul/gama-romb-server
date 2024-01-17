@@ -1,0 +1,104 @@
+@import "./../../../../../../scss/color-styles";
+@import "./../../../../../../scss/default-styles";
+
+.offer-deal-container {
+    padding: 0 1%;
+    display: flex;
+    justify-content: space-between;
+    gap: 5vh;
+    flex-direction: column;
+}
+
+.info-player-offer-container {
+    width: 100%;
+    @include flex_c_c;
+    flex-direction: column;
+    gap: 1vw;
+}
+
+.info-player-name {
+    @include font-default;
+    font-size: 1vw;
+    margin-top: 1vh;
+    text-align: center;
+}
+
+.info-player_img-offer {
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: inset 1px 1px 3px #00000080,
+            inset 1px 1px 3px #00000080, inset 1px 1px 1px #00000080,
+            inset 1px 1px px #00000080;
+    }
+}
+
+.offer-deal-item-container {
+    display: grid;
+    grid-template-columns: 48% 1% 48%;
+    gap: 1%;
+    justify-content: space-between;
+}
+
+.line-offer-deal-item-container {
+    height: 100%;
+    width: 3px;
+    background: $blue;
+}
+
+.info-player-offer-container_item {
+    @include flex_c_c;
+    flex-direction: column;
+}
+
+.balanse-line {
+    margin: 1vh 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 95%;
+    height: 2vh;
+    background: linear-gradient(60deg, rgba(145, 12, 3, 1) 0%, rgba(226, 206, 17, 1) 35%, rgba(43, 224, 22, 1) 50%, rgba(94, 219, 21, 1) 55%, rgba(226, 206, 17, 1) 65%, rgba(145, 12, 3, 1) 100%);
+    border-radius: 1vh;
+    pointer-events: none;
+    box-shadow:
+        inset 0 2px 9px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+
+    &::-webkit-slider-thumb {
+        background: rgba($default_white, .7);
+        border-radius: 0.1vw;
+        border: 1px solid $cell_hover;
+        width: 1vw;
+        height: 3vh;
+        -webkit-appearance: none;
+        -webkit-box-shadow: 0px 5px 52px 20px rgba(34, 60, 80, 0.2) inset;
+        -moz-box-shadow: 0px 5px 52px 20px rgba(34, 60, 80, 0.2) inset;
+        box-shadow: 0px 5px 52px 20px rgba(34, 60, 80, 0.2) inset;
+        transition: all .5s;
+    }
+}
+
+.offer-deal-buttons {
+    @include flex_c_c;
+    gap: 2vw;
+}
+
+.balanse-offer-title {
+    @include font-default;
+    font-size: 1vw;
+    font-weight: 600;
+}
+
+.balanse-offer-text {
+    @include font-default;
+    font-size: .9vw;
+    position: absolute;
+}
+
+.info-player-container {
+    @include flex_c_c;
+    gap: 0.8vw;
+}

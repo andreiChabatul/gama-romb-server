@@ -1,0 +1,28 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.img-lang-choise {
+    width: 2vw;
+}
+
+.menu-text {
+    @include font_default;
+    font-size: 1vw;
+    font-weight: 500;
+}
+
+.menu-text_name {
+    font-size: 1.1vw;
+    font-weight: 700;
+}
+
+.lang-container {
+    @include flex-c_s;
+    gap: 5px;
+}
+
+.volume-slider-container {
+    @include flex-c_s;
+    padding: 0 2vw;
+    gap: 1vw;
+}

@@ -1,0 +1,67 @@
+@import "./../../../../../scss/color-styles";
+@import "./../../../../../scss/default-styles";
+
+.dice {
+    transform-style: preserve-3d;
+    transition: transform 1s;
+    width: 5.5vw;
+    height: 5.5vw;
+    position: relative;
+}
+
+.dice-side {
+    position: absolute;
+    border-radius: 1vw;
+    width: 5.5vw;
+    height: 5.5vw;
+    background-image: url('./../../../../../assets/diseSide.png');
+    background-size: cover;
+}
+
+.dice-side:nth-child(1) {
+    transform: translateZ(2vw);
+}
+
+.dice-side:nth-child(6) {
+    transform: rotateY(90deg) translateZ(2vw);
+}
+
+.dice-side:nth-child(3) {
+    transform: rotateY(-90deg) translateZ(2vw);
+}
+
+.dice-side:nth-child(4) {
+    transform: rotateX(90deg) translateZ(2vw);
+}
+
+.dice-side:nth-child(5) {
+    transform: rotateX(-90deg) translateZ(2vw);
+}
+
+.dice-side:nth-child(2) {
+    transform: rotateY(-180deg) translateZ(2vw);
+}
+
+.show-1 {
+    transform: rotateX(720deg) rotateZ(-720deg);
+}
+
+.show-2 {
+    transform: rotateX(-900deg) rotateZ(1080deg);
+}
+
+.show-6 {
+    transform: rotateY(-450deg) rotateZ(-1440deg);
+}
+
+.show-3 {
+    transform: rotateY(810deg) rotateZ(720deg);
+}
+
+.show-4 {
+    transform: rotateX(-810deg) rotateZ(-1080deg);
+}
+
+.show-5 {
+    transform: rotateX(450deg) rotateZ(-720deg);
+}

@@ -1,0 +1,14 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.dice-rool-wrapper {
+    @include flex-c_c;
+    margin-bottom: 10%;
+    gap: 2vw;
+}
+
+.dice-rool_text {
+    @include font_default;
+    font-size: 1.2vw;
+    font-weight: 600;
+}

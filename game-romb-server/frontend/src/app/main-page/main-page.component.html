@@ -1,0 +1,11 @@
+<div class="main-page-container">
+    <div class="main-page-info">
+        <p class="main-page_title">Monopoly Game</p>
+        <div class="main-page-line"></div>
+        <p class="main-page-info_text">{{'mainPageInfo' | transloco}}</p>
+        <div class="main-page-buttons">
+            <app-button-standart *ngFor="let button of buttons" [button]="button"></app-button-standart>
+        </div>
+    </div>
+    <img class="main-page-img" src="assets/temp.png" alt="">
+</div>

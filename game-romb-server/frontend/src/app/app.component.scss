@@ -1,0 +1,18 @@
+@import './../scss/color-styles';
+
+.wrapper-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: max-content;
+    border-radius: 0.5vw;
+    overflow: hidden;
+    background: rgba($default_white, .4);
+    box-shadow: 0 0 0.5vw #5D0C97, 0 0 1vw #5D0C97, 0 0 2vw #5D0C97, 0 0 6vw #5D0C97, 0 0 8vw #5D0C97;
+}
+
+.header {
+    width: 100%;
+    position: absolute;
+}

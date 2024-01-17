@@ -1,0 +1,20 @@
+@import "./../../../../../../scss/color-styles";
+@import "./../../../../../../scss/default-styles";
+
+.receive-deal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    padding: 0 3vw;
+}
+
+.receive-deal-title {
+    @include font-default;
+    font-weight: 600;
+    font-size: 1.4vw;
+}
+
+.buttons-container {
+    @include flex_c_c;
+    gap: 2vw;
+}

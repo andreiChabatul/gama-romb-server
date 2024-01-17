@@ -1,0 +1,92 @@
+<button mat-button [matMenuTriggerFor]="menu">
+    <img [style.width]="size" src="assets/menuAssets/menu.png" alt="menuImg"></button>
+<mat-menu #menu="matMenu">
+    <button *ngIf="(infoUser$ | async)?.nickName; else loginMenu" mat-menu-item [matMenuTriggerFor]="profile">
+        <div class="lang-container">
+            <img class="img-lang-choise" [src]="((infoUser$ | async)?.image) | avatarImage" alt="infoUser">
+            <span class="menu-text menu-text_name">{{(infoUser$ | async)?.nickName}}</span>
+        </div>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="languages">
+        <div class="lang-container">
+            <img class="img-lang-choise" [src]="activeLang | imgAssets : 'menuAssets/'" alt="langImg">
+            <span class="menu-text">{{'language' | transloco}}</span>
+        </div>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="volumes">
+        <div class="lang-container">
+            <img class="img-lang-choise" [src]="initVolume | volumeImage" alt="volumeImg">
+            <span class="menu-text">{{'volume' | transloco}}</span>
+            <span class="menu-text">{{initVolume}}%</span>
+        </div>
+    </button>
+    <button mat-menu-item>
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/rules.png" alt="rulesImg">
+            <span class="menu-text">{{'rules' | transloco}}</span>
+        </div>
+    </button>
+    <button mat-menu-item>
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/info.png" alt="infoImg">
+            <span class="menu-text">{{'info' | transloco}}</span>
+        </div>
+    </button>
+    <button mat-menu-item *ngIf="idRoom$ | async" (click)="exitGame()">
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/leaveGame.png" alt="leaveImg">
+            <span class="menu-text">{{'leaveGame' | transloco}}</span>
+        </div>
+    </button>
+</mat-menu>
+<mat-menu #languages="matMenu">
+    <button mat-menu-item>
+        <div class="lang-container" (click)="changeLang('ru')">
+            <img class="img-lang-choise" src="assets/menuAssets/ru.png" alt="">
+            <span class="menu-text">Русский</span>
+        </div>
+    </button>
+    <button mat-menu-item>
+        <div class="lang-container" (click)="changeLang('en')">
+            <img class=" img-lang-choise" src="assets/menuAssets/en.png" alt="">
+            <span class="menu-text">English</span>
+        </div>
+    </button>
+</mat-menu>
+<mat-menu #volumes="matMenu">
+    <div class="volume-slider-container" >
+        <img class="img-lang-choise" [src]="initVolume | volumeImage" alt="volumeImg">
+        <mat-slider [max]=100 [min]=0 [step]=1 [displayWith]="changeVolume">
+            <input matSliderThumb [value]="initVolume">
+        </mat-slider>
+        <p class="menu-text">{{initVolume}}</p>
+    </div>
+</mat-menu>
+<mat-menu #profile="matMenu">
+    <button mat-menu-item (click)="editProfile()">
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/edit.png" alt="edit">
+            <span class="menu-text">{{'editProfile' | transloco}}</span>
+        </div>
+    </button>
+    <button mat-menu-item (click)="deleteProfile()">
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/deleteProfile.png" alt="deleteProfile">
+            <span class="menu-text">{{'deleteProfile' | transloco}}</span>
+        </div>
+    </button>
+    <button mat-menu-item (click)="loguotProfile()">
+        <div class="lang-container">
+            <img class="img-lang-choise" src="assets/menuAssets/exit.png" alt="exit">
+            <span class="menu-text">{{'exitProfile' | transloco}}</span>
+        </div>
+    </button>
+    <ng-template #loginMenu>
+        <button mat-menu-item (click)="loginProfile()">
+            <div class="lang-container">
+                <img class="img-lang-choise" src="assets/menuAssets/login.png" alt="rulesImg">
+                <span class="menu-text">{{'logInProfile' | transloco}}</span>
+            </div>
+        </button>
+    </ng-template>
+</mat-menu>

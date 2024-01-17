@@ -1,0 +1,35 @@
+@import "./../../../../../../scss/color-styles";
+@import "./../../../../../../scss/default-styles";
+
+
+.receive-deal-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    background: rgba($default_white, .5);
+    padding: 3%;
+    border-radius: 1vw;
+}
+
+
+.receive-deal-player {
+    @include font_default;
+    font-weight: 600;
+    font-size: 1.2vw;
+}
+
+.receive-deal-company {
+    display: flex;
+    gap: 1vw;
+    align-items: center;
+}
+
+.receive-deal-text {
+    @include font_default;
+    font-weight: 600;
+    font-size: 1.1vw;
+}
+
+.receive-deal-text_money {
+    font-weight: 400;
+}

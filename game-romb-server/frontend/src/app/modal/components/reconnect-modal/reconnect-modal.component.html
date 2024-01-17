@@ -1,0 +1,8 @@
+<div class="reconnect-container">
+    <p class="reconnect-text ">{{'reconnectText' | transloco}}</p>
+    <div class="reconnect-buttons">
+        <app-button-standart *ngFor="let button of buttons" [button]="button"
+            (click)="reconnectAccess(button.action)"></app-button-standart>
+    </div>
+    <app-loader-time *ngIf="isReconnect && room?.isStart" [typeLoading]="'startGame'"></app-loader-time>
+</div>

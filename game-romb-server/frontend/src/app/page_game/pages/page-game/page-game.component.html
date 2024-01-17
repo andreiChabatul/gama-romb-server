@@ -1,0 +1,7 @@
+<div *ngIf="gameRoom.idRoom" class="page-game-container">
+    <app-game-board [gameRoom]="gameRoom"></app-game-board>
+    <div class="page-game-profile">
+        <app-info-player *ngFor="let player of (players$ | async); trackBy:trackByFunction"
+            [player]="player"></app-info-player>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="info-modal-container">
+    <div class="info-modal-title-container">
+        <img class="info-cell-img" [src]="gameCell.nameCell| imgAssets" alt="img info">
+        <p class="info-modal-text"> {{('modalInfoTitle' | transloco)}} {{gameCell.nameCell | uppercase}} </p>
+    </div>
+    <p>{{(gameCell.company ? 'companyInfo' : gameCell.nameCell+ 'Info') | transloco}}</p>
+</div>

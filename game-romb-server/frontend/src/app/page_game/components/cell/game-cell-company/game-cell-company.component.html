@@ -1,0 +1,42 @@
+<div class="game-cell_content">
+    <div appColorShadow [playerId]="companyInfo?.owned" [directtion]="cellDirections" class="owned-shadow" [ngClass]="{
+        'owned-shadow_left':cellDirections === 'left',
+        'owned-shadow_right': cellDirections === 'right',
+        'owned-shadow_bottom': cellDirections === 'bottom'}"></div>
+    <div *ngIf="companyInfo?.isPledge" class="game-cell-container__grayscale">
+        <img *ngIf="companyInfo?.isPledge" class="game-cell-pledge_img" src="./assets/pledge.png" alt="pledgeImg">
+    </div>
+    <!-- control company block start-->
+    <p *ngIf="checkBuyStock() | async" class="game-cell-control" (click)="controlCompany($event,'buyStock')">
+        Купить акции за ${{companyInfo?.priceStock}}</p>
+    <p *ngIf="checkMortage() | async" class="game-cell-control" (click)="controlCompany($event,'pledgeCompany')">
+        Заложить компанию за ${{companyInfo?.collateralCompany}}</p>
+    <p *ngIf="checkBuyOut() | async" class="game-cell-control" (click)="controlCompany($event, 'buyOutCompany')">
+        Выкупить компанию за ${{companyInfo?.buyBackCompany}}</p>
+    <p *ngIf="checkSellStock() | async" class="game-cell-control" (click)="controlCompany($event, 'sellStock')">
+        Продать акции за ${{companyInfo?.priceStock}}</p>
+    <!-- control company block end-->
+    <div class="game-cell-company_container" [ngClass]="{
+        'game-cell-company_container__gorizontalLeft': cellDirections === 'left',
+        'game-cell-company_container__gorizontalRight': cellDirections === 'right',
+        'game-cell-company_container__gorizontalTop': cellDirections === 'top'}">
+
+        <img class="game-cell-company" [src]="companyInfo?.countryCompany | imgAssets" alt='country assets'>
+        <div class="company-info-container">
+            <img class="game-cell-company_logo" [src]="gameCell.nameCell | imgAssets" [ngClass]="{
+        'game-cell-company_logo__gorizontal': cellDirections === 'left' || cellDirections === 'right'
+        }" alt='name assets'>
+            <p *ngIf="companyInfo?.owned; else priceBlock" class="game-cell-company_price">
+                {{companyInfo?.rentCompany | rentPipe: companyInfo?.countryCompany}}</p>
+            <ng-template #priceBlock>
+                <p *ngIf="!(companyInfo?.owned)" class="game-cell-company_price">
+                    ${{companyInfo?.priceCompany}}</p>
+            </ng-template>
+        </div>
+        <div *ngIf="companyInfo?.shares" class="game-cell-company_stock"
+            [ngClass]="{'game-cell-company_stock__gorizontal': cellDirections === 'left' || cellDirections === 'right'}">
+            <img class="game-cell-company_stock__img" *ngFor="let i of [].constructor(companyInfo?.shares)"
+                [src]="companyInfo?.countryCompany | stockAssets" alt="stock image">
+        </div>
+    </div>
+</div>

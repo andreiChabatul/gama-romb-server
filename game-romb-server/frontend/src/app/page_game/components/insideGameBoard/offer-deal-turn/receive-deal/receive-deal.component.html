@@ -1,0 +1,8 @@
+<div class="receive-deal-container">
+    <p class="receive-deal-title">{{'termsDeal' | transloco}}</p>
+    <app-receive-deal-item [offerInfo]="offerDealInfo?.offerPerson"></app-receive-deal-item>
+    <app-receive-deal-item [offerInfo]="offerDealInfo?.receivePerson"></app-receive-deal-item>
+    <div class="buttons-container">
+        <app-button-standart *ngFor="let button of buttonDeal" [button]="button"></app-button-standart>
+    </div>
+</div>

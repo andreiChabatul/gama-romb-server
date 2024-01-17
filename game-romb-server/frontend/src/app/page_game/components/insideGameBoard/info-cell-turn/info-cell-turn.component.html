@@ -1,0 +1,24 @@
+<mat-spinner *ngIf="!cell; else elseBlock" class="spinner-info-cell"></mat-spinner>
+<ng-template #elseBlock>
+    <div class="info-cell-container">
+        <img class="info-cell-img" [src]="cell.nameCell| imgAssets" alt="img info">
+        <p class="info-cell-text info-cell-title">
+            {{('infoCellTurnTitle' | transloco)}} {{cell.nameCell | uppercase}} </p>
+        <div class="info-desc-container">
+            <div [ngSwitch]="cell.type" [style.width]="'100%'">
+                <app-cell-tax *ngSwitchCase="'tax'" [infoCellTurn]="infoCellTurn"></app-cell-tax>
+                <app-cell-profit *ngSwitchCase="'profit'" [infoCellTurn]="infoCellTurn"></app-cell-profit>
+                <app-cell-loss *ngSwitchCase="'loss'" [infoCellTurn]="infoCellTurn"></app-cell-loss>
+                <app-cell-empty *ngSwitchCase="'empty'" [infoCellTurn]="infoCellTurn"></app-cell-empty>
+                <app-cell-company *ngSwitchCase="'company'" [infoCellTurn]="infoCellTurn"></app-cell-company>
+            </div>
+            <div class="info-cell-buttons">
+                <app-button-standart *ngFor="let button of this.buttonsResult" [button]="button"
+                    [ngClass]="{'button__disable': (button.action === 'payButton' && (isPay() | async))}">
+                </app-button-standart>
+            </div>
+        </div>
+        <p *ngIf="(gamePlayer$ | async)?.bankrupt" class="bankrupt-fon" [style.color]="(gamePlayer$ | async)?.color">
+            {{'bankrot' | transloco}}</p>
+    </div>
+</ng-template>

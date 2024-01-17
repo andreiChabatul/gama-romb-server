@@ -1,0 +1,11 @@
+@import "./../../../../scss/default-styles";
+
+.page-game-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1%;
+}
+
+.page-game-profile {
+    width: 95%;
+}

@@ -1,0 +1,10 @@
+<p class="prison-title-text">{{'prisonDesc' | transloco}}</p>
+<div *ngIf="player" class="prison-info-container">
+    <img class="img-prison" src="assets/inJail.png" alt="inJail">
+    <div class="prison-buttons-container">
+        <app-button-standart *ngFor="let button of buttons" [button]="button"
+            [ngClass]="{'button__disable': (button.action === 'payButton' && checkMoney())}">
+        </app-button-standart>
+    </div>
+    <p class="prison-title-text">{{'prisonAttempt' | transloco}} {{player.prison - 1}} </p>
+</div>

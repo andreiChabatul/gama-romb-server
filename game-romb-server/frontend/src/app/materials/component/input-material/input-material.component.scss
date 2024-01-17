@@ -1,0 +1,23 @@
+@import "./../../../../scss/color-styles";
+
+.hide-password {
+    position: absolute;
+    right: 10px;
+    top: 25%;
+    font-size: 26px;
+    font-weight: 500;
+    opacity: .7;
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+        opacity: 1;
+        color: $dark_purple;
+    }
+
+    &:active {
+        transform: scale(0.95);
+        color: $light_grey;
+    }
+
+}

@@ -1,0 +1,26 @@
+@import "./../../../../scss/color-styles";
+@import "./../../../../scss/default-styles";
+
+.error-form-container {
+    position: absolute;
+    bottom: 0;
+}
+
+.form-create-container {
+    @include flex-c_s;
+    gap: 1vh;
+    flex-direction: column;
+    padding: 1% 0;
+}
+
+.form-create-title {
+    @include font_default;
+    font-size: 2vw;
+    margin: 1% 0;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mat-mdc-form-field {
+    width: 22vw;
+}

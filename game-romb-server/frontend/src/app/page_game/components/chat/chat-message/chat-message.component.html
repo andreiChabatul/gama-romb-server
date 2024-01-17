@@ -1,0 +1,7 @@
+<p *ngIf="message.action" class="chat-text">{{(message.action | transloco | changeMessage: message) | async}}</p>
+<div *ngIf="message.message" class="message-container">
+    <img class="chat-message-avatar" [style.background]="player.color" [src]="player.image | avatarImage" alt="img">
+    <span class="chat-text chat-text_name" [style.color]="player.color">{{player.nickName}}:</span>
+    <span class="chat-text">{{message.message}}</span>
+</div>
+<p class="chat-text_separator">***</p>

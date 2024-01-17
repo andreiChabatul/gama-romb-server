@@ -1,0 +1,40 @@
+@import "./../../../../../scss/default-styles";
+@import "./../../../../../scss/color-styles";
+
+.auction-img {
+    width: 7vw;
+}
+
+.img-title {
+    margin: 0 calc(50% - 3.5vw);
+}
+
+.auction-container_info {
+    display: grid;
+    grid-template-columns: auto 7vw;
+    margin-bottom: 2vh;
+    padding: 0 1%;
+}
+
+.auction-info-title {
+    @include font-default;
+    font-size: 1.2vw;
+    font-weight: 700;
+}
+
+.auction-info-text {
+    margin-left: 3%;
+    @include font-default;
+    font-size: 1vw;
+    font-weight: 400;
+}
+
+.auction-info-text_value {
+    margin-left: 0%;
+    font-weight: 600;
+}
+
+.auction-button {
+    @include flex_c_c;
+    gap: 2vw;
+}

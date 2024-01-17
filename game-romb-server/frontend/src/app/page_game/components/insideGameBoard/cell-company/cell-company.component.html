@@ -1,0 +1,7 @@
+<p class="info-cell-text">{{(infoCellTurn?.description | transloco | changeMessage: {cellId:
+    infoCellTurn?.indexCompany}) | async}}
+</p>
+<app-enough-money [value]="infoCellTurn?.value"
+    *ngIf="infoCellTurn?.buttons === 'pay' || infoCellTurn?.buttons === 'bankrupt'"></app-enough-money>
+<app-loader-time *ngIf="infoCellTurn?.buttons === 'none' || infoCellTurn?.buttons === 'auction'"
+    [typeLoading]="infoCellTurn?.buttons === 'none' ? 'cell' : 'startAuction'"></app-loader-time>

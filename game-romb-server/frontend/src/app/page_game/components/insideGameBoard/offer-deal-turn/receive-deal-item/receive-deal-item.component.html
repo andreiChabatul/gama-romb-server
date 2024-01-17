@@ -1,0 +1,15 @@
+<div class="receive-deal-item">
+    <p class="receive-deal-player">{{'player' | transloco}}
+        <span [ngStyle]="{color: (player | async)?.color}">{{(player | async)?.nickName}}</span>
+        {{'getOffer' | transloco}}
+    </p>
+    <ul *ngIf="(companyPlayer | async)?.length" class="receive-deal-company">
+        <p class="receive-deal-text">{{'getCompany' | transloco}} </p>
+        <li class="offer-company-li" *ngFor="let cell of companyPlayer | async">
+            <img class="offer-company-li_img" [src]="cell.nameCell | imgAssets" alt='name assets'>
+        </li>
+    </ul>
+    <p *ngIf="offerInfo?.valueMoney" class="receive-deal-text">{{'getMoney' | transloco}}
+        <span class="receive-deal-text receive-deal-text_money">{{offerInfo?.valueMoney}}$</span>
+    </p>
+</div>

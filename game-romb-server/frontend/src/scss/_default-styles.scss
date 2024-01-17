@@ -1,0 +1,59 @@
+@mixin flex-c_c {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-c_s {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-s_c {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+}
+
+@mixin flex-s_s {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+}
+
+
+@mixin fon-white {
+    background: $light_grey;
+    border-radius: 0.6vw;
+    border: 0.3vw solid $dark_purple;
+}
+
+@mixin fon-gradient {
+    border-radius: 8px;
+    padding: 8px;
+    background: linear-gradient(360deg, rgba(68, 150, 171, 1) 0%, rgba(156, 218, 238, 1) 100%)
+}
+
+@mixin font_default {
+    font-family: 'Tektur', cursive;
+    color: $dark_purple;
+}
+
+@mixin font_22px {
+    @include font_default;
+    font-weight: 600;
+    font-size: 22px;
+}
+
+@mixin box3D {
+    box-shadow:
+        inset 0 2px 9px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+}
+
+@mixin font_clip {
+    max-width: 6vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
