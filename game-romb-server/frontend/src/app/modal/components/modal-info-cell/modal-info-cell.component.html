@@ -1,7 +1,66 @@
-<div class="info-modal-container">
+<div class="info-modal-container" *ngIf="gameCell | async as gameCell">
     <div class="info-modal-title-container">
         <img class="info-cell-img" [src]="gameCell.nameCell| imgAssets" alt="img info">
         <p class="info-modal-text"> {{('modalInfoTitle' | transloco)}} {{gameCell.nameCell | uppercase}} </p>
     </div>
-    <p>{{(gameCell.company ? 'companyInfo' : gameCell.nameCell+ 'Info') | transloco}}</p>
+    <p class="modal-info-description">{{(gameCell.company ? 'companyInfo' : gameCell.nameCell+ 'Info') | transloco}}</p>
+    <div class="company-info-container" *ngIf="gameCell.company as companyInfo">
+        <div>
+            <p class="title-profitability">{{'infoCompany' | transloco}}</p>
+            <ul>
+                <li class="value-container">
+                    <span class="text-value-info text-value-desc">{{'priceCompany' | transloco}}</span>
+                    <span class="text-value-info">${{companyInfo.priceCompany}}</span>
+                </li>
+                <li class="value-container">
+                    <span class="text-value-info text-value-desc">{{'collateralCompany' | transloco}}</span>
+                    <span class="text-value-info">${{companyInfo.collateralCompany}}</span>
+                </li>
+                <li class="value-container">
+                    <span class="text-value-info text-value-desc">{{'buyBackCompany' | transloco}}</span>
+                    <span class="text-value-info">${{companyInfo.buyBackCompany}}</span>
+                </li>
+                <li class="value-container">
+                    <span class="text-value-info text-value-desc">{{'priceStock' | transloco}}</span>
+                    <span class="text-value-info">${{companyInfo.priceStock || '—'}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="profitability-container">
+            <p class="title-profitability">{{'profitabilityCompany' | transloco}}</p>
+            <ul
+                *ngIf="companyInfo.countryCompany === 'ukraine' || companyInfo.countryCompany === 'japan'; else elseCompany">
+                <li *ngFor="let value of companyInfo.rentCompanyInfo, index as i">
+                    <div class="value-container" *ngIf="i > 0">
+                        <div>
+                            <img *ngFor="let i of [].constructor(i)" class="img-assets-modal"
+                                [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
+                        </div>
+                        <span class="text-value-info">${{value}}</span>
+                    </div>
+                </li>
+            </ul>
+            <ng-template #elseCompany>
+                <ul>
+                    <li *ngFor="let value of companyInfo.rentCompanyInfo, index as i">
+                        <div class="value-container" *ngIf="i === 0">
+                            <span class="text-value-info text-value-desc">{{'basicRent' | transloco}}</span>
+                            <span class="text-value-info">${{value}}</span>
+                        </div>
+                        <div class="value-container" *ngIf="i === 1">
+                            <span class="text-value-info text-value-desc">{{'monopolyRent' | transloco}}</span>
+                            <span class="text-value-info">${{value}}</span>
+                        </div>
+                        <div class="value-container" *ngIf="i > 1">
+                            <div>
+                                <img *ngFor="let i of [].constructor(i - 1)" class="img-assets-modal"
+                                    [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
+                            </div>
+                            <span class="text-value-info">${{value}}</span>
+                        </div>
+                    </li>
+                </ul>
+            </ng-template>
+        </div>
+    </div>
 </div>

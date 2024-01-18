@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription, map, mapTo, mergeMap } from 'rxjs';
+import { Observable, map, mergeMap } from 'rxjs';
 import { gameCell } from 'src/app/types';
 import { AppStore } from 'src/app/types/state';
 import { selectGameRoom, selectModal } from 'src/store/selectors';
@@ -10,26 +10,19 @@ import { selectGameRoom, selectModal } from 'src/store/selectors';
   templateUrl: './modal-info-cell.component.html',
   styleUrls: ['./modal-info-cell.component.scss']
 })
-export class ModalInfoCellComponent implements OnInit, OnDestroy {
+export class ModalInfoCellComponent {
 
-  subscription$: Subscription;
   modal$ = this.store.select(selectModal);
   gameRoom$ = this.store.select(selectGameRoom);
-  gameCell: gameCell;
 
   constructor(private store: Store<AppStore>) { }
 
-  ngOnInit(): void {
-
-    this.subscription$ = this.modal$.pipe(
+  get gameCell(): Observable<gameCell> {
+    return this.modal$.pipe(
       mergeMap((modal) => this.gameRoom$.pipe(
-        map(gameRoom => { return { modal, gameRoom } })
+        map(gameRoom => gameRoom.board[Number(modal.payload)])
       ))
-    ).subscribe((value) => this.gameCell = value.gameRoom.board[Number(value.modal.payload)])
-  }
-
-  ngOnDestroy(): void {
-    this.subscription$.unsubscribe();
+    );
   }
 
 }

@@ -6,7 +6,7 @@
             <span class="material-symbols-outlined close-modal" (click)="closeModal()">
                 cancel
             </span>
-            <div [ngSwitch]="(modal$ | async)?.modalState">
+            <div class="modal-container-inside" [ngSwitch]="(modal$ | async)?.modalState">
                 <app-modal-register *ngSwitchCase="'register'"></app-modal-register>
                 <app-modal-login *ngSwitchCase="'logInProfile'"></app-modal-login>
                 <app-modal-info-cell *ngSwitchCase="'infoCell'"></app-modal-info-cell>

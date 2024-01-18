@@ -2,17 +2,65 @@
 @import "./../../../../scss/default-styles";
 
 .info-modal-container {
-    width: 45vw;
+    width: 40vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
 }
 
 .info-modal-title-container {
-    @include flex_c_s;
-    justify-content: space-around;
-
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2vw;
 }
 
-.info-modal-text{
+.modal-info-description {
+    @include font_default;
+    font-size: 1.2vw;
+    text-align: justify;
+}
+
+.info-modal-text {
     @include font_default;
     font-weight: 600;
+    font-size: 1.5vw;
+}
+
+.img-assets-modal {
+    width: 1vw;
+}
+
+.text-value-info {
+    @include font-default;
+    font-size: 1vw;
+}
+
+.text-value-desc {
+    font-weight: 600;
+}
+
+.value-container {
+    @include flex_c_s;
+    gap: 1vw;
+}
+
+.title-profitability {
+    @include font-default;
     font-size: 1.2vw;
+    font-weight: 600;
+    margin-bottom: 1vw;
+}
+
+.profitability-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.company-info-container {
+    padding: 1%;
+    border: 0.3vw solid $dark_grey;
+    border-radius: 0.5vw;
+    @include flex-s_s;
+    gap: 3vw;
 }
