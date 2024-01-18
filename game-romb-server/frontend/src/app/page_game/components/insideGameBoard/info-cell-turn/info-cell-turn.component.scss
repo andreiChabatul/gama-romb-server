@@ -23,8 +23,6 @@
     gap: 1vh;
 }
 
-
-
 .info-desc-container {
     width: 95%;
     @include flex_c_s;
@@ -38,8 +36,11 @@
 }
 
 .bankrupt-fon {
-    @include font-default;
     position: absolute;
+}
+
+.bankrupt-fon-text {
+    @include font-default;
     font-size: 5vw;
     border: thick double;
     transform: rotate(335deg);

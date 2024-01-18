@@ -25,7 +25,7 @@ export class RoomGame implements RoomI {
     constructor(private infoRoom: CreateRoomDto, private idRoom: string, private userService: UserService) {
         this.auction = new AuctionCompany(this.idRoom);
         this.cellsService = new CellsService(this.idRoom);
-        this.turnService = new TurnService(this.idRoom, this.cellsService);
+        this.turnService = new TurnService(this.idRoom, this.cellsService, this.userService);
         this.offerService = new OfferService(this.idRoom, this.cellsService);
     }
 
@@ -36,10 +36,11 @@ export class RoomGame implements RoomI {
     }
 
     private async checkStartGame(): Promise<void> {
-        const amountPlayers = storage_players.getPlayersRoom(this.idRoom).length;
-        if (true || amountPlayers === this.infoRoom.maxPlayers && amountPlayers > 0) { //убрать труе потом, временно чтобы тестть
-            this.isStart = true;
+        const playersGame = storage_players.getPlayersRoom(this.idRoom);
+        if (playersGame.length === this.infoRoom.maxPlayers) { //убрать труе потом, временно чтобы тестть
+            setTimeout(() => this.isStart = true, 5000);
             storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
+            this.userService.addGameUser(playersGame);
             this.turnService.firstTurn();
         };
     }

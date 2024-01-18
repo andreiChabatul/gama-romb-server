@@ -5,7 +5,7 @@ import { chatGame } from "../chatGame";
 import { storage_players } from "../playerStorage";
 import { prison } from "../prison.service";
 import { CellsServiceI } from "src/types/cellsServices";
-
+import { UserService } from "src/user/user.service";
 
 export class TurnService {
 
@@ -13,7 +13,7 @@ export class TurnService {
     private isDouble: boolean;
     checkPrisonUser = this.checkPrison();
 
-    constructor(private idRoom: string, private cellsService: CellsServiceI) { }
+    constructor(private idRoom: string, private cellsService: CellsServiceI, private userService: UserService) { }
 
     firstTurn(): void {
         this.indexActive = Math.floor(Math.random() * this.playersActive.length);
@@ -23,19 +23,18 @@ export class TurnService {
 
     turn(idUser: string, valueroll: number, isDouble: boolean): void {
         if (this.checkPrisonUser(idUser, isDouble)) {
-            this.isDouble = false;
             chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.DOUBLE_TURN_PRISON, idUser });
             prison.addPrisoner(this.idRoom, idUser);
             this.endTurn();
-        } else {
-            this.isDouble = isDouble;
-            const player = storage_players.getPlayer(this.idRoom, idUser);
-            player.position = valueroll;
-            const cellId = player.position;
-            const cell = this.cellsService.getOneCell(cellId);
-            cell.movePlayer(idUser, valueroll);
-            chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.INTO_CELL, idUser, cellId, valueroll });
-        };
+            return;
+        }
+        this.isDouble = isDouble;
+        const player = storage_players.getPlayer(this.idRoom, idUser);
+        player.position = valueroll;
+        const cellId = player.position;
+        const cell = this.cellsService.getOneCell(cellId);
+        cell.movePlayer(idUser, valueroll);
+        chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.INTO_CELL, idUser, cellId, valueroll });
     }
 
     private nextTurn(): void {
@@ -44,7 +43,8 @@ export class TurnService {
         } else {
             this.indexActive = this.calcIndexActive();
             chatGame.addChatMessage(this.idRoom, { action: EMESSAGE_CLIENT.TURN, idUser: this.activePlayer });
-        }
+        };
+        this.isDouble = false;
         this.updateTurn();
     }
 
@@ -58,8 +58,8 @@ export class TurnService {
 
     endTurn(bankrupt: boolean = false): void {
         this.indexActive -= Number(bankrupt);
-        // this.checkWinner() ? this.nextTurn() : '';
-        this.nextTurn();
+        this.checkWinner();
+        // this.nextTurn();
     };
 
     updateTurn(idUser?: string): void {
@@ -74,12 +74,12 @@ export class TurnService {
         return futureIndexActive;
     }
 
-    checkWinner(): boolean {
+    checkWinner(): void {
         if (this.playersActive.length === 1) {
             storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.END_GAME, this.playersActive[0]);
-            return false;
+            this.userService.gameWinner(this.playersActive[0]);
         } else {
-            return true;
+            this.nextTurn();
         }
     };
 
