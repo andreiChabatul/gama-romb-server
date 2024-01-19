@@ -127,6 +127,11 @@ export class ButtonControllerService implements OnDestroy {
         break;
       }
 
+      case ACTIONS_BUTTON.GO_MAIN: {
+        this.router.navigate(['/']);
+        break;
+      }
+
       default:
         break;
     }

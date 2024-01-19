@@ -16,6 +16,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AccessTokenInterceptor } from './interceptors/accessToken.interceptor';
 import { ModalModule } from './modal/modal.module';
 import { EFFECTS } from 'src/store/effects';
+import { Page404Module } from './page-404/page-404.module';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { EFFECTS } from 'src/store/effects';
     EffectsModule.forRoot(EFFECTS),
     StoreModule.forRoot(appReducers),
     HttpClientModule,
+    Page404Module
   ],
   providers: [AuthService, {
     provide: HTTP_INTERCEPTORS,

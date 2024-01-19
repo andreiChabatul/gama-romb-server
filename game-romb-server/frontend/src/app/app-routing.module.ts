@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from './main-page/main-page.component';
+import { Page404Component } from './page-404/pages/page-404.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    component: MainPageComponent,
+    component: Page404Component,
   },
 ];
 

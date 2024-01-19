@@ -1,0 +1,31 @@
+@import "./../../../scss/default-styles";
+
+.page-404-container {
+    height: 92vh;
+    @include flex-c_s;
+}
+
+.page-404-img {
+    height: 130%;
+}
+
+.page-404-title {
+    font-size: 5vw;
+    font-weight: 600;
+}
+
+.page-404-title-two {
+    font-size: 2vw;
+}
+
+.page-404-desc {
+    font-size: 1.2vw;
+    text-align: center;
+}
+
+.page-404-container-desc {
+    padding-right: 5vw;
+    @include flex-c_c;
+    flex-direction: column;
+    gap: 1vw;
+}

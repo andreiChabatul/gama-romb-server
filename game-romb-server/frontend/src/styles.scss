@@ -48,16 +48,12 @@ body {
   padding: 3vh 2vw;
   background: linear-gradient(125deg, rgba(216, 191, 248, 1) 0%, rgba(104, 33, 173, 1) 100%);
   box-sizing: border-box;
+  @include font-default;
 }
 
 html,
 body {
   height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .error-text {
@@ -89,7 +85,7 @@ body {
 .button-standart {
   padding: 0;
   @include flex-c_c;
-  background: url(./assets/buttonFon.png);
+  background: url(./assets/buttonFon.svg);
   background-size: cover;
   border: 0.2vw solid $default_white;
   width: 100%;
