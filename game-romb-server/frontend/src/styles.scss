@@ -272,3 +272,11 @@ body {
 .social-container {
   @include flex_c_c;
 }
+
+.page-title {
+  @include font_default;
+  color: $color_turquoise;
+  font-size: 4vw;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px black, 0 0 0.3em $button_color, 0 0 0.1em $button_color;
+}

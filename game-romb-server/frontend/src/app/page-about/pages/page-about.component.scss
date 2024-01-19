@@ -1,0 +1,53 @@
+@import "./../../../scss/default-styles";
+@import "./../../../scss/color-styles";
+
+.page-about-container {
+    height: 92vh;
+    @include flex_c-s;
+}
+
+.page-about-img {
+    height: 100%;
+}
+
+.page-about-speck {
+    width: 85%;
+    margin: 0 auto;
+}
+
+.page-about-desc-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    padding-left: 2vw;
+    padding-top: 4vw;
+}
+
+.container-speck {
+    position: relative;
+    border-radius: 0.5vw;
+    border: 0.3vw solid $dark_grey;
+    display: flex;
+    padding-top: 2%;
+    padding-bottom: 1%;
+    @include box3D;
+}
+
+.container-speck_title {
+    width: max-content;
+    background: $dark_grey;
+    border-radius: 0.5vw;
+    position: absolute;
+    font-size: 1.2vw;
+    top: calc(0% - 1vw);
+    left: 2vw;
+    padding: 0 1%;
+    color: $light_grey;
+    @include box3D;
+}
+
+.container-social {
+    width: 4vw;
+    height: 4vw;
+}

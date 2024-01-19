@@ -1,10 +1,10 @@
 <button mat-button [matMenuTriggerFor]="menu">
     <img [style.width]="size" src="assets/menuAssets/menu.png" alt="menuImg"></button>
 <mat-menu #menu="matMenu">
-    <button *ngIf="(infoUser$ | async)?.nickName; else loginMenu" mat-menu-item [matMenuTriggerFor]="profile">
+    <button *ngIf="infoUser$ | async as infoUser; else loginMenu" mat-menu-item [matMenuTriggerFor]="profile">
         <div class="lang-container">
-            <img class="img-lang-choise" [src]="((infoUser$ | async)?.image) | avatarImage" alt="infoUser">
-            <span class="menu-text menu-text_name">{{(infoUser$ | async)?.nickName}}</span>
+            <img class="img-lang-choise" [src]="infoUser.image | avatarImage" alt="infoUser">
+            <span class="menu-text menu-text_name">{{infoUser.nickName}}</span>
         </div>
     </button>
     <button mat-menu-item [matMenuTriggerFor]="languages">
@@ -26,7 +26,7 @@
             <span class="menu-text">{{'rules' | transloco}}</span>
         </div>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="openAbout()">
         <div class="lang-container">
             <img class="img-lang-choise" src="assets/menuAssets/info.png" alt="infoImg">
             <span class="menu-text">{{'info' | transloco}}</span>
@@ -54,7 +54,7 @@
     </button>
 </mat-menu>
 <mat-menu #volumes="matMenu">
-    <div class="volume-slider-container" >
+    <div class="volume-slider-container">
         <img class="img-lang-choise" [src]="initVolume | volumeImage" alt="volumeImg">
         <mat-slider [max]=100 [min]=0 [step]=1 [displayWith]="changeVolume">
             <input matSliderThumb [value]="initVolume">

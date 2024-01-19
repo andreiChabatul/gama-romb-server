@@ -17,6 +17,7 @@ import { AccessTokenInterceptor } from './interceptors/accessToken.interceptor';
 import { ModalModule } from './modal/modal.module';
 import { EFFECTS } from 'src/store/effects';
 import { Page404Module } from './page-404/page-404.module';
+import { PageAboutModule } from './page-about/page-about.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { Page404Module } from './page-404/page-404.module';
     EffectsModule.forRoot(EFFECTS),
     StoreModule.forRoot(appReducers),
     HttpClientModule,
-    Page404Module
+    Page404Module,
+    PageAboutModule
   ],
   providers: [AuthService, {
     provide: HTTP_INTERCEPTORS,

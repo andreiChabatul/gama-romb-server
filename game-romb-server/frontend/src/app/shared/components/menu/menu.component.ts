@@ -6,6 +6,7 @@ import { AppStore } from 'src/app/types/state';
 import { OpenModal } from 'src/store/actions/modalActions';
 import { selectIdRoom, selectInfoUser } from 'src/store/selectors';
 import { AudioServices } from '../../services/audio.services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -24,7 +25,8 @@ export class MenuComponent implements OnInit {
     private store: Store<AppStore>,
     private authService: AuthService,
     private translocoService: TranslocoService,
-    private audioServices: AudioServices
+    private audioServices: AudioServices,
+    private router: Router
   ) { this.changeVolume = this.changeVolume.bind(this); }
 
   ngOnInit(): void {
@@ -54,6 +56,10 @@ export class MenuComponent implements OnInit {
 
   exitGame(): void {
     this.store.dispatch(OpenModal({ payload: { modalState: 'leaveGame' } }));
+  }
+
+  openAbout(): void {
+    this.router.navigate(['about']);
   }
 
   changeVolume(value: number): string {
