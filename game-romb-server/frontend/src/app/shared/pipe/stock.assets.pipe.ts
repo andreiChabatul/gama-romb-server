@@ -20,7 +20,7 @@ export class StockAssetsPipe implements PipeTransform {
     }
 
     return (defaultStock)
-      ? `assets/${defaultStock}.png`
-      : `assets/default.png`
+      ? `assets/${defaultStock}.svg`
+      : `assets/default.svg`
   }
 }
