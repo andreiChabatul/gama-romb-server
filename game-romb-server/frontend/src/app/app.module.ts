@@ -18,6 +18,7 @@ import { ModalModule } from './modal/modal.module';
 import { EFFECTS } from 'src/store/effects';
 import { Page404Module } from './page-404/page-404.module';
 import { PageAboutModule } from './page-about/page-about.module';
+import { PageRulesModule } from './page-rules/page-rules.module';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { PageAboutModule } from './page-about/page-about.module';
     StoreModule.forRoot(appReducers),
     HttpClientModule,
     Page404Module,
-    PageAboutModule
+    PageAboutModule,
+    PageRulesModule
   ],
   providers: [AuthService, {
     provide: HTTP_INTERCEPTORS,

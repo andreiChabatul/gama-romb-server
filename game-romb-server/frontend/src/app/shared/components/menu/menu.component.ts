@@ -62,6 +62,10 @@ export class MenuComponent implements OnInit {
     this.router.navigate(['about']);
   }
 
+  openRules(): void {
+    this.router.navigate(['rules']);
+  }
+
   changeVolume(value: number): string {
     this.audioServices.volume = value;
     return '';

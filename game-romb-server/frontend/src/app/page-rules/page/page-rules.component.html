@@ -1,0 +1,12 @@
+<div class="page-rules-container">
+    <p class="page-title page-title_rules">{{'rulesTitle' | transloco}}</p>
+    <div class="container-rules-items_scrool">
+        <div class="container-rules-items">
+            <div *ngFor="let info of info" class="container-number-one container-rules-item">
+                <p class="container-number-one_title">{{info+'Title' | transloco}}</p>
+                <p class="container-rules-item_desc">{{info+'Desc'| transloco}}</p>
+            </div>
+        </div>
+    </div>
+    <img class="page-rules-img" src="assets/pageRules.svg" alt="pageRules">
+</div>

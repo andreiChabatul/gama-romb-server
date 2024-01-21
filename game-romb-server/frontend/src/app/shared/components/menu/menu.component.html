@@ -20,7 +20,7 @@
             <span class="menu-text">{{initVolume}}%</span>
         </div>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="openRules()">
         <div class="lang-container">
             <img class="img-lang-choise" src="assets/menuAssets/rules.png" alt="rulesImg">
             <span class="menu-text">{{'rules' | transloco}}</span>

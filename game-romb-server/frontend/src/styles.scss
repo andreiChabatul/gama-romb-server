@@ -276,7 +276,29 @@ body {
 .page-title {
   @include font_default;
   color: $color_turquoise;
-  font-size: 4vw;
+  font-size: 3.5vw;
   font-weight: 600;
   text-shadow: 1px 1px 2px black, 0 0 0.3em $button_color, 0 0 0.1em $button_color;
+}
+
+.container-number-one {
+  padding: 1%;
+  position: relative;
+  border-radius: 1vw;
+  border: 0.3vw solid $dark_grey;
+  display: flex;
+  @include box3D;
+}
+
+.container-number-one_title {
+  width: max-content;
+  background: $dark_grey;
+  border-radius: 0.5vw;
+  position: absolute;
+  font-size: 1.2vw;
+  top: calc(0% - 1vw);
+  left: 2vw;
+  padding: 0 1%;
+  color: $light_grey;
+  @include box3D;
 }
