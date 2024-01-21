@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class PageAboutComponent {
 
+  contacts = [
+    { ico: 'icoVK', href: 'https://vk.com/smorgon_komp' },
+    { ico: 'icoGM', href: 'mailto:andreichabatul@gmail.com' },
+    { ico: 'icoTel', href: 'https://t.me/andrey_nanov' }
+  ]
 }

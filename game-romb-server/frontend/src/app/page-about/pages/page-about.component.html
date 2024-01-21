@@ -1,25 +1,14 @@
 <div class="page-about-container">
     <div class="page-about-desc-container">
-        <p class="page-title">О проекте</p>
-        <p>Данный проект – это бесплатная онлайн игра, которая объединяет в себе несколько игровых концепций. Её
-            основы аналогичны классической монополии, а возможности онлайна позволили внести в игру элементы ролевых
-            игр. Сам проект относится к многопользовательским браузерным играм. Поскольку браузерные игры не требуют
-            установки дополнительных программ, вы можете начать играть в любой момент.
-        </p>
+        <p class="page-title">{{'titleAboutPage'| transloco}}</p>
+        <p class="page-about-desc">{{'pageAboutDesc' | transloco}} </p>
         <div class="container-speck">
-            <p class="container-speck_title">Испольpуемый стек технологий</p>
+            <p class="container-speck_title">{{'steckTech' | transloco}}</p>
             <img class="page-about-speck" src="./../../../assets/speck.png" alt="speck">
         </div>
-        <div>
-            <div class="container-auth container-social">
-                <img class="img-auth" src="./../../../assets/icoVK.png" alt="googleAuth">
-            </div>
-            <div class="container-auth container-social">
-                <img class="img-auth" src="./../../../assets/icoGM.png" alt="googleAuth">
-            </div>
-            <div class="container-auth container-social">
-                <img class="img-auth" src="./../../../assets/icoTel.png" alt="googleAuth">
-            </div>
+        <div class="container-contacts">
+            <a *ngFor="let contact of contacts" class="container-auth container-social" href={{contact.href}}>
+                <img class="img-auth" [src]="contact.ico | imgAssets" alt="icoVK"></a>
         </div>
     </div>
     <img class="page-about-img" src="assets/pageAbout.png" alt="page about">
