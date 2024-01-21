@@ -1,0 +1,54 @@
+@import "./../../../scss/default-styles";
+@import "./../../../scss/color-styles";
+
+.page-rules-container {
+    height: 92vh;
+    padding-top: 8vh;
+    @include flex-c_s;
+    position: relative;
+}
+
+.page-rules-img {
+    width: 45vw;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.container-rules {
+    padding-top: 10vh;
+    padding-left: 1%;
+    height: 100%;
+}
+
+.container-rules-item {
+    width: 57%;
+}
+
+.container-rules-item_desc {
+    font-size: 1vw;
+    text-align: justify;
+}
+
+.container-rules-items {
+    transform: rotate(180deg);
+    padding-left: 0.5%;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.container-rules-items_scrool {
+    width: 100%;
+    height: 80vh;
+    overflow-y: auto;
+    position: absolute;
+    transform: rotate(180deg);
+    padding-right: 1%;
+}
+
+.page-title_rules {
+    position: absolute;
+    right: 2%;
+    top: 8vh;
+}
