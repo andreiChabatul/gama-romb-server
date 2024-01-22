@@ -1,4 +1,8 @@
 <header *ngIf="isShow" class="header-container">
     <img class="header-logo" src="assets/logo.svg" alt="logo">
-    <app-menu [size]="'2.5vw'"></app-menu>
+    <div class="header-menu">
+        <a *ngIf="isHome" href="/">
+            <img class="header-home-img" src="assets/menuAssets/home.png" alt="home"></a>
+        <app-menu [size]="'2.5vw'"></app-menu>
+    </div>
 </header>

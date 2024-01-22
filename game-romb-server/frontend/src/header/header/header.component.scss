@@ -9,3 +9,17 @@
 .header-logo {
     width: 5vw;
 }
+
+.header-menu {
+    z-index: 111;
+    @include flex-c_s;
+}
+
+.header-home-img {
+    width: 2.5vw;
+    transition: .4s;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
