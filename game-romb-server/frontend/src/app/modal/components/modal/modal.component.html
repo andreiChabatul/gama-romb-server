@@ -1,21 +1,23 @@
-<div *ngIf="(modal$ | async)?.modalState !== 'none'" class="wrapper-modal" (click)="closeModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-        <div class="modal-gradient">
-            <p class="title-modal">{{(modal$ | async)?.modalState | transloco}}</p>
-            <p *ngIf="(modal$ | async)?.modalError" class="modal-error">{{(modal$ | async)?.modalError}}</p>
-            <span class="material-symbols-outlined close-modal" (click)="closeModal()">
-                cancel
-            </span>
-            <div class="modal-container-inside" [ngSwitch]="(modal$ | async)?.modalState">
-                <app-modal-register *ngSwitchCase="'register'"></app-modal-register>
-                <app-modal-login *ngSwitchCase="'logInProfile'"></app-modal-login>
-                <app-modal-info-cell *ngSwitchCase="'infoCell'"></app-modal-info-cell>
-                <app-modal-exit-game *ngSwitchCase="'leaveGame'"></app-modal-exit-game>
-                <app-create-game-form *ngSwitchCase="'createGame'"></app-create-game-form>
-                <app-modal-join-game *ngSwitchCase="'joinGame'"></app-modal-join-game>
-                <app-reconnect-modal *ngSwitchCase="'reconnectGame'"></app-reconnect-modal>
-                <app-modal-edit-profile *ngSwitchCase="'editProfile'"></app-modal-edit-profile>
-                <app-modal-delete-profile *ngSwitchCase="'deleteProfile'"></app-modal-delete-profile>
+<div *ngIf="modal$ | async as modal">
+    <div *ngIf="modal.modalState !== 'none'" class="wrapper-modal" (click)="closeModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+            <div class="modal-gradient">
+                <p class="title-modal">{{modal.modalState | transloco}}</p>
+                <p *ngIf="modal.modalError" class="modal-error">{{modal.modalError}}</p>
+                <span class="material-symbols-outlined close-modal" (click)="closeModal()">
+                    cancel
+                </span>
+                <div class="modal-container-inside" [ngSwitch]="modal.modalState">
+                    <app-modal-register *ngSwitchCase="'register'"></app-modal-register>
+                    <app-modal-login *ngSwitchCase="'logInProfile'"></app-modal-login>
+                    <app-modal-info-cell *ngSwitchCase="'infoCell'"></app-modal-info-cell>
+                    <app-modal-exit-game *ngSwitchCase="'leaveGame'"></app-modal-exit-game>
+                    <app-create-game-form *ngSwitchCase="'createGame'"></app-create-game-form>
+                    <app-modal-join-game *ngSwitchCase="'joinGame'"></app-modal-join-game>
+                    <app-reconnect-modal *ngSwitchCase="'reconnectGame'"></app-reconnect-modal>
+                    <app-modal-edit-profile *ngSwitchCase="'editProfile'"></app-modal-edit-profile>
+                    <app-modal-delete-profile *ngSwitchCase="'deleteProfile'"></app-modal-delete-profile>
+                </div>
             </div>
         </div>
     </div>
