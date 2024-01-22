@@ -42,7 +42,7 @@ export class ModalEditProfileComponent implements OnInit, OnDestroy {
         { nameForm: 'oldPassword', type: 'password' }
       ];
       this.avatar = this.infoUser.image;
-    };
+    }
   }
 
   inputFileAvatar(event: Event): void {
@@ -52,7 +52,7 @@ export class ModalEditProfileComponent implements OnInit, OnDestroy {
         this.avatar = newAvatar;
       });
     }
-  };
+  }
 
   convertFile(file: File): Observable<string> {
     const result = new ReplaySubject<string>(1);
@@ -66,7 +66,7 @@ export class ModalEditProfileComponent implements OnInit, OnDestroy {
     if (this.editProfile.invalid) {
       this.editProfile.markAllAsTouched()
       return;
-    };
+    }
     this.userService.updateUser({
       userId: String(this.infoUser?.id),
       password: this.editProfile.value.oldPassword.value,

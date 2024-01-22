@@ -27,10 +27,10 @@ export class GameBoardTurnComponent implements OnInit {
     const value = Number(event.key);
     if (0 < value && value < 7) {
       this.cheatNumbers = [value, ...this.cheatNumbers];
-    };
+    }
     if (this.gameRoom.insideBoardState === 'startButtons' && event.key === 'Enter') {
       this.store.dispatch(ControlInsideBoard({ insideBoardState: 'diceRoll' }));
-    };
+    }
   }
 
   resetCheat(): void {

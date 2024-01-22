@@ -108,7 +108,7 @@ export type infoRoom = {
     maxPlayers: number,
     idRoom: string,
     roomName: string,
-    isStart: Boolean,
+    isStart: boolean,
     players: fullPlayer[],
     timeTurn: number
 }

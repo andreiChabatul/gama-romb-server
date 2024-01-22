@@ -20,7 +20,7 @@ export class InfoPlayerComponent implements OnChanges {
   constructor(private store: Store<AppStore>) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    for (let propName in changes) {
+    for (const propName in changes) {
       const chng = changes[propName];
       this.prevTotal = chng.previousValue ? chng.previousValue.total : 0;
       this.prevCapital = chng.previousValue ? chng.previousValue.capital : 0;

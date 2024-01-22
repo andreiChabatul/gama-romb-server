@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { JwtPayload, createUserDto, deleteUserDto, updateUser } from '../types';
+import { JwtPayload, deleteUserDto, updateUser } from '../types';
 import { jwtDecode } from 'jwt-decode';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ENDPOINT } from '../const/enum';

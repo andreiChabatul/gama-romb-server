@@ -27,13 +27,13 @@ export class WinnerGameComponent implements OnInit, OnDestroy {
       const player = this.gameRoom.players[this.gameRoom.winner];
       this.nameWinner = player.nickName;
       this.photoWinner = player.image;
-    };
+    }
     this.subscription$ = this.infoUser$.subscribe((infoUser) =>
       this.isWinner = (infoUser?.id === this.gameRoom.winner)
     );
     if (this.isWinner) {
       this.audioServices.playAudioSpec('winner');
-    };
+    }
   }
 
   ngOnDestroy(): void {

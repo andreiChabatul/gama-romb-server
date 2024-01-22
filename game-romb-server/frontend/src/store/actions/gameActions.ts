@@ -14,7 +14,7 @@ export enum gameActionsTypes {
     UpdateInfoCellTurn = '[UPDATE INFO CELL TURN] UpdateInfoCellTurn',
     UpdateTurn = '[UPDATE TURN] UpdateTurn',
     UpdateInfoPlayer = '[UPDATE Player] UpdateInfoPlayer'
-};
+}
 
 export const EndGame = createAction(gameActionsTypes.EndGame,
     props<{ winner: string }>()

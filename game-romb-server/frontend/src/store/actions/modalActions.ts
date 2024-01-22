@@ -6,7 +6,7 @@ export enum modalActionsTypes {
     OpenModal = '[OPEN MODAL] OpenModal',
     AddModalInfo = '[ADD MODAL INFO] AddModalInfo',
     ClearModalInfo = '[CLEAR MODAL INFO] ClearModalInfo',
-};
+}
 
 export const closeModal = createAction(modalActionsTypes.CloseModal);
 export const ClearModalInfo = createAction(modalActionsTypes.ClearModalInfo);

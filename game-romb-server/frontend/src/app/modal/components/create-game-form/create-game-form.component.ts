@@ -73,7 +73,7 @@ export class CreateGameFormComponent implements OnInit {
     if (this.createGame.invalid) {
       this.createGame.markAllAsTouched()
       return;
-    };
+    }
 
     this.roomsService.createRoom({
       roomName: this.createGame.value['roomName'].value,
@@ -88,7 +88,7 @@ export class CreateGameFormComponent implements OnInit {
             idRoom,
           });
           this.store.dispatch(closeModal());
-        };
+        }
       },
       error: (error: HttpErrorResponse) => this.store.dispatch(AddModalInfo({ modalError: error.error.message }))
     });

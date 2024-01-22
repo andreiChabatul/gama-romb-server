@@ -17,5 +17,5 @@ export class AnonimAuthComponent {
       nickName: 'anonim_' + Date.now(),
       password: '12345678'
     });
-  };
+  }
 }

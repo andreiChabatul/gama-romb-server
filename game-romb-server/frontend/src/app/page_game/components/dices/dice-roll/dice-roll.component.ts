@@ -60,7 +60,7 @@ export class DiceRollComponent implements OnInit {
   }
 
   randomrool(dice: number): number {
-    let result = Math.floor((Math.random() * 6) + 1);
+    const result = Math.floor((Math.random() * 6) + 1);
     if (dice === result) {
       return this.randomrool(result);
     }

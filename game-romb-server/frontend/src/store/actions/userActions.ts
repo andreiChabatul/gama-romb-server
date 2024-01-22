@@ -5,7 +5,7 @@ export enum userActionsTypes {
     LoginUser = '[LOGIN USER] LoginUser',
     LogoutUser = '[LOGOUT USER] LogoutUser',
     UpdateUser = '[UPDATE USER] UpdateUser',
-};
+}
 
 export const logoutUser = createAction(userActionsTypes.LogoutUser);
 export const loginUser = createAction(userActionsTypes.LoginUser,

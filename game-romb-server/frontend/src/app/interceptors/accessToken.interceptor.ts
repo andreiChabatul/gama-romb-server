@@ -16,7 +16,7 @@ export class AccessTokenInterceptor implements HttpInterceptor {
                 headers: req.headers.append('Authorization', accessToken),
             })
             return next.handle(tokenReq);
-        };
+        }
         return next.handle(req);
-    };
+    }
 }

@@ -25,7 +25,7 @@ export class AuctionCompanyComponent implements OnChanges {
       this.infoAuction = this.gameRoom?.infoAuction;
       this.gameCell = this.gameRoom.board[this.gameRoom.infoAuction.indexCompany];
       this.rentCompany = Number(this.gameCell.company?.rentCompanyInfo[0]);
-    };
+    }
   }
 
 }

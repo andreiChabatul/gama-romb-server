@@ -30,7 +30,7 @@ export class RoomItemComponent implements OnChanges, OnDestroy {
     this.playerArr = [...this.infoRoom.players];
     while (this.playerArr.length < this.infoRoom.maxPlayers) {
       this.playerArr.push(null);
-    };
+    }
   }
 
   clickControl(): void {

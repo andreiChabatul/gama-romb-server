@@ -28,7 +28,7 @@ export class ModalComponent implements OnDestroy {
         this.webSocketController.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'leave' });
         this.store.dispatch(StartGame({ gameRoom: EMPTY_GAME_ROOM }));
         this.router.navigate(['rooms']);
-      };
+      }
     });
     this.store.dispatch(closeModal());
   }

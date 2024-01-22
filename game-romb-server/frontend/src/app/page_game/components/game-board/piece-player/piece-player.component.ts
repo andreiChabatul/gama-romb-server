@@ -79,18 +79,18 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.isCircle = true;
-    for (let propName in changes) {
+    for (const propName in changes) {
       if (propName === 'cellPosition') {
         this.cellPositionChange(changes[propName].previousValue)
-      };
-    };
+      }
+    }
   }
 
   cellPositionChange(prevPosition: number) {
     if (this.prisonPlayer) {
       [this.coorX, this.coorY, this.moveX, this.moveY] = [coorEndX, coorInitY, 'X', 'Y'];
       return;
-    };
+    }
     this.changePosition = this.cellPosition - prevPosition;
     this.changePosition += (this.changePosition < 0) ? MAX_INDEX_CELL_BOARD : 0;
     this.step();
@@ -135,7 +135,7 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
       }
       else if (this.coorX === coorInitX && this.coorY > coorInitY) {
         this.moveTop();
-      };
+      }
     }
   }
 

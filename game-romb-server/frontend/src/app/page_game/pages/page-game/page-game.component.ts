@@ -22,9 +22,7 @@ export class PageGameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription$ = this.gameRoom$.subscribe((gameRoom) => this.gameRoom = gameRoom);
-    if (!this.gameRoom.idRoom) {
-      this.router.navigate(['rooms']);
-    };
+    if (!this.gameRoom.idRoom) this.router.navigate(['rooms']);
   }
 
   ngOnDestroy(): void {

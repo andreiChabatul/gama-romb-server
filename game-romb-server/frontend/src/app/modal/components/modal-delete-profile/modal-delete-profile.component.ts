@@ -30,7 +30,7 @@ export class ModalDeleteProfileComponent {
     if (this.deleteProfile.invalid) {
       this.deleteProfile.markAllAsTouched()
       return;
-    };
+    }
     this.userService.deleteUser({
       password: this.deleteProfile.value.password.value,
       nickname: this.deleteProfile.value.nickname.value,

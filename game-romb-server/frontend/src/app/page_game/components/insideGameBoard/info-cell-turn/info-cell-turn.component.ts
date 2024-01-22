@@ -46,10 +46,10 @@ export class InfoCellTurnComponent implements OnInit {
       this.infoCellTurn = this.gameRoom.infoCellTurn;
       this.buttonsResult = this.updateButtons(this.infoCellTurn.buttons);
       this.cell = this.gameRoom.board[this.gameRoom.infoCellTurn.indexCompany];
-    };
+    }
   }
 
-  isPay(): Observable<Boolean> {
+  isPay(): Observable<boolean> {
     return this.gamePlayer$.pipe(
       map((fullPlayer) => Number(fullPlayer?.total) < Number(this.infoCellTurn?.value))
     )
@@ -67,7 +67,7 @@ export class InfoCellTurnComponent implements OnInit {
         return [5, 6].map((index) => buttons[index]);
       default:
         return [];
-    };
+    }
   }
 
 }
