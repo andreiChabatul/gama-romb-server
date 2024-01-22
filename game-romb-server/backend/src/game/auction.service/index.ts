@@ -25,38 +25,36 @@ export class AuctionCompany implements AuctionI {
         this.currentPrice = cell.infoCompany.priceCompany;
         this.action = 'startAuction';
         this.auctionWinner = '';
-        this.filterParticipants(idUser);
-        this.nextStep();
+        this.leaveAuction(idUser);
     }
 
     stepAuction(idUser: string): void {
         this.auctionWinner = idUser;
-        this.currentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
         this.filterParticipants();
-        this.nextStep();
+        this.currentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
     }
 
     leaveAuction(idUser: string): void {
+        this.indexActive -= 1;
         this.filterParticipants(idUser);
-        this.nextStep();
     }
 
     private filterParticipants(idUser?: string): void {
+        const futureCurrentPrice = Math.floor(this.currentPrice * AUCTION_STEP);
         this.playersId = this.playersId.filter((id) =>
-            id !== idUser && storage_players.getPlayer(this.idRoom, id).total >= this.currentPrice);
+            id !== idUser && storage_players.getPlayer(this.idRoom, id).total >= futureCurrentPrice);
+        this.nextStep();
     }
 
     private nextStep(): void {
         ((this.playersId.length === 1 && this.auctionWinner) || this.playersId.length === 0)
             ? this.endAuction()
-            : (this.indexActive > this.playersId.length - 2) ? 0 : this.indexActive += 1;
+            : this.indexActive > this.playersId.length - 2 ? 0 : this.indexActive += 1;
         this.sendAllPlayers();
     }
 
     private endAuction(): void {
-        this.auctionWinner
-            ? this.cell.buyCompany(this.auctionWinner, this.currentPrice)
-            : '';
+        if (this.auctionWinner) { this.cell.buyCompany(this.auctionWinner, this.currentPrice); };
         this.action = 'endAuction';
     }
 

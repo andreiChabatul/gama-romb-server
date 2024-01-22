@@ -64,7 +64,7 @@ export class CellsService implements CellsServiceI {
             cells.forEach((cell) => cell.monopoly = resultArr.length === 1 && !resultArr.includes('noOwned'));
         } else {
             const ownedCell = cells.reduce((res, cell) => {
-                if (cell.owned) {
+                if (cell.owned && !cell.pledge) {
                     res[cell.owned]
                         ? res[cell.owned].push(cell.index)
                         : res[cell.owned] = [cell.index]

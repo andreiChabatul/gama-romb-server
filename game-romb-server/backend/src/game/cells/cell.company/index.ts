@@ -56,6 +56,7 @@ export class CellCompany implements CellCompanyI {
 
     activateCell(idUser: string): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
+
         if (idUser === this._owned || this._pledge) {
             return;
         } else if (this._owned && idUser !== this._owned && !this._pledge) {
@@ -68,6 +69,7 @@ export class CellCompany implements CellCompanyI {
     buyCompany(idUser: string, price: number = this.compnanyInfo.priceCompany): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
         this.owned = idUser;
+
         player.minusTotal(price, EMESSAGE_CLIENT.MINUS_TOTAL_BUY_COMPANY, this._index);
         this.sendInfoPlayer();
     }
@@ -76,6 +78,7 @@ export class CellCompany implements CellCompanyI {
         const payer = storage_players.getPlayer(this._idRoom, idUser)
         const owned = storage_players.getPlayer(this._idRoom, this._owned);
         const debtRent = this.rentFact >= payer.capital ? payer.capital : this.rentFact;
+        
         owned.addTotal(debtRent);
         payer.minusTotal(debtRent, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_RENT);
     }

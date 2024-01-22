@@ -37,6 +37,7 @@ export class RoomGame implements RoomI {
 
     private async checkStartGame(): Promise<void> {
         const playersGame = storage_players.getPlayersRoom(this.idRoom);
+
         if (playersGame.length === this.infoRoom.maxPlayers) { //убрать труе потом, временно чтобы тестть
             setTimeout(() => this.isStart = true, 5000);
             storage_WS.sendAllPlayersGame(this.idRoom, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
@@ -48,6 +49,7 @@ export class RoomGame implements RoomI {
     playerMove({ idUser, isDouble, value }: DiceRollGamePayload): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         player.turn = true;
+
         if (player.prison) {
             if (isDouble) {
                 prison.deletePrisoner(this.idRoom, idUser);
@@ -57,12 +59,14 @@ export class RoomGame implements RoomI {
                 return;
             }
         };
+
         this.turnService.turn(idUser, value, isDouble);
     }
 
     activeCell(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
-        player.turn ? this.cellsService.activateCell(player.position, idUser) : '';
+
+        if (player.turn || player.prison) this.cellsService.activateCell(player.position, idUser);
         this.turnService.endTurn(player.bankrupt);
         player.turn = false;
     }
@@ -157,7 +161,9 @@ export class RoomGame implements RoomI {
                 ...storage_players.getPlayer(this.idRoom, idUser).playerInfo
             }
         }))
+
         players.forEach((player) => delete player.password);
+
         return players;
     }
 
@@ -168,6 +174,7 @@ export class RoomGame implements RoomI {
     async reconnectPlayer(idUser: string): Promise<void> {
         const player = storage_players.getPlayer(this.idRoom, idUser);
         player.online = true;
+
         storage_WS.sendOnePlayerGame(this.idRoom, idUser, EACTION_WEBSOCKET.START_GAME, await this.gameInfo());
         this.cellsService.reconnectPlayer(idUser);
         this.turnService.updateTurn(idUser);
@@ -175,6 +182,7 @@ export class RoomGame implements RoomI {
 
     leavePlayerGame(idUser: string): void {
         const player = storage_players.getPlayer(this.idRoom, idUser);
+        
         if (player) {
             player.bankrupt = true;
             this.activeCell(idUser);

@@ -17,8 +17,7 @@ export class Prison implements PrisonI {
     }
 
     payDebt(idRoom: string, idUser: string): void {
-        storage_players.getPlayer(idRoom, idUser)
-            .minusTotal(DEBT_PRISON, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_PRISON);
+        storage_players.getPlayer(idRoom, idUser).minusTotal(DEBT_PRISON, EMESSAGE_CLIENT.MINUS_TOTAL_PAY_PRISON);
         this.deletePrisoner(idRoom, idUser);
     }
 
@@ -26,7 +25,7 @@ export class Prison implements PrisonI {
         const player = storage_players.getPlayer(idRoom, idUser);
         player.prison = player.prison - 1;
         if ((DEBT_PRISON > player.capital || DEBT_PRISON === player.capital) && player.prison === 1) {
-            player.bankrupt = true
+            player.bankrupt = true;
         };
     }
 

@@ -28,7 +28,7 @@ export class CellEmpty implements CellDefault {
 
     activateCell(idUser: string): void {
         const player = storage_players.getPlayer(this._idRoom, idUser);
-        this._nameCell === 'goJail' ? prison.addPrisoner(this._idRoom, idUser) : '';
-        player && player.prison && this._nameCell === 'inJail' ? prison.payDebt(this._idRoom, idUser) : '';
+        if (this._nameCell === 'goJail') prison.addPrisoner(this._idRoom, idUser);
+        if (player && player.prison && this._nameCell === 'inJail') prison.payDebt(this._idRoom, idUser);
     }
 }
