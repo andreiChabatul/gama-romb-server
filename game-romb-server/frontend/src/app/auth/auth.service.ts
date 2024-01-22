@@ -39,8 +39,7 @@ export class AuthService {
 
     refresh(): void {
         this.http.get(`${BASIC_URL}${ENDPOINT.REFRESH}`, this.httpOptions).subscribe({
-            next: (value: Partial<ResponseAuth>) => this.setToken(value),
-            error: (error: HttpErrorResponse) => { }
+            next: (value: Partial<ResponseAuth>) => this.setToken(value)
         })
     }
 
@@ -49,7 +48,7 @@ export class AuthService {
         if (accessToken) {
             localStorage.setItem('accessToken', accessToken);
             this.users.getUser(accessToken);
-        };
+        }
     }
 }
 

@@ -4,7 +4,6 @@ import { gameRoom } from "src/app/types/state";
 import { EMPTY_GAME_ROOM } from "src/app/const";
 import { defaultCell } from "src/app/const/defaultCells";
 import { immerOn } from 'ngrx-immer/store';
-import { state } from "@angular/animations";
 import { keyUpdatePlayer } from "src/app/types";
 
 const initalState: gameRoom = EMPTY_GAME_ROOM;
@@ -28,7 +27,7 @@ export const gameReducers = createReducer(initalState,
         const cellCompany = state.board[updateCell.indexCell].company;
         if (cellCompany) {
             state.board[updateCell.indexCell].company = { ...cellCompany, ...updateCell.company }
-        };
+        }
         return state;
     })
 );
