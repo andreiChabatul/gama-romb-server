@@ -47,6 +47,11 @@ export class RoomsService {
         ));
     }
 
+    async filterRoom(query: string): Promise<infoRoom[]> {
+        const rooms = await this.getAllRooms();
+        return rooms.filter((room) => room.roomName.toLowerCase().includes(query.toLowerCase()));
+    }
+
     createRoom(createRoomDto: CreateRoomDto): string {
         const idRoom = uuidv4();
         this.rooms[idRoom] = new RoomGame(createRoomDto, idRoom, this.userService);

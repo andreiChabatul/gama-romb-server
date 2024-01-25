@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Body, Param } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { RoomsService } from './rooms.services';
 import { CreateRoomDto } from './dto/create.room.dto';
@@ -13,7 +13,12 @@ export class RoomsController {
 
     @Get()
     async getAllRooms() {
-        return (await this.roomsService.getAllRooms());
+        return await this.roomsService.getAllRooms();
+    }
+
+    @Get(':query')
+    async getRoomFilter(@Param('query') query: string): Promise<infoRoom[]> {
+        return await this.roomsService.filterRoom(query);
     }
 
     @Post('/reconnect')
