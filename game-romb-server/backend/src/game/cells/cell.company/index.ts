@@ -30,7 +30,7 @@ export class CellCompany implements CellCompanyI {
             indexCompany: this._index,
             description: '',
             buttons: 'none',
-            value: this.rentCompany
+            value: this.rentFact
         };
 
         if (idUser === this._owned) {

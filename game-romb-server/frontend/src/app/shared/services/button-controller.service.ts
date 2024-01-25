@@ -17,7 +17,7 @@ import { AudioServices } from './audio.services';
 })
 export class ButtonControllerService implements OnDestroy {
 
-  susbscription$: Subscription
+  susbscription$: Subscription;
   isLogin: boolean;
   user$ = this.store.select(selectUser);
 
@@ -55,11 +55,11 @@ export class ButtonControllerService implements OnDestroy {
         break;
 
       case ACTIONS_BUTTON.BUY_STOCK:
-        this.store.dispatch(ControlCompany({ controlCompany: 'buyStock' }));
+        this.store.dispatch(ControlCompany({ state: 'buyStock' }));
         break;
 
       case ACTIONS_BUTTON.SELL_STOCK:
-        this.store.dispatch(ControlCompany({ controlCompany: 'sellStock' }));
+        this.store.dispatch(ControlCompany({ state: 'sellStock' }));
         break;
 
       case ACTIONS_BUTTON.BUY_COMPANY:
@@ -83,15 +83,15 @@ export class ButtonControllerService implements OnDestroy {
         break;
 
       case ACTIONS_BUTTON.MORTGAGE:
-        this.store.dispatch(ControlCompany({ controlCompany: 'pledgeCompany' }));
+        this.store.dispatch(ControlCompany({ state: 'pledgeCompany' }));
         break;
 
       case ACTIONS_BUTTON.BUY_OUT_COMPANY:
-        this.store.dispatch(ControlCompany({ controlCompany: 'buyOutCompany' }));
+        this.store.dispatch(ControlCompany({ state: 'buyOutCompany' }));
         break;
 
       case ACTIONS_BUTTON.END_CONTROL:
-        this.store.dispatch(ControlCompany({ controlCompany: undefined }));
+        this.store.dispatch(ControlCompany({ state: undefined }));
         break;
 
       case ACTIONS_BUTTON.PAY:

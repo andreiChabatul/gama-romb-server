@@ -6,6 +6,8 @@ export enum gameActionsTypes {
     EndGame = '[END GAME] EndGame',
     ControlInsideBoard = '[CONTROL INSIDE BOARD] ControlInsideBoard',
     ControlCompany = '[CONTROL COMPANY] ControlCompany',
+    ControlCompanyStock = '[CONTROL COMPANY STOCK] ControlCompanyStock',
+    ControlCompanyClear = '[CONTROL COMPANY CLEAR] ControlCompanyClear',
     StartGame = '[START GAME] StartGame',
     UpdateChatRoom = '[UPDATE CHAT ROOM] UpdateChatRoom',
     UpdateCell = '[UPDATE CELL] UpdateCell',
@@ -19,11 +21,15 @@ export enum gameActionsTypes {
 export const EndGame = createAction(gameActionsTypes.EndGame,
     props<{ winner: string }>()
 );
+export const ControlCompanyClear = createAction(gameActionsTypes.ControlCompanyClear);
 export const ControlInsideBoard = createAction(gameActionsTypes.ControlInsideBoard,
     props<{ insideBoardState: insideBoardState }>()
 );
 export const ControlCompany = createAction(gameActionsTypes.ControlCompany,
-    props<{ controlCompany: controlCompanyState }>()
+    props<{ state: controlCompanyState }>()
+);
+export const ControlCompanyStock = createAction(gameActionsTypes.ControlCompanyStock,
+    props<{ noSellStock: string }>()
 );
 export const StartGame = createAction(gameActionsTypes.StartGame,
     props<{ gameRoom: gameRoom }>()

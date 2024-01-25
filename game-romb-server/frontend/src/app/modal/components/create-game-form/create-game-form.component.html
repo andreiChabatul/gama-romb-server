@@ -1,4 +1,4 @@
-<form class="form-create-container" [formGroup]="createGame" (ngSubmit)="onSubmit()">
+<form class="form-create-container form-container" [formGroup]="createGame" (ngSubmit)="onSubmit()">
     <div>
         <app-input-material *ngFor="let option of inputForm" [optionForm]="option"
             [parentForm]="createGame"></app-input-material>

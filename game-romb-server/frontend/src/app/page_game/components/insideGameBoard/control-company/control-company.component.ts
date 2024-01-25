@@ -10,7 +10,7 @@ import { controlCompanyState } from 'src/app/types/state';
 })
 export class ControlCompanyComponent {
 
-  @Input() controlCompany: controlCompanyState;
-  buttonFinish: ButtonStandart = { action: ACTIONS_BUTTON.END_CONTROL, width: '15vw', height: '6vh', show: true };
+  @Input() state: controlCompanyState;
+  buttonFinish: ButtonStandart = { action: ACTIONS_BUTTON.END_CONTROL, width: '15vw', height: '6vh' };
 
 }

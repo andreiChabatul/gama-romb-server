@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { fullPlayer, gameCell } from 'src/app/types';
 import { AppStore, gameRoom } from 'src/app/types/state';
-import { selectAllPlayerArr } from 'src/store/selectors';
+import { selectGamePlayer } from 'src/store/selectors';
 
 @Component({
   selector: 'app-game-board',
@@ -12,7 +13,8 @@ import { selectAllPlayerArr } from 'src/store/selectors';
 export class GameBoardComponent {
 
   @Input() gameRoom: gameRoom;
-  allPlayerArr$ = this.store.select(selectAllPlayerArr)
+  @Input() players$: Observable<fullPlayer[]>;
+  gamePlayer$ = this.store.select(selectGamePlayer);
 
   constructor(private store: Store<AppStore>) { }
 

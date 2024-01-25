@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { RoomsService } from 'src/app/rooms/rooms.services';
-
 import { Button } from 'src/app/types/components';
 import { AppStore } from 'src/app/types/state';
 import { selectAllRooms } from 'src/store/selectors';

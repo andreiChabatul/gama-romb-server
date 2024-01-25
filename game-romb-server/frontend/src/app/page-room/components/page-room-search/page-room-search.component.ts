@@ -13,7 +13,6 @@ export class PageRoomSearchComponent implements OnInit, OnDestroy {
   searchForm: FormControl = new FormControl();
   subscription$: Subscription;
 
-
   constructor(private roomsService: RoomsService) { }
 
   ngOnInit(): void {

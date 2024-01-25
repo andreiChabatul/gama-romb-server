@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { gameCell } from 'src/app/types';
-import { AppStore } from 'src/app/types/state';
+import { fullPlayer, gameCell } from 'src/app/types';
+import { AppStore, controlCompany } from 'src/app/types/state';
 import { OpenModal } from 'src/store/actions/modalActions';
 
 @Component({
@@ -12,6 +12,8 @@ import { OpenModal } from 'src/store/actions/modalActions';
 export class GameCellComponent {
 
   @Input() gameCell: gameCell;
+  @Input() controlCompany: controlCompany;
+  @Input() gamePlayer: fullPlayer;
 
   constructor(private store: Store<AppStore>) { }
 

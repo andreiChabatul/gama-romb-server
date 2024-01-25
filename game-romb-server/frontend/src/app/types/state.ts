@@ -33,6 +33,7 @@ export type infoUser = {
 
 export type insideBoardState = 'playerInfo' | 'diceRoll' | 'startButtons' | 'infoCellTurn' | 'offerDeal' | 'receiveDeal' | 'auction' | 'winner' | undefined;
 export type controlCompanyState = 'buyStock' | 'sellStock' | 'pledgeCompany' | 'buyOutCompany' | undefined;
+export type controlCompany = { state: controlCompanyState, noSellStock: string[] }
 
 export interface gameRoom {
     chat: chatMessage[];
@@ -44,7 +45,7 @@ export interface gameRoom {
     offerDealInfo?: offerDealInfo;
     infoAuction?: infoAuction;
     winner?: string;
-    controlCompany?: controlCompanyState;
+    controlCompany: controlCompany;
     insideBoardState?: insideBoardState,
     infoCellTurn?: infoCellTurn,
 }

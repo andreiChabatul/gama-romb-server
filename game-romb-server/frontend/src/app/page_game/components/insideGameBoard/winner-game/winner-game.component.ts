@@ -1,42 +1,27 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
 import { AudioServices } from 'src/app/shared/services/audio.services';
-import { AppStore, gameRoom } from 'src/app/types/state';
-import { selectInfoUser } from 'src/store/selectors';
+import { fullPlayer } from 'src/app/types';
+import { gameRoom } from 'src/app/types/state';
+
 
 @Component({
   selector: 'app-winner-game',
   templateUrl: './winner-game.component.html',
   styleUrls: ['./winner-game.component.scss']
 })
-export class WinnerGameComponent implements OnInit, OnDestroy {
+export class WinnerGameComponent implements OnInit {
 
   @Input() gameRoom: gameRoom;
-  infoUser$ = this.store.select(selectInfoUser);
-  nameWinner: string;
-  photoWinner: string;
+  @Input() gamePlayer: fullPlayer;
+  winner: fullPlayer;
   isWinner: boolean;
-  subscription$: Subscription;
 
-  constructor(private store: Store<AppStore>, private audioServices: AudioServices) { }
+  constructor(private audioServices: AudioServices) { }
 
   ngOnInit(): void {
-
-    if (this.gameRoom.winner) {
-      const player = this.gameRoom.players[this.gameRoom.winner];
-      this.nameWinner = player.nickName;
-      this.photoWinner = player.image;
-    }
-    this.subscription$ = this.infoUser$.subscribe((infoUser) =>
-      this.isWinner = (infoUser?.id === this.gameRoom.winner)
-    );
-    if (this.isWinner) {
-      this.audioServices.playAudioSpec('winner');
-    }
+    this.isWinner = this.gamePlayer.id === this.gameRoom.winner;
+    if (this.gameRoom.winner) this.winner = this.gameRoom.players[this.gameRoom.winner];
+    if (this.isWinner) this.audioServices.playAudioSpec('winner');
   }
 
-  ngOnDestroy(): void {
-    this.subscription$.unsubscribe();
-  }
 }

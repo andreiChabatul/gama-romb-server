@@ -26,15 +26,14 @@ import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 export class TurnTimerComponent implements OnInit, OnDestroy {
 
   @Input() gameRoom: gameRoom;
-  turnTime: number;
   isActive: boolean;
 
   constructor(private webSocketConroller: WebSocketController) { }
 
   turnEnd(): void {
-    (this.isActive)
-      ? this.webSocketConroller.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'leave' })
-      : '';
+    if (this.isActive) {
+      this.webSocketConroller.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'leave' });
+    }
   }
 
   ngOnInit(): void {

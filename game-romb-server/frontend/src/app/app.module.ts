@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PageGameModule } from './page_game/pageGame.modules';
 import { MainPageComponent } from './main-page/main-page.component';
-import { HeaderModule } from 'src/header/header.module';
 import { appReducers } from 'src/store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
@@ -30,7 +29,6 @@ import { PageRulesModule } from './page-rules/page-rules.module';
     BrowserModule,
     AppRoutingModule,
     PageGameModule,
-    HeaderModule,
     SharedModule,
     CommonModule,
     BrowserAnimationsModule,

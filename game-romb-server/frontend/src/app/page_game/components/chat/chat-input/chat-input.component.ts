@@ -32,13 +32,11 @@ export class ChatInputComponent {
       this.chatForm.markAllAsTouched();
       return;
     }
-    this.webSocketController.sendMessage(
-      EACTION_WEBSOCKET.UPDATE_CHAT,
-      {
-        message: this.chatForm.get('message')?.value
-      }
+    this.webSocketController.sendMessage(EACTION_WEBSOCKET.UPDATE_CHAT, {
+      message: this.chatForm.get('message')?.value
+    }
     )
     this.chatForm.get('message')?.reset();
-  } 
+  }
 
 }

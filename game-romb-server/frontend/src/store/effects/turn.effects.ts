@@ -13,9 +13,10 @@ export class TurnEffects {
             ofType(gameActions.UpdateTurn),
             switchMap((action) => this.user$.pipe(
                 map((user) => {
+                    this.store.dispatch(gameActions.ControlCompanyClear())
                     return (user.infoUser?.id === action.turnId)
-                        ? gameActions.ControlInsideBoard({insideBoardState: 'startButtons'})
-                        : gameActions.ControlInsideBoard({insideBoardState: 'playerInfo'})
+                        ? gameActions.ControlInsideBoard({ insideBoardState: 'startButtons' })
+                        : gameActions.ControlInsideBoard({ insideBoardState: 'playerInfo' })
                 })
             ))
         )

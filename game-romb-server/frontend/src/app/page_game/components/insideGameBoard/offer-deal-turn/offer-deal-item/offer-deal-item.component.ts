@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable, map } from 'rxjs';
 import { fullPlayer, gameCell, offerInfo, dealPerson } from 'src/app/types';
-import { AppStore } from 'src/app/types/state';
-import { selectGameRoom } from 'src/store/selectors';
+import { gameRoom } from 'src/app/types/state';
 
 @Component({
   selector: 'app-offer-deal-item',
@@ -12,13 +9,13 @@ import { selectGameRoom } from 'src/store/selectors';
 })
 export class OfferDealItemComponent implements OnInit {
 
+  @Input() gameRoom: gameRoom;
   @Input() idUser: string | null;
   @Input() dealPerson: dealPerson;
   @Output() offerEvent = new EventEmitter<{ dealPerson: dealPerson, offerInfo: offerInfo }>();
-  gameRoom$ = this.store.select(selectGameRoom);
-  _offerInfo: offerInfo = {} as offerInfo;
+  _offerInfo: offerInfo;
 
-  constructor(private store: Store<AppStore>) {
+  constructor() {
     this.formatLabel = this.formatLabel.bind(this);
   }
 
@@ -48,8 +45,9 @@ export class OfferDealItemComponent implements OnInit {
   }
 
   set company(idCompany: number) {
-    const resultArr = [...this._offerInfo.indexCompany]
+    const resultArr = [...this._offerInfo.indexCompany];
     const indexSelect = this.searchIndexCompany(idCompany);
+
     (indexSelect === -1)
       ? resultArr.push(idCompany)
       : resultArr.splice(indexSelect, 1);
@@ -57,17 +55,13 @@ export class OfferDealItemComponent implements OnInit {
     this.sendItemOffer();
   }
 
-  get player(): Observable<fullPlayer> {
-    return this.gameRoom$.pipe(
-      map((gameRoom) => gameRoom.players[String(this.idUser)])
-    )
+  get player(): fullPlayer {
+    return this.gameRoom.players[String(this.idUser)];
   }
 
-  get companyPlayer(): Observable<gameCell[]> {
-    return this.gameRoom$.pipe(
-      map((gameRoom) =>
-        gameRoom.board.filter((cell) => !cell.company?.isPledge && cell.company?.owned === this.idUser))
-    );
+  get companyPlayer(): gameCell[] {
+    return this.gameRoom.board.filter((cell) =>
+      !cell.company?.isPledge && cell.company?.owned === this.idUser)
   }
 
   sendItemOffer(): void {

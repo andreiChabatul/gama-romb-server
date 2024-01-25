@@ -1,7 +1,7 @@
 <div class="winner-container">
     <p class="winner-title">{{(isWinner ? 'youWin' : 'youLose' )| transloco}}</p>
     <img class="winner-img" src="assets/winner.png" alt="winnerAvatar">
-    <img class="winner-img_player" src="assets/defaultAvatar.png" alt="fotoPlayer">
-    <p class="winner-text">{{'nameWinner' | transloco}} <span class="winner-text_name">{{nameWinner}}</span> </p>
+    <img class="winner-img_player" [src]="winner.image | avatarImage" alt="fotoPlayer">
+    <p class="winner-text">{{'nameWinner' | transloco}} <span class="winner-text_name">{{winner.nickName}}</span></p>
     <app-loader-time [typeLoading]="'endGame'"></app-loader-time>
 </div>

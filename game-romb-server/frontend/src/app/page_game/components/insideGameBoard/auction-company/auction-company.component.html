@@ -15,8 +15,7 @@
                 <span class="auction-info-text auction-info-text_value">${{infoAuction.currentPrice}}</span>
             </li>
             <li class="auction-info-text">{{'currentWinner' | transloco}}
-                <span class="auction-info-text auction-info-text_value">
-                    {{infoAuction.currentPlayer ? infoAuction.currentPlayer : 'noWinner' | transloco}}</span>
+                <span class="auction-info-text auction-info-text_value">{{winner | transloco}}</span>
             </li>
         </ul>
         <img class="auction-img" [src]="gameCell?.nameCell | imgAssets" alt="nameInfo">

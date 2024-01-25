@@ -1,22 +1,20 @@
 <div class="info-player-container">
-    <div class="info-player" [ngClass]="{'info-player_turn': (playerTurnId$ | async) === player.id}">
+    <div class="info-player" [ngClass]="{'info-player_turn': playerTurnId  === player.id}">
         <div class="info-player_gradient">
             <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
             <p *ngIf="player.bankrupt; else elseBlock" class="info-player_bankrupt" [style.color]="player.color"
                 [style.border-color]="player.color">{{'bankrot' | transloco}}</p>
             <ng-template #elseBlock>
-                <ol>
+                <ul>
                     <li class="info-player_title">
                         <span class="status-player" [ngClass]="{'status-player_online': player.online}"></span>
                         <span class="info-player_text info-player_text_name">{{player.nickName}} </span>
                     </li>
-                    <li class="info-player_text">{{'total' | transloco}}: <app-info-player-balanse
-                            [prevValue]="prevTotal" [currValue]="player.total"></app-info-player-balanse> </li>
-                    <li class="info-player_text">{{'capital' | transloco}}: <app-info-player-balanse
-                            [prevValue]="prevCapital" [currValue]="player.capital"></app-info-player-balanse> </li>
-                    </ol>
+                    <li *ngFor="let value of moneys" class="info-player_text">{{value | transloco}}:
+                        <app-info-player-balanse [valueActual]="player[value]"></app-info-player-balanse>
+                    </li>
+                </ul>
             </ng-template>
-
         </div>
     </div>
 </div>

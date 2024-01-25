@@ -20,7 +20,10 @@ export class ModalComponent implements OnDestroy {
   modal$ = this.store.select(selectModal);
   subscription$: Subscription;
 
-  constructor(private readonly store: Store<AppStore>, private webSocketController: WebSocketController, private router: Router) { }
+  constructor(
+    private readonly store: Store<AppStore>,
+    private webSocketController: WebSocketController,
+    private router: Router) { }
 
   closeModal(): void {
     this.subscription$ = this.modal$.subscribe((modal) => {

@@ -5,7 +5,7 @@
         <p class="info-cell-text info-cell-title">
             {{('infoCellTurnTitle' | transloco)}} {{cell.nameCell | uppercase}} </p>
         <div class="info-desc-container">
-            <div [ngSwitch]="cell.type" [style.width]="'100%'">
+            <div *ngIf="gameRoom.infoCellTurn as infoCellTurn" [ngSwitch]="cell.type" [style.width]="'100%'">
                 <app-cell-tax *ngSwitchCase="'tax'" [infoCellTurn]="infoCellTurn"></app-cell-tax>
                 <app-cell-profit *ngSwitchCase="'profit'" [infoCellTurn]="infoCellTurn"></app-cell-profit>
                 <app-cell-loss *ngSwitchCase="'loss'" [infoCellTurn]="infoCellTurn"></app-cell-loss>
@@ -14,12 +14,12 @@
             </div>
             <div class="info-cell-buttons">
                 <app-button-standart *ngFor="let button of this.buttonsResult" [button]="button"
-                    [ngClass]="{'button__disable': (button.action === 'payButton' && (isPay() | async))}">
+                    [ngClass]="{'button__disable': (button.action === 'payButton' && isPay())}">
                 </app-button-standart>
             </div>
         </div>
-        <div class="bankrupt-fon" *ngIf="gamePlayer$ | async as player">
-            <p *ngIf="player.bankrupt" class="bankrupt-fon-text" [style.color]="player.color">
+        <div class="bankrupt-fon" *ngIf="gamePlayer">
+            <p *ngIf="gamePlayer.bankrupt" class="bankrupt-fon-text" [style.color]="gamePlayer.color">
                 {{'bankrot' | transloco}}
             </p>
         </div>

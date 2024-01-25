@@ -1,4 +1,4 @@
-<form class="container-modal_switch" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<form class="container-modal_switch form-container" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <app-input-material *ngFor="let option of inputForm" [parentForm]="registerForm"
         [optionForm]="option"></app-input-material>
     <app-button-standart [button]="textButton"></app-button-standart>

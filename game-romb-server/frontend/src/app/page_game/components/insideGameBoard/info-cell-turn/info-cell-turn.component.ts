@@ -1,12 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, Input } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable, map } from 'rxjs';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { gameCell, infoCellButtons, infoCellTurn } from 'src/app/types';
+import { fullPlayer, gameCell, infoCellButtons } from 'src/app/types';
 import { ButtonStandart } from 'src/app/types/components';
-import { AppStore, gameRoom } from 'src/app/types/state';
-import { selectGamePlayer } from 'src/store/selectors';
+import { gameRoom } from 'src/app/types/state';
 
 const buttons: ButtonStandart[] = [
   { action: ACTIONS_BUTTON.PAY, width: '13vw', height: '6vh' },
@@ -34,25 +31,19 @@ const buttons: ButtonStandart[] = [
 export class InfoCellTurnComponent implements OnInit {
 
   @Input() gameRoom: gameRoom;
+  @Input() gamePlayer: fullPlayer;
   buttonsResult: ButtonStandart[] = [];
-  infoCellTurn: infoCellTurn | undefined;
-  gamePlayer$ = this.store.select(selectGamePlayer);
   cell: gameCell;
-
-  constructor(private store: Store<AppStore>) { }
 
   ngOnInit(): void {
     if (this.gameRoom.infoCellTurn) {
-      this.infoCellTurn = this.gameRoom.infoCellTurn;
-      this.buttonsResult = this.updateButtons(this.infoCellTurn.buttons);
+      this.buttonsResult = this.updateButtons(this.gameRoom.infoCellTurn.buttons);
       this.cell = this.gameRoom.board[this.gameRoom.infoCellTurn.indexCompany];
     }
   }
 
-  isPay(): Observable<boolean> {
-    return this.gamePlayer$.pipe(
-      map((fullPlayer) => Number(fullPlayer?.total) < Number(this.infoCellTurn?.value))
-    )
+  isPay(): boolean {
+    return this.gamePlayer.total < Number(this.gameRoom.infoCellTurn?.value)
   }
 
   private updateButtons(type: infoCellButtons): ButtonStandart[] {

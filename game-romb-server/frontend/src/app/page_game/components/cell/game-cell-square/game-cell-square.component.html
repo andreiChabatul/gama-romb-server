@@ -1,6 +1,5 @@
 <div class="game-cell-square-container" [ngClass]="{
-    'game-cell-square-container__gorizontal': gameCell.location.cellDirections === 'left' || gameCell.location.cellDirections === 'right'
-    }">
+    'game-cell-square-container__gorizontal': ['left','right'].includes(gameCell.location.cellDirections)}">
     <img class="game-cell-square_img" [src]="gameCell.nameCell | imgAssets" alt="empty cell">
     <p class="game-cell-square_text">{{gameCell.nameCell | transloco}}</p>
 </div>

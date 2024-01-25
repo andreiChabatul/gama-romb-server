@@ -8,6 +8,6 @@ import { infoCellTurn } from 'src/app/types';
 })
 export class CellProfitComponent {
 
-  @Input() infoCellTurn: infoCellTurn | undefined | null;
+  @Input() infoCellTurn: infoCellTurn;
 
 }

@@ -20,6 +20,7 @@ import { AnonimAuthComponent } from './components/anonim-auth/anonim-auth.compon
 import { AvatarImagePipe } from './pipe/avatar.pipe';
 import { AudioServices } from './services/audio.services';
 import { VolumeImagePipe } from './pipe/volume.pipe';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { VolumeImagePipe } from './pipe/volume.pipe';
         YandexAuthComponent,
         AnonimAuthComponent,
         AvatarImagePipe,
-        VolumeImagePipe
+        VolumeImagePipe,
+        HeaderComponent
     ],
     imports: [
         CommonModule, MaterialsModule, TranslocoRootModule
@@ -60,7 +62,8 @@ import { VolumeImagePipe } from './pipe/volume.pipe';
         GoogleAuthComponent,
         YandexAuthComponent,
         AnonimAuthComponent,
-        AvatarImagePipe
+        AvatarImagePipe,
+        HeaderComponent
     ],
     providers: [ButtonControllerService, AudioServices],
     bootstrap: []
