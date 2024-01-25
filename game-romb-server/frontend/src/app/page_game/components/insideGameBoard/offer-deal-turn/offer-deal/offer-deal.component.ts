@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ACTIONS_BUTTON, EACTION_WEBSOCKET } from 'src/app/const/enum';
 import { offerInfo, gameCell, offerDealInfo, dealPerson, fullPlayer } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 
@@ -18,9 +18,9 @@ export class OfferDealComponent implements OnInit {
   _isAwaitSoluton: boolean;
   _userIdReceiver: string = '';
 
-  buttonOffer: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.SEND_DEAL, width: '12vw', height: '5vh', show: false },
-    { action: ACTIONS_BUTTON.CANSEL_DEAL, width: '12vw', height: '5vh' }];
+  buttonOffer: Button[] = [
+    { action: ACTIONS_BUTTON.SEND_DEAL, width: '15vw' },
+    { action: ACTIONS_BUTTON.CANSEL_DEAL, width: '15vw' }];
 
   constructor(private webSocketController: WebSocketController) {
     this._isAwaitSoluton = true;
@@ -33,7 +33,6 @@ export class OfferDealComponent implements OnInit {
   selectPlayer(userId: string): void {
     this.calcBalanse();
     this._userIdReceiver = userId;
-    this.buttonOffer[0] = { ...this.buttonOffer[0], show: this._userIdReceiver };
   }
 
   calcBalanse(): number {

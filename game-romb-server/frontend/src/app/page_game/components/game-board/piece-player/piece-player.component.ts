@@ -81,7 +81,7 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
     this.isCircle = true;
     for (const propName in changes) {
       if (propName === 'cellPosition') {
-        this.cellPositionChange(changes[propName].previousValue)
+        this.cellPositionChange(changes[propName].previousValue || 0);
       }
     }
   }
@@ -98,18 +98,12 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
 
   animEndX(): void {
     this.moveX = '';
-    (this.coorX === coorEndX && this.coorY === coorInitY) ||
-      (this.coorX === coorInitX && this.coorY === coorEndY)
-      ? this._rotate = 'deg90'
-      : '';
+    if ((this.endX() && this.startY()) || (this.startX() && this.endY())) this._rotate = 'deg90';
   }
 
   animEndY(): void {
     this.moveY = '';
-    (this.coorY === coorEndY && this.coorX === coorEndX) ||
-      (this.coorX === coorInitX && this.coorY === coorInitY)
-      ? this._rotate = 'deg0'
-      : '';
+    if ((this.endY() && this.endX()) || (this.startX() && this.startY())) this._rotate = 'deg0';
   }
 
   animEndText(): void {
@@ -117,23 +111,23 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
   }
 
   animRotateEnd(): void {
-    this._animText = (this.coorX === coorInitX && this.coorY === coorInitY && this.isCircle) ? 'on' : 'off';
+    this._animText = (this.startX() && this.startY() && this.isCircle) ? 'on' : 'off';
     this.step();
   }
 
   step(): void {
     if (!this.prisonPlayer) {
       this.audioServices.playAudioSpec('pieceMove');
-      if (this.coorX < coorEndX && this.coorY === coorInitY) {
+      if (this.coorX < coorEndX && this.startY()) {
         this.moveRight();
       }
-      else if (this.coorX === coorEndX && this.coorY < coorEndY) {
+      else if (this.endX() && this.coorY < coorEndY) {
         this.moveDown();
       }
-      else if (this.coorX > coorInitX && this.coorY === coorEndY) {
+      else if (this.coorX > coorInitX && this.endY()) {
         this.moveLeft();
       }
-      else if (this.coorX === coorInitX && this.coorY > coorInitY) {
+      else if (this.startX() && this.coorY > coorInitY) {
         this.moveTop();
       }
     }
@@ -142,7 +136,7 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
   moveRight(): void {
     while (this.changePosition > 0 && this.coorX !== coorEndX) {
       this.changePosition -= 1;
-      (this.coorX === coorInitX) ? this.coorX += stepX / 2 : '';
+      this.startX() ? this.coorX += stepX / 2 : '';
       const newCoorX = this.coorX + stepX;
       ((newCoorX + coorInitX) < coorEndX)
         ? this.coorX = newCoorX
@@ -154,7 +148,7 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
   moveLeft(): void {
     while (this.changePosition > 0 && this.coorX !== coorInitX) {
       this.changePosition -= 1;
-      (this.coorX === coorEndX) ? this.coorX -= stepX / 2 : '';
+      this.endX() ? this.coorX -= stepX / 2 : '';
       const newCoorX = this.coorX - stepX;
       ((newCoorX - (stepX / 2)) > coorInitX)
         ? this.coorX = newCoorX
@@ -166,7 +160,7 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
   moveDown(): void {
     while (this.changePosition > 0 && this.coorY !== coorEndY) {
       this.changePosition -= 1;
-      (this.coorY === coorInitY) ? this.coorY += stepY / 2 : '';
+      this.startY() ? this.coorY += stepY / 2 : '';
       const newCoorY = this.coorY + stepY;
       ((newCoorY + (stepY / 2)) < coorEndY)
         ? this.coorY = newCoorY
@@ -178,13 +172,29 @@ export class PiecePlayerComponent implements OnInit, OnChanges {
   moveTop(): void {
     while (this.changePosition > 0 && this.coorY !== coorInitY) {
       this.changePosition -= 1;
-      (this.coorY === coorEndY) ? this.coorY -= stepY / 2 : '';
+      this.endY() ? this.coorY -= stepY / 2 : '';
       const newCoorY = this.coorY - stepY;
       (newCoorY - (stepY / 2) > coorInitY)
         ? this.coorY = newCoorY
         : this.coorY = coorInitY;
     }
     this.moveY = 'Y';
+  }
+
+  startY(): boolean {
+    return this.coorY === coorInitY;
+  }
+
+  endY(): boolean {
+    return this.coorY === coorEndY;
+  }
+
+  startX(): boolean {
+    return this.coorX === coorInitX;
+  }
+
+  endX(): boolean {
+    return this.coorX === coorEndX;
   }
 
 }

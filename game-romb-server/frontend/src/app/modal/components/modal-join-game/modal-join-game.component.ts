@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { ACTIONS_BUTTON, EACTION_WEBSOCKET } from 'src/app/const/enum';
-import { ButtonStandart, InputTextFormOption } from 'src/app/types/components';
+import { Button, InputTextFormOption } from 'src/app/types/components';
 import { AppStore } from 'src/app/types/state';
 import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 import { closeModal } from 'src/store/actions/modalActions';
@@ -21,7 +21,7 @@ export class ModalJoinGameComponent implements OnInit, OnDestroy {
   modal$ = this.store.select(selectModal);
   subscription$: Subscription;
   idRoomJoin: string;
-  joinButton: ButtonStandart = { action: ACTIONS_BUTTON.JOIN_ITEM_GAME, height: '4vw', width: '18vw' };
+  joinButton: Button = { action: ACTIONS_BUTTON.JOIN_ITEM_GAME, width: '18vw' };
 
   constructor(private fb: FormBuilder, private webSocketController: WebSocketController, private store: Store<AppStore>) {
     this.createForm();

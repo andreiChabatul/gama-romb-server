@@ -1,11 +1,15 @@
+@import "./../../../../scss/default-styles";
+@import "./../../../../scss/color-styles";
+
 .container-button_font {
     border-radius: 1.7vw;
 }
 
 .button-font {
-    font-family: 'Tektur', cursive;
-    font-weight: 600;
-    font-size: 1em;
-    transform: scale(.3);
+    @include font-default;
+    font-size: 1vw;
     white-space: nowrap;
+    color: $light_blue;
+    margin: 4%;
+    font-weight: 600;
 }

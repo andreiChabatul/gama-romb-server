@@ -13,12 +13,12 @@ export class InfoPlayerBalanseComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     let previousValue = 0;
-    let currentValue = Number(this.valueActual);
+    const currentValue = Number(this.valueActual);
 
     for (const propName in changes) {
       const chng = changes[propName];
       previousValue = chng.previousValue || 0;
-    };
+    }
 
     const difference = currentValue - previousValue;
     this.value = previousValue;

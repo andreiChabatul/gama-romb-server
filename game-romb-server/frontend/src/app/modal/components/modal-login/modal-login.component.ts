@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { ButtonStandart, InputTextFormOption } from 'src/app/types/components';
+import { Button, InputTextFormOption } from 'src/app/types/components';
 import { AppStore } from 'src/app/types/state';
 import { OpenModal } from 'src/store/actions/modalActions';
 
@@ -18,7 +18,7 @@ export class ModalLoginComponent {
     { nameForm: 'password', type: 'password' }
   ]
   loginForm: FormGroup;
-  textButton: ButtonStandart = { action: ACTIONS_BUTTON.LOGIN, height: '4vw', width: '17vw' };
+  textButton: Button = { action: ACTIONS_BUTTON.LOGIN, width: '17vw' };
 
   constructor(private fb: FormBuilder, private store: Store<AppStore>, private authService: AuthService) {
     this.createForm();

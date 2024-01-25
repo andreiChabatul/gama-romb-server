@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subscription } from 'rxjs';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { ButtonStandart, InputTextFormOption } from 'src/app/types/components';
+import { Button, InputTextFormOption } from 'src/app/types/components';
 import { AppStore, infoUser } from 'src/app/types/state';
 import { UsersService } from 'src/app/users/users.service';
 import { selectInfoUser } from 'src/store/selectors';
@@ -22,7 +22,7 @@ export class ModalEditProfileComponent implements OnInit, OnDestroy {
   subscriptionInput$: Subscription;
   editProfile: FormGroup;
   inputForm: InputTextFormOption[];
-  saveButton: ButtonStandart = { action: ACTIONS_BUTTON.EDIT_PROFILE, height: '3.5vw', width: '20vw' };
+  saveButton: Button = { action: ACTIONS_BUTTON.EDIT_PROFILE, width: '20vw' };
   avatar: string;
 
   constructor(private fb: FormBuilder, private store: Store<AppStore>, private userService: UsersService) {

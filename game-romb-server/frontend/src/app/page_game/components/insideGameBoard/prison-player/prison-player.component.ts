@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DEBT_PRISON } from 'src/app/const';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { fullPlayer } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 
 @Component({
   selector: 'app-prison-player',
@@ -13,11 +13,11 @@ export class PrisonPlayerComponent {
 
   @Input() gamePlayer: fullPlayer;
 
-  buttons: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.DICE_ROLL, width: '12vw', height: '6vh' },
-    { action: ACTIONS_BUTTON.PAY, width: '12vw', height: '6vh' },
-    { action: ACTIONS_BUTTON.SELL_STOCK, width: '12vw', height: '6vh' },
-    { action: ACTIONS_BUTTON.MORTGAGE, width: '12vw', height: '6vh' }
+  buttons: Button[] = [
+    { action: ACTIONS_BUTTON.DICE_ROLL, width: '13vw' },
+    { action: ACTIONS_BUTTON.PAY, width: '13vw' },
+    { action: ACTIONS_BUTTON.SELL_STOCK, width: '13vw' },
+    { action: ACTIONS_BUTTON.MORTGAGE, width: '13vw' }
   ]
 
   checkMoney(): boolean {
@@ -25,7 +25,7 @@ export class PrisonPlayerComponent {
   }
 
   checkDiceRool(): boolean {
-    return !Boolean(this.gamePlayer.prison - 1);
+    return !(this.gamePlayer.prison - 1);
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 
 @Component({
   selector: 'app-modal-exit-game',
@@ -9,6 +9,6 @@ import { ButtonStandart } from 'src/app/types/components';
 })
 export class ModalExitGameComponent {
 
-  leaveGameButton: ButtonStandart = { action: ACTIONS_BUTTON.LEAVE_GAME, width: '17vw', height: '3vw' };
+  leaveGameButton: Button = { action: ACTIONS_BUTTON.LEAVE_GAME, width: '17vw' };
 
 }

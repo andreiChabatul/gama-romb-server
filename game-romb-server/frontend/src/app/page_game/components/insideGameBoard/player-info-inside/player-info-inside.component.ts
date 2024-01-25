@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { fullPlayer } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 
 @Component({
@@ -14,7 +14,7 @@ export class PlayerInfoInsideComponent {
   @Input() gameRoom: gameRoom;
   @Input() gamePlayer: fullPlayer;
 
-  leaveGameButton: ButtonStandart = { action: ACTIONS_BUTTON.LEAVE_GAME, width: '15vw', height: '3vw' };
+  leaveGameButton: Button = { action: ACTIONS_BUTTON.LEAVE_GAME, width: '15vw' };
 
   get amountCompany(): number {
     return this.gameRoom.board.reduce((res, cell) =>

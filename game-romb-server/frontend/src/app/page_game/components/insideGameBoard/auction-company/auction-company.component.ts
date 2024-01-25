@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { gameCell, infoAuction } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 
 @Component({
@@ -16,9 +16,9 @@ export class AuctionCompanyComponent implements OnChanges {
   gameCell: gameCell | null;
   winner: string;
   rentCompany: number;
-  buttonsAuction: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.AUCTION_STEP, width: '14vw', height: '5vh' },
-    { action: ACTIONS_BUTTON.AUCTION_LEAVE, width: '14vw', height: '5vh' },
+  buttonsAuction: Button[] = [
+    { action: ACTIONS_BUTTON.AUCTION_STEP, width: '14vw' },
+    { action: ACTIONS_BUTTON.AUCTION_LEAVE, width: '14vw' },
   ];
 
   ngOnChanges(): void {

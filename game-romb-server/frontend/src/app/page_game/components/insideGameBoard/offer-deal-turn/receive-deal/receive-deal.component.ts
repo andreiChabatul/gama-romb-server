@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { AudioServices } from 'src/app/shared/services/audio.services';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 
 @Component({
@@ -12,9 +12,9 @@ import { gameRoom } from 'src/app/types/state';
 export class ReceiveDealComponent implements OnInit {
 
   @Input() gameRoom: gameRoom;
-  buttonDeal: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.ACCEPT_DEAL, width: '12vw', height: '5vh' },
-    { action: ACTIONS_BUTTON.REFUSE_DEAL, width: '12vw', height: '5vh' }];
+  buttonDeal: Button[] = [
+    { action: ACTIONS_BUTTON.ACCEPT_DEAL, width: '13vw' },
+    { action: ACTIONS_BUTTON.REFUSE_DEAL, width: '13vw' }];
 
   constructor(private audioServices: AudioServices) { }
 

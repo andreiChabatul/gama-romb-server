@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { ACTIONS_BUTTON, EACTION_WEBSOCKET } from 'src/app/const/enum';
 import { infoRoom } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { AppStore } from 'src/app/types/state';
 import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 import { selectReconnectRoom } from 'src/store/selectors';
@@ -15,9 +15,9 @@ import { selectReconnectRoom } from 'src/store/selectors';
 })
 export class ReconnectModalComponent implements OnInit, OnDestroy {
 
-  buttons: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.RECONNECT_GAME, width: '12vw', height: '6vh' },
-    { action: ACTIONS_BUTTON.LEAVE_GAME, width: '12vw', height: '6vh' }
+  buttons: Button[] = [
+    { action: ACTIONS_BUTTON.RECONNECT_GAME, width: '12vw' },
+    { action: ACTIONS_BUTTON.LEAVE_GAME, width: '12vw' }
   ];
   isReconnect: boolean;
   room: infoRoom | undefined;

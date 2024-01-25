@@ -2,17 +2,17 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, Input } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { fullPlayer, gameCell, infoCellButtons } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 
-const buttons: ButtonStandart[] = [
-  { action: ACTIONS_BUTTON.PAY, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.SELL_STOCK, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.MORTGAGE, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.BUY_COMPANY, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.START_AUCTION, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.LEAVE_GAME, width: '13vw', height: '6vh' },
-  { action: ACTIONS_BUTTON.STAY_GAME, width: '13vw', height: '6vh' },
+const buttons: Button[] = [
+  { action: ACTIONS_BUTTON.PAY, width: '13vw' },
+  { action: ACTIONS_BUTTON.SELL_STOCK, width: '13vw' },
+  { action: ACTIONS_BUTTON.MORTGAGE, width: '13vw' },
+  { action: ACTIONS_BUTTON.BUY_COMPANY, width: '13vw' },
+  { action: ACTIONS_BUTTON.START_AUCTION, width: '13vw' },
+  { action: ACTIONS_BUTTON.LEAVE_GAME, width: '13vw' },
+  { action: ACTIONS_BUTTON.STAY_GAME, width: '13vw' },
 ]
 
 @Component({
@@ -32,7 +32,7 @@ export class InfoCellTurnComponent implements OnInit {
 
   @Input() gameRoom: gameRoom;
   @Input() gamePlayer: fullPlayer;
-  buttonsResult: ButtonStandart[] = [];
+  buttonsResult: Button[] = [];
   cell: gameCell;
 
   ngOnInit(): void {
@@ -46,7 +46,7 @@ export class InfoCellTurnComponent implements OnInit {
     return this.gamePlayer.total < Number(this.gameRoom.infoCellTurn?.value)
   }
 
-  private updateButtons(type: infoCellButtons): ButtonStandart[] {
+  private updateButtons(type: infoCellButtons): Button[] {
     switch (type) {
       case 'none':
         return [];

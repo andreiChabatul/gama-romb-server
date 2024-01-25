@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { ButtonStandart, InputTextFormOption } from 'src/app/types/components';
+import { Button, InputTextFormOption } from 'src/app/types/components';
 import { UsersService } from 'src/app/users/users.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { UsersService } from 'src/app/users/users.service';
 })
 export class ModalDeleteProfileComponent {
 
-  deleteButton: ButtonStandart = { action: ACTIONS_BUTTON.DELETE_PROFILE, height: '3.5vw', width: '20vw' };
+  deleteButton: Button = { action: ACTIONS_BUTTON.DELETE_PROFILE, width: '20vw' };
   deleteProfile: FormGroup;
   inputForm: InputTextFormOption[] = [
     { nameForm: 'nickname', type: 'text' },

@@ -57,8 +57,7 @@ export class PlayerDefault implements PlayerDefaultI {
     let resultPosition = this.cellPosition + value;
     if (resultPosition >= MAX_INDEX_CELL_BOARD) {
       this.addTotal(CIRCLE_REWARD);
-      // this.chat.addMessage(`${this._name} receives ${CIRCLE_REWARD} for completing a circle`);
-      resultPosition = resultPosition - MAX_INDEX_CELL_BOARD;
+      resultPosition -= MAX_INDEX_CELL_BOARD;
     }
     return resultPosition;
   }
@@ -77,7 +76,7 @@ export class PlayerDefault implements PlayerDefaultI {
       color: this._color,
       total: this._total,
       capital: this.capital,
-      cellPosition: this.cellPosition,
+      cellPosition: this.position,
       prison: this.prison,
       bankrupt: this.bankrupt,
       online: this._isOnline,

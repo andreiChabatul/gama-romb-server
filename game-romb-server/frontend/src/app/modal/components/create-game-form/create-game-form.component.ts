@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ACTIONS_BUTTON, EACTION_WEBSOCKET } from 'src/app/const/enum';
 import { RoomsService } from 'src/app/rooms/rooms.services';
-import { ButtonStandart, InputTextFormOption, SelectFormOption } from 'src/app/types/components';
+import { Button, InputTextFormOption, SelectFormOption } from 'src/app/types/components';
 import { AppStore } from 'src/app/types/state';
 import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 import { AddModalInfo, closeModal } from 'src/store/actions/modalActions';
@@ -51,7 +51,7 @@ export class CreateGameFormComponent implements OnInit {
     }
   ]
   createGame: FormGroup;
-  textButton: ButtonStandart = { action: ACTIONS_BUTTON.CREATE_GAME, height: '4vw', width: '18vw' };
+  textButton: Button = { action: ACTIONS_BUTTON.CREATE_GAME, width: '18vw' };
 
   constructor(private fb: FormBuilder,
     private webSocketController: WebSocketController,

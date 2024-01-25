@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ACTIONS_BUTTON } from '../const/enum';
-import { ButtonStandart } from '../types/components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { Button } from '../types/components';
 
 @Component({
   selector: 'app-main-page',
@@ -16,9 +16,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private router: Router) { }
 
-  buttons: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.NEW_GAME, width: '18vw', height: '4vw' },
-    { action: ACTIONS_BUTTON.JOIN_GAME, width: '18vw', height: '4vw' },
+  buttons: Button[] = [
+    { action: ACTIONS_BUTTON.NEW_GAME, width: '18vw' },
+    { action: ACTIONS_BUTTON.JOIN_GAME, width: '18vw' }
   ];
 
   ngOnInit(): void {

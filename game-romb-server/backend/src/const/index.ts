@@ -7,7 +7,7 @@ export const VALUE_CELL = [
 ];
 export const CIRCLE_REWARD = 200000;
 export const INIT_TOTAL = 1500000;
-export const TIME_DISCONNECT = 5000;
+export const TIME_DISCONNECT = 120000;
 export const GOOGLE_AUTH_INFO =
   'https://www.googleapis.com/oauth2/v3/userinfo?access_token=';
 export const YANDEX_AUTH_INFO =

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { controlCompanyState } from 'src/app/types/state';
 
 @Component({
@@ -11,6 +11,6 @@ import { controlCompanyState } from 'src/app/types/state';
 export class ControlCompanyComponent {
 
   @Input() state: controlCompanyState;
-  buttonFinish: ButtonStandart = { action: ACTIONS_BUTTON.END_CONTROL, width: '15vw', height: '6vh' };
+  buttonFinish: Button = { action: ACTIONS_BUTTON.END_CONTROL, width: '15vw' };
 
 }

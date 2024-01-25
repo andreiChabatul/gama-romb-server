@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ACTIONS_BUTTON } from 'src/app/const/enum';
 import { fullPlayer } from 'src/app/types';
-import { ButtonStandart } from 'src/app/types/components';
+import { Button } from 'src/app/types/components';
 import { gameRoom } from 'src/app/types/state';
 
 
@@ -14,19 +14,21 @@ export class StartTurnButtonsComponent implements OnInit {
 
   @Input() gameRoom: gameRoom;
   @Input() gamePlayer: fullPlayer;
+  isBuyStock: boolean;
+  isBuyOut: boolean;
 
-  buttons: ButtonStandart[] = [
-    { action: ACTIONS_BUTTON.DICE_ROLL, width: '18vw', height: '7vh' },
-    { action: ACTIONS_BUTTON.OFFER_DEAL, width: '18vw', height: '7vh' },
-    { action: ACTIONS_BUTTON.BUY_STOCK, width: '18vw', height: '7vh', show: false },
-    { action: ACTIONS_BUTTON.BUY_OUT_COMPANY, width: '18vw', height: '7vh', show: false },
+  buttons: Button[] = [
+    { action: ACTIONS_BUTTON.DICE_ROLL, width: '17vw' },
+    { action: ACTIONS_BUTTON.OFFER_DEAL, width: '17vw' },
+    { action: ACTIONS_BUTTON.BUY_STOCK, width: '17vw' },
+    { action: ACTIONS_BUTTON.BUY_OUT_COMPANY, width: '17vw' },
   ]
 
   ngOnInit(): void {
     this.gameRoom.board.forEach((cell) => {
       if (cell.company?.owned === this.gamePlayer.id) {
-        cell.company?.isMonopoly ? this.buttons[2].show = true : '';
-        cell.company?.isPledge ? this.buttons[3].show = true : '';
+        cell.company?.isMonopoly ? this.isBuyStock = true : '';
+        cell.company?.isPledge ? this.isBuyOut = true : '';
       }
     })
   }

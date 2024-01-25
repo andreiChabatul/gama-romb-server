@@ -4,7 +4,6 @@ import { gameRoom } from "src/app/types/state";
 import { EMPTY_GAME_ROOM } from "src/app/const";
 import { immerOn } from 'ngrx-immer/store';
 import { keyUpdatePlayer } from "src/app/types";
-import { state } from "@angular/animations";
 
 const initalState: gameRoom = EMPTY_GAME_ROOM;
 
