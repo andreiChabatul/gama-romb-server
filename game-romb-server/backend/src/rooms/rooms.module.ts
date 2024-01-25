@@ -4,9 +4,9 @@ import { UserModule } from 'src/user/user.module';
 import { RoomsController } from './rooms.controller';
 
 @Module({
-    controllers: [RoomsController],
-    providers: [RoomsService],
-    exports: [RoomsService],
-    imports: [UserModule]
+  controllers: [RoomsController],
+  providers: [RoomsService],
+  exports: [RoomsService],
+  imports: [UserModule],
 })
-export class RoomsModule { }
+export class RoomsModule {}

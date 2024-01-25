@@ -1,19 +1,18 @@
-import { PlayerDefaultI } from "../player";
+import { PlayerDefaultI } from '../player';
 
 export interface StoragePlayersI {
-    addPlayer(idRoom: string, idUser: string, player: PlayerDefaultI): void;
-    getPlayer(idRoom: string, idUser: string): PlayerDefaultI;
-    deletePlayer(idRoom: string, idUser: string): void;
-    deleteRoom(idRoom: string): void;
-    getPlayersActive(idRoom: string): string[];
-    getPlayersRoom(idRoom: string): string[];
+  addPlayer(idRoom: string, idUser: string, player: PlayerDefaultI): void;
+  getPlayer(idRoom: string, idUser: string): PlayerDefaultI;
+  deletePlayer(idRoom: string, idUser: string): void;
+  deleteRoom(idRoom: string): void;
+  getPlayersActive(idRoom: string): string[];
+  getPlayersRoom(idRoom: string): string[];
 }
 
-
 export type storagePlayers = {
-    [idRoom: string]: roomPlayers,
+  [idRoom: string]: roomPlayers;
 };
 
 type roomPlayers = {
-    [idUser: string]: PlayerDefaultI
+  [idUser: string]: PlayerDefaultI;
 };

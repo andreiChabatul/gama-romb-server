@@ -13,8 +13,12 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   providers: [AuthService, ...STRATIGIES, ...GUARDS],
   controllers: [AuthController],
-  imports: [PassportModule, UserModule, PrismaModule, HttpModule,
-    JwtModule.registerAsync(options())
-  ]
+  imports: [
+    PassportModule,
+    UserModule,
+    PrismaModule,
+    HttpModule,
+    JwtModule.registerAsync(options()),
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

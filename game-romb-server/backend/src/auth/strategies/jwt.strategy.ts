@@ -7,19 +7,22 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private configServise: ConfigService, private userServise: UserService) {
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: configServise.get('JWT_SECRET')
-        });
-    }
+  constructor(
+    private configServise: ConfigService,
+    private userServise: UserService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: configServise.get('JWT_SECRET'),
+    });
+  }
 
-    async validate(payload: JwtPayload) {
-        const user = await this.userServise.findOne(payload.id);
-        if (!user) {
-            throw new UnauthorizedException();
-        };
-        return payload;
+  async validate(payload: JwtPayload) {
+    const user = await this.userServise.findOne(payload.id);
+    if (!user) {
+      throw new UnauthorizedException();
     }
+    return payload;
+  }
 }

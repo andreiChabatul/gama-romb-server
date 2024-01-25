@@ -4,14 +4,13 @@ import { AppGatewayModule } from './app/app.gateway.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports:
-    [
-      AuthModule,
-      AppGatewayModule,
-      ConfigModule.forRoot({ isGlobal: true })
-    ],
+  imports: [
+    AuthModule,
+    AppGatewayModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+  ],
   controllers: [],
   providers: [],
-  exports: []
+  exports: [],
 })
-export class AppModule { }
+export class AppModule {}
