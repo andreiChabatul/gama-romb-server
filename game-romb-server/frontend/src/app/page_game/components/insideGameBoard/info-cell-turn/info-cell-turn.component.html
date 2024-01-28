@@ -1,27 +1,48 @@
-<mat-spinner *ngIf="!cell; else elseBlock" class="spinner-info-cell"></mat-spinner>
-<ng-template #elseBlock>
-    <div class="info-cell-container">
-        <img class="info-cell-img" [src]="cell.nameCell| imgAssets" alt="img info">
-        <p class="info-cell-text info-cell-title">
-            {{('infoCellTurnTitle' | transloco)}} {{cell.nameCell | uppercase}} </p>
-        <div class="info-desc-container">
-            <div *ngIf="gameRoom.infoCellTurn as infoCellTurn" [ngSwitch]="cell.type" [style.width]="'100%'">
-                <app-cell-tax *ngSwitchCase="'tax'" [infoCellTurn]="infoCellTurn"></app-cell-tax>
-                <app-cell-profit *ngSwitchCase="'profit'" [infoCellTurn]="infoCellTurn"></app-cell-profit>
-                <app-cell-loss *ngSwitchCase="'loss'" [infoCellTurn]="infoCellTurn"></app-cell-loss>
-                <app-cell-empty *ngSwitchCase="'empty'" [infoCellTurn]="infoCellTurn"></app-cell-empty>
-                <app-cell-company *ngSwitchCase="'company'" [infoCellTurn]="infoCellTurn"></app-cell-company>
-            </div>
-            <div class="info-cell-buttons">
-                <app-button-standart *ngFor="let button of this.buttonsResult" [button]="button"
-                    [ngClass]="{'button__disable': (button.action === 'payButton' && isPay())}">
-                </app-button-standart>
-            </div>
+@if (!cell) {
+  <mat-spinner class="spinner-info-cell"></mat-spinner>
+} @else {
+  <div class="info-cell-container">
+    <img class="info-cell-img" [src]="cell.nameCell| imgAssets" alt="img info">
+    <p class="info-cell-text info-cell-title">
+    {{('infoCellTurnTitle' | transloco)}} {{cell.nameCell | uppercase}} </p>
+    <div class="info-desc-container">
+      @if (gameRoom.infoCellTurn; as infoCellTurn) {
+        <div [style.width]="'100%'">
+          @switch (cell.type) {
+            @case ('tax') {
+              <app-cell-tax [infoCellTurn]="infoCellTurn"></app-cell-tax>
+            }
+            @case ('profit') {
+              <app-cell-profit [infoCellTurn]="infoCellTurn"></app-cell-profit>
+            }
+            @case ('loss') {
+              <app-cell-loss [infoCellTurn]="infoCellTurn"></app-cell-loss>
+            }
+            @case ('empty') {
+              <app-cell-empty [infoCellTurn]="infoCellTurn"></app-cell-empty>
+            }
+            @case ('company') {
+              <app-cell-company [infoCellTurn]="infoCellTurn"></app-cell-company>
+            }
+          }
         </div>
-        <div class="bankrupt-fon" *ngIf="gamePlayer">
-            <p *ngIf="gamePlayer.bankrupt" class="bankrupt-fon-text" [style.color]="gamePlayer.color">
-                {{'bankrot' | transloco}}
-            </p>
-        </div>
+      }
+      <div class="info-cell-buttons">
+        @for (button of this.buttonsResult; track button) {
+          <app-button-standart [button]="button"
+            [ngClass]="{'button__disable': (button.action === 'payButton' && isPay())}">
+          </app-button-standart>
+        }
+      </div>
     </div>
-</ng-template>
+    @if (gamePlayer) {
+      <div class="bankrupt-fon">
+        @if (gamePlayer.bankrupt) {
+          <p class="bankrupt-fon-text" [style.color]="gamePlayer.color">
+            {{'bankrot' | transloco}}
+          </p>
+        }
+      </div>
+    }
+  </div>
+}

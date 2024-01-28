@@ -1,66 +1,87 @@
-<div class="info-modal-container" *ngIf="gameCell | async as gameCell">
+@if (gameCell | async; as gameCell) {
+  <div class="info-modal-container">
     <div class="info-modal-title-container">
-        <img class="info-cell-img" [src]="gameCell.nameCell| imgAssets" alt="img info">
-        <p class="info-modal-text"> {{('modalInfoTitle' | transloco)}} {{gameCell.nameCell | uppercase}} </p>
+      <img class="info-cell-img" [src]="gameCell.nameCell| imgAssets" alt="img info">
+      <p class="info-modal-text"> {{('modalInfoTitle' | transloco)}} {{gameCell.nameCell | uppercase}} </p>
     </div>
     <p class="modal-info-description">{{(gameCell.company ? 'companyInfo' : gameCell.nameCell+ 'Info') | transloco}}</p>
-    <div class="company-info-container" *ngIf="gameCell.company as companyInfo">
+    @if (gameCell.company; as companyInfo) {
+      <div class="company-info-container">
         <div>
-            <p class="title-profitability">{{'infoCompany' | transloco}}</p>
-            <ul>
-                <li class="value-container">
-                    <span class="text-value-info text-value-desc">{{'priceCompany' | transloco}}</span>
-                    <span class="text-value-info">${{companyInfo.priceCompany}}</span>
-                </li>
-                <li class="value-container">
-                    <span class="text-value-info text-value-desc">{{'collateralCompany' | transloco}}</span>
-                    <span class="text-value-info">${{companyInfo.collateralCompany}}</span>
-                </li>
-                <li class="value-container">
-                    <span class="text-value-info text-value-desc">{{'buyBackCompany' | transloco}}</span>
-                    <span class="text-value-info">${{companyInfo.buyBackCompany}}</span>
-                </li>
-                <li class="value-container">
-                    <span class="text-value-info text-value-desc">{{'priceStock' | transloco}}</span>
-                    <span class="text-value-info">${{companyInfo.priceStock || '—'}}</span>
-                </li>
-            </ul>
+          <p class="title-profitability">{{'infoCompany' | transloco}}</p>
+          <ul>
+            <li class="value-container">
+              <span class="text-value-info text-value-desc">{{'priceCompany' | transloco}}</span>
+              <span class="text-value-info">${{companyInfo.priceCompany}}</span>
+            </li>
+            <li class="value-container">
+              <span class="text-value-info text-value-desc">{{'collateralCompany' | transloco}}</span>
+              <span class="text-value-info">${{companyInfo.collateralCompany}}</span>
+            </li>
+            <li class="value-container">
+              <span class="text-value-info text-value-desc">{{'buyBackCompany' | transloco}}</span>
+              <span class="text-value-info">${{companyInfo.buyBackCompany}}</span>
+            </li>
+            <li class="value-container">
+              <span class="text-value-info text-value-desc">{{'priceStock' | transloco}}</span>
+              <span class="text-value-info">${{companyInfo.priceStock || '—'}}</span>
+            </li>
+          </ul>
         </div>
         <div class="profitability-container">
-            <p class="title-profitability">{{'profitabilityCompany' | transloco}}</p>
+          <p class="title-profitability">{{'profitabilityCompany' | transloco}}</p>
+          @if (companyInfo.countryCompany === 'ukraine' || companyInfo.countryCompany === 'japan') {
             <ul
-                *ngIf="companyInfo.countryCompany === 'ukraine' || companyInfo.countryCompany === 'japan'; else elseCompany">
-                <li *ngFor="let value of companyInfo.rentCompanyInfo, index as i">
-                    <div class="value-container" *ngIf="i > 0">
-                        <div>
-                            <img *ngFor="let i of [].constructor(i)" class="img-assets-modal"
-                                [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
-                        </div>
-                        <span class="text-value-info">${{value}}</span>
+              >
+              @for (value of companyInfo.rentCompanyInfo; track value; let i = $index) {
+                <li>
+                  @if (i > 0) {
+                    <div class="value-container">
+                      <div>
+                        @for (i of [].constructor(i); track i) {
+                          <img class="img-assets-modal"
+                            [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
+                        }
+                      </div>
+                      <span class="text-value-info">${{value}}</span>
                     </div>
+                  }
                 </li>
+              }
             </ul>
-            <ng-template #elseCompany>
-                <ul>
-                    <li *ngFor="let value of companyInfo.rentCompanyInfo, index as i">
-                        <div class="value-container" *ngIf="i === 0">
-                            <span class="text-value-info text-value-desc">{{'basicRent' | transloco}}</span>
-                            <span class="text-value-info">${{value}}</span>
-                        </div>
-                        <div class="value-container" *ngIf="i === 1">
-                            <span class="text-value-info text-value-desc">{{'monopolyRent' | transloco}}</span>
-                            <span class="text-value-info">${{value}}</span>
-                        </div>
-                        <div class="value-container" *ngIf="i > 1">
-                            <div>
-                                <img *ngFor="let i of [].constructor(i - 1)" class="img-assets-modal"
-                                    [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
-                            </div>
-                            <span class="text-value-info">${{value}}</span>
-                        </div>
-                    </li>
-                </ul>
-            </ng-template>
+          } @else {
+            <ul>
+              @for (value of companyInfo.rentCompanyInfo; track value; let i = $index) {
+                <li>
+                  @if (i === 0) {
+                    <div class="value-container">
+                      <span class="text-value-info text-value-desc">{{'basicRent' | transloco}}</span>
+                      <span class="text-value-info">${{value}}</span>
+                    </div>
+                  }
+                  @if (i === 1) {
+                    <div class="value-container">
+                      <span class="text-value-info text-value-desc">{{'monopolyRent' | transloco}}</span>
+                      <span class="text-value-info">${{value}}</span>
+                    </div>
+                  }
+                  @if (i > 1) {
+                    <div class="value-container">
+                      <div>
+                        @for (i of [].constructor(i - 1); track i) {
+                          <img class="img-assets-modal"
+                            [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
+                        }
+                      </div>
+                      <span class="text-value-info">${{value}}</span>
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
+          }
         </div>
-    </div>
-</div>
+      </div>
+    }
+  </div>
+}

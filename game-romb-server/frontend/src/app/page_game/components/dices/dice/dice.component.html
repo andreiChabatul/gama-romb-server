@@ -1,5 +1,7 @@
 <div class="dice" class={{classShow}}>
-    <div class="dice-side" *ngFor="let index of indexs">
-        <app-dice-side [index]="index"></app-dice-side>
+  @for (index of indexs; track index) {
+    <div class="dice-side">
+      <app-dice-side [index]="index"></app-dice-side>
     </div>
+  }
 </div>

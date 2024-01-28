@@ -1,6 +1,8 @@
 <form class="container-modal_switch" [formGroup]="deleteProfile" (ngSubmit)="onSubmit()">
-    <p class="form-delete-desc">{{'deleteProfileDesc' |transloco}}</p>
-    <app-input-material *ngFor="let option of inputForm" [optionForm]="option"
-        [parentForm]="deleteProfile"></app-input-material>
-    <app-button-standart [button]="deleteButton"></app-button-standart>
+  <p class="form-delete-desc">{{'deleteProfileDesc' |transloco}}</p>
+  @for (option of inputForm; track option) {
+    <app-input-material [optionForm]="option"
+    [parentForm]="deleteProfile"></app-input-material>
+  }
+  <app-button-standart [button]="deleteButton"></app-button-standart>
 </form>

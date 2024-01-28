@@ -1,9 +1,23 @@
 <div>
-    <div *ngIf="index === 0 || index === 4 || index === 2" class="dot dot_center"></div>
-    <div *ngIf="!(index === 0)" class="dot dot_one"></div>
-    <div *ngIf="index === 5" class="dot dot_two"></div>
-    <div *ngIf="index === 3 || index === 4 || index === 5" class="dot dot_three"></div>
-    <div *ngIf="index === 3 || index === 4 || index === 5" class="dot dot_four"></div>
-    <div *ngIf="index === 5" class="dot dot_five"></div>
-    <div *ngIf="!(index === 0)" class="dot dot_six"></div>
+  @if (index === 0 || index === 4 || index === 2) {
+    <div class="dot dot_center"></div>
+  }
+  @if (!(index === 0)) {
+    <div class="dot dot_one"></div>
+  }
+  @if (index === 5) {
+    <div class="dot dot_two"></div>
+  }
+  @if (index === 3 || index === 4 || index === 5) {
+    <div class="dot dot_three"></div>
+  }
+  @if (index === 3 || index === 4 || index === 5) {
+    <div class="dot dot_four"></div>
+  }
+  @if (index === 5) {
+    <div class="dot dot_five"></div>
+  }
+  @if (!(index === 0)) {
+    <div class="dot dot_six"></div>
+  }
 </div>

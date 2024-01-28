@@ -1,30 +1,40 @@
-<div *ngIf="companyInfo" class="game-cell_content">
+@if (companyInfo) {
+  <div class="game-cell_content">
     <div appColorShadow [playerId]="companyInfo.owned" [directtion]="cellDirections" class="owned-shadow" [ngClass]="{
         'owned-shadow_left':cellDirections === 'left',
         'owned-shadow_right': cellDirections === 'right',
         'owned-shadow_bottom': cellDirections === 'bottom'}"></div>
-    <div *ngIf="companyInfo.isPledge" class="game-cell-container__grayscale">
+    @if (companyInfo.isPledge) {
+      <div class="game-cell-container__grayscale">
         <img class="game-cell-pledge_img" src="./assets/pledge.png" alt="pledgeImg">
-    </div>
-    <button *ngFor="let button of controlButtons" (click)="controlCompanyClick($event)" class="game-cell-control"
+      </div>
+    }
+    @for (button of controlButtons; track button) {
+      <button (click)="controlCompanyClick($event)" class="game-cell-control"
         [ngClass]="{'game-cell-control_active':button.show}">
-        {{controlCompany.state|transloco}}{{button.value}}</button>
+      {{controlCompany.state|transloco}}{{button.value}}</button>
+    }
     <div class="game-cell-company_container" [ngClass]="{
         'game-cell-company_container__gorizontalLeft': cellDirections === 'left',
         'game-cell-company_container__gorizontalRight': cellDirections === 'right',
         'game-cell-company_container__gorizontalTop': cellDirections === 'top'}">
-        <img class="game-cell-company" [src]="companyInfo.countryCompany | imgAssets" alt='country assets'>
-        <div class="company-info-container">
-            <img class="game-cell-company_logo" [src]="gameCell.nameCell | imgAssets" alt='name assets'
-                [ngClass]="{'game-cell-company_logo__gorizontal': ['left','right'].includes(cellDirections)}">
-            <p class="game-cell-company_price">{{companyInfo.owned
-                ? (companyInfo.rentCompany | rentPipe: companyInfo.countryCompany)
-                : companyInfo.priceCompany}}</p>
+      <img class="game-cell-company" [src]="companyInfo.countryCompany | imgAssets" alt='country assets'>
+      <div class="company-info-container">
+        <img class="game-cell-company_logo" [src]="gameCell.nameCell | imgAssets" alt='name assets'
+          [ngClass]="{'game-cell-company_logo__gorizontal': ['left','right'].includes(cellDirections)}">
+          <p class="game-cell-company_price">{{companyInfo.owned
+            ? (companyInfo.rentCompany | rentPipe: companyInfo.countryCompany)
+          : companyInfo.priceCompany}}</p>
         </div>
-        <div *ngIf="companyInfo?.shares" class="game-cell-company_stock"
+        @if (companyInfo?.shares) {
+          <div class="game-cell-company_stock"
             [ngClass]="{'game-cell-company_stock__gorizontal': ['left','right'].includes(cellDirections)}">
-            <img class="game-cell-company_stock__img" *ngFor="let i of [].constructor(companyInfo.shares)"
+            @for (i of [].constructor(companyInfo.shares); track i) {
+              <img class="game-cell-company_stock__img"
                 [src]="companyInfo.countryCompany | stockAssets" alt="stock image">
-        </div>
+            }
+          </div>
+        }
+      </div>
     </div>
-</div>
+  }

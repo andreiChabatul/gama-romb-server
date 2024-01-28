@@ -1,20 +1,23 @@
 <div class="info-player-container">
-    <div class="info-player" [ngClass]="{'info-player_turn': playerTurnId  === player.id}">
-        <div class="info-player_gradient">
-            <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
-            <p *ngIf="player.bankrupt; else elseBlock" class="info-player_bankrupt" [style.color]="player.color"
-                [style.border-color]="player.color">{{'bankrot' | transloco}}</p>
-            <ng-template #elseBlock>
-                <ul>
-                    <li class="info-player_title">
-                        <span class="status-player" [ngClass]="{'status-player_online': player.online}"></span>
-                        <span class="info-player_text info-player_text_name">{{player.nickName}} </span>
-                    </li>
-                    <li *ngFor="let value of moneys" class="info-player_text">{{value | transloco}}:
-                        <app-info-player-balanse [valueActual]="player[value]"></app-info-player-balanse>
-                    </li>
-                </ul>
-            </ng-template>
-        </div>
+  <div class="info-player" [ngClass]="{'info-player_turn': playerTurnId  === player.id}">
+    <div class="info-player_gradient">
+      <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
+      @if (player.bankrupt) {
+        <p class="info-player_bankrupt" [style.color]="player.color"
+        [style.border-color]="player.color">{{'bankrot' | transloco}}</p>
+      } @else {
+        <ul>
+          <li class="info-player_title">
+            <span class="status-player" [ngClass]="{'status-player_online': player.online}"></span>
+            <span class="info-player_text info-player_text_name">{{player.nickName}} </span>
+          </li>
+          @for (value of moneys; track value) {
+            <li class="info-player_text">{{value | transloco}}:
+              <app-info-player-balanse [valueActual]="player[value]"></app-info-player-balanse>
+            </li>
+          }
+        </ul>
+      }
     </div>
+  </div>
 </div>

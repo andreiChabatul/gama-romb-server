@@ -1,15 +1,17 @@
 <div class="page-about-container">
-    <div class="page-about-desc-container">
-        <p class="page-title">{{'titleAboutPage'| transloco}}</p>
-        <p class="page-about-desc">{{'pageAboutDesc' | transloco}} </p>
-        <div class="container-number-one container-speck">
-            <p class="container-number-one_title">{{'steckTech' | transloco}}</p>
-            <img class="page-about-speck" src="./../../../assets/speck.png" alt="speck">
-        </div>
-        <div class="container-contacts">
-            <a *ngFor="let contact of contacts" class="container-auth container-social" href={{contact.href}}>
-                <img class="img-auth" [src]="contact.ico | imgAssets" alt="icoVK"></a>
-        </div>
+  <div class="page-about-desc-container">
+    <p class="page-title">{{'titleAboutPage'| transloco}}</p>
+    <p class="page-about-desc">{{'pageAboutDesc' | transloco}} </p>
+    <div class="container-number-one container-speck">
+      <p class="container-number-one_title">{{'steckTech' | transloco}}</p>
+      <img class="page-about-speck" src="./../../../assets/speck.png" alt="speck">
+    </div>
+    <div class="container-contacts">
+      @for (contact of contacts; track contact) {
+        <a class="container-auth container-social" href={{contact.href}}>
+          <img class="img-auth" [src]="contact.ico | imgAssets" alt="icoVK"></a>
+        }
+      </div>
     </div>
     <img class="page-about-img" src="assets/pageAbout.png" alt="page about">
-</div>
+  </div>

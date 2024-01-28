@@ -1,7 +1,11 @@
-<div *ngIf="gameRoom.idRoom" class="page-game-container">
+@if (gameRoom.idRoom) {
+  <div class="page-game-container">
     <app-game-board [gameRoom]="gameRoom" [players$]="players$"></app-game-board>
     <div class="page-game-profile">
-        <app-info-player *ngFor="let player of (players$ | async); trackBy:trackByFunction" [player]="player"
-            [playerTurnId]="gameRoom.turnId"></app-info-player>
+      @for (player of (players$ | async); track trackByFunction($index, player)) {
+        <app-info-player [player]="player"
+        [playerTurnId]="gameRoom.turnId"></app-info-player>
+      }
     </div>
-</div>
+  </div>
+}

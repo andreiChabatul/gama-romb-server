@@ -1,7 +1,11 @@
 <p class="info-cell-text">
-    {{(infoCellTurn.description | transloco | changeMessage: {cellId: infoCellTurn.indexCompany}) | async}}
+  {{(infoCellTurn.description | transloco | changeMessage: {cellId: infoCellTurn.indexCompany}) | async}}
 </p>
-<app-enough-money *ngIf="['pay','bankrupt'].includes(infoCellTurn.buttons)"
-    [value]="infoCellTurn.value"></app-enough-money>
-<app-loader-time *ngIf="['none','auction'].includes(infoCellTurn.buttons)"
-    [typeLoading]="infoCellTurn.buttons === 'none' ? 'cell' : 'startAuction'"></app-loader-time>
+@if (['pay','bankrupt'].includes(infoCellTurn.buttons)) {
+  <app-enough-money
+  [value]="infoCellTurn.value"></app-enough-money>
+}
+@if (['none','auction'].includes(infoCellTurn.buttons)) {
+  <app-loader-time
+  [typeLoading]="infoCellTurn.buttons === 'none' ? 'cell' : 'startAuction'"></app-loader-time>
+}

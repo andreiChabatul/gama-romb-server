@@ -1,9 +1,12 @@
-<app-prison-player [gamePlayer]="gamePlayer" *ngIf="gamePlayer.prison; else elseBlock"></app-prison-player>
-<ng-template #elseBlock>
-    <div class="button-container-turn">
-        <app-button-standart *ngFor="let button of buttons" [button]="button" [ngClass]="{
+@if (gamePlayer.prison) {
+  <app-prison-player [gamePlayer]="gamePlayer"></app-prison-player>
+} @else {
+  <div class="button-container-turn">
+    @for (button of buttons; track button) {
+<app-button-standart [button]="button" [ngClass]="{
                 'button__disable': (button.action === 'buyStockButton' && !isBuyStock) ||
                 (button.action === 'buyOutButton' && !isBuyOut)}">
-        </app-button-standart>
-    </div>
-</ng-template>
+      </app-button-standart>
+    }
+  </div>
+}

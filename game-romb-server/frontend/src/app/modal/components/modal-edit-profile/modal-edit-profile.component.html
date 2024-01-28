@@ -1,17 +1,21 @@
-<div class="edit-profile-container container-modal_switch" *ngIf="infoUser">
+@if (infoUser) {
+  <div class="edit-profile-container container-modal_switch">
     <p class="edit-profile-nickName">{{infoUser.nickName}}</p>
     <div class="edit-profile-img">
-        <div class="edit-profile-upload">
-            <input id="upload_image" type="file" class="edit-profile-upload-input" (change)="inputFileAvatar($event)">
-            <label class="edit-profile-upload-text" for="upload_image">{{'uploadFile' | transloco}}</label>
-        </div>
-        <img class="edit-profile-image" [src]="avatar | avatarImage" alt="avatar">
+      <div class="edit-profile-upload">
+        <input id="upload_image" type="file" class="edit-profile-upload-input" (change)="inputFileAvatar($event)">
+        <label class="edit-profile-upload-text" for="upload_image">{{'uploadFile' | transloco}}</label>
+      </div>
+      <img class="edit-profile-image" [src]="avatar | avatarImage" alt="avatar">
     </div>
     <app-raiting-stars [infoUser]="infoUser" [width]="'9vw'"></app-raiting-stars>
     <form class="form-container" [formGroup]="editProfile" (ngSubmit)="onSubmit()">
-        <app-input-material *ngFor="let option of inputForm" [optionForm]="option"
-            [parentForm]="editProfile"></app-input-material>
-        <app-button-standart [button]="saveButton"></app-button-standart>
-        <p class="edit-profile-footer-text">{{'footerEditProfile' | transloco}}</p>
+      @for (option of inputForm; track option) {
+        <app-input-material [optionForm]="option"
+        [parentForm]="editProfile"></app-input-material>
+      }
+      <app-button-standart [button]="saveButton"></app-button-standart>
+      <p class="edit-profile-footer-text">{{'footerEditProfile' | transloco}}</p>
     </form>
-</div>
+  </div>
+}

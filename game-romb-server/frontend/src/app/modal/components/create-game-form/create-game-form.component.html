@@ -1,9 +1,13 @@
 <form class="form-create-container form-container" [formGroup]="createGame" (ngSubmit)="onSubmit()">
-    <div>
-        <app-input-material *ngFor="let option of inputForm" [optionForm]="option"
-            [parentForm]="createGame"></app-input-material>
-        <app-select-material *ngFor="let option of selectsForm" [parentForm]="createGame"
-            [optionForm]="option"></app-select-material>
-    </div>
-    <app-button-standart [button]="textButton"></app-button-standart>
+  <div>
+    @for (option of inputForm; track option) {
+      <app-input-material [optionForm]="option"
+      [parentForm]="createGame"></app-input-material>
+    }
+    @for (option of selectsForm; track option) {
+      <app-select-material [parentForm]="createGame"
+      [optionForm]="option"></app-select-material>
+    }
+  </div>
+  <app-button-standart [button]="textButton"></app-button-standart>
 </form>

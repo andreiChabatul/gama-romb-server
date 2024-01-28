@@ -1,19 +1,21 @@
 <div class="offer-deal-item-container">
-    <p class="offer-deal-item-name" [ngStyle]="{'color': player.color }">{{player.nickName}}</p>
-    <p class="offer-deal-item-text">
-        {{(dealPerson === 'offerPerson' ? 'offerPersonCompany' : 'receivePersonCompany') | transloco}}</p>
-    <ul class="offer-company-container">
-        <li [ngClass]="{'offer-company-li__select': (searchIndexCompany(cell.indexCell) > -1)}"
-            (click)="company = cell.indexCell" class="offer-company-li offer-company-li__click"
-            *ngFor="let cell of companyPlayer">
-            <img class="offer-company-li_img" [src]="cell.nameCell | imgAssets" alt='name assets'>
-        </li>
-    </ul>
-    <p class="offer-deal-item-text">
-        {{(dealPerson === 'offerPerson'? 'offerPersonMoney' : 'receivePersonMoney') | transloco}}
-        <span class="offer-deal-item-text_value">{{_offerInfo.valueMoney}}$</span>
-    </p>
-    <mat-slider min="0" [max]="player.total" step="1000" showTickMarks discrete [displayWith]="formatLabel">
-        <input matSliderThumb>
-    </mat-slider>
+  <p class="offer-deal-item-name" [ngStyle]="{'color': player.color }">{{player.nickName}}</p>
+  <p class="offer-deal-item-text">
+  {{(dealPerson === 'offerPerson' ? 'offerPersonCompany' : 'receivePersonCompany') | transloco}}</p>
+  <ul class="offer-company-container">
+    @for (cell of companyPlayer; track cell) {
+      <li [ngClass]="{'offer-company-li__select': (searchIndexCompany(cell.indexCell) > -1)}"
+        (click)="company = cell.indexCell" class="offer-company-li offer-company-li__click"
+        >
+        <img class="offer-company-li_img" [src]="cell.nameCell | imgAssets" alt='name assets'>
+      </li>
+    }
+  </ul>
+  <p class="offer-deal-item-text">
+    {{(dealPerson === 'offerPerson'? 'offerPersonMoney' : 'receivePersonMoney') | transloco}}
+    <span class="offer-deal-item-text_value">{{_offerInfo.valueMoney}}$</span>
+  </p>
+  <mat-slider min="0" [max]="player.total" step="1000" showTickMarks discrete [displayWith]="formatLabel">
+    <input matSliderThumb>
+  </mat-slider>
 </div>

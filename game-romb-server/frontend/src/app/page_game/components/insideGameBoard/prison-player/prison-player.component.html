@@ -1,11 +1,13 @@
 <p class="prison-title-text">{{'prisonDesc' | transloco}}</p>
 <div class="prison-info-container">
-    <img class="img-prison" src="assets/inJail.png" alt="inJail">
-    <div class="prison-buttons-container">
-        <app-button-standart *ngFor="let button of buttons" [button]="button"
+  <img class="img-prison" src="assets/inJail.png" alt="inJail">
+  <div class="prison-buttons-container">
+    @for (button of buttons; track button) {
+      <app-button-standart [button]="button"
             [ngClass]="{'button__disable': (button.action === 'payButton' && checkMoney())
         || (button.action === 'diceRollButton' && checkDiceRool())}">
-        </app-button-standart>
-    </div>
-    <p class="prison-title-text">{{'prisonAttempt' | transloco}} {{gamePlayer.prison - 1}} </p>
+      </app-button-standart>
+    }
+  </div>
+  <p class="prison-title-text">{{'prisonAttempt' | transloco}} {{gamePlayer.prison - 1}} </p>
 </div>

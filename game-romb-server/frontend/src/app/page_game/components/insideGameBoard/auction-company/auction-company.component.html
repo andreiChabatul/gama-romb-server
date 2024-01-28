@@ -1,39 +1,44 @@
 <div class="auction-container">
-    <img class="auction-img img-title" src="assets/auction.png" alt="imgAuction">
-    <p class="info-cell-text info-cell-title"> {{('infoAuctionTitle' | transloco)}} {{gameCell?.nameCell | uppercase}}
-    </p>
-    <div class="auction-container_info">
-        <ul class="auction-info-title">{{'infoAuction' | transloco}}
-            <li class="auction-info-text">{{'startPrice' | transloco}}
-                <span class="auction-info-text auction-info-text_value">${{gameCell?.company?.priceCompany}}</span>
-            </li>
-            <li class="auction-info-text">{{'rentValue' | transloco}}
-                <span class="auction-info-text auction-info-text_value">
-                    {{rentCompany | rentPipe: gameCell?.company?.countryCompany}}</span>
-            </li>
-            <li class="auction-info-text">{{'currentBid' | transloco}}
-                <span class="auction-info-text auction-info-text_value">${{infoAuction.currentPrice}}</span>
-            </li>
-            <li class="auction-info-text">{{'currentWinner' | transloco}}
-                <span class="auction-info-text auction-info-text_value">{{winner | transloco}}</span>
-            </li>
-        </ul>
-        <img class="auction-img" [src]="gameCell?.nameCell | imgAssets" alt="nameInfo">
+  <img class="auction-img img-title" src="assets/auction.png" alt="imgAuction">
+  <p class="info-cell-text info-cell-title"> {{('infoAuctionTitle' | transloco)}} {{gameCell?.nameCell | uppercase}}
+  </p>
+  <div class="auction-container_info">
+    <ul class="auction-info-title">{{'infoAuction' | transloco}}
+      <li class="auction-info-text">{{'startPrice' | transloco}}
+        <span class="auction-info-text auction-info-text_value">${{gameCell?.company?.priceCompany}}</span>
+      </li>
+      <li class="auction-info-text">{{'rentValue' | transloco}}
+        <span class="auction-info-text auction-info-text_value">
+        {{rentCompany | rentPipe: gameCell?.company?.countryCompany}}</span>
+      </li>
+      <li class="auction-info-text">{{'currentBid' | transloco}}
+        <span class="auction-info-text auction-info-text_value">${{infoAuction.currentPrice}}</span>
+      </li>
+      <li class="auction-info-text">{{'currentWinner' | transloco}}
+        <span class="auction-info-text auction-info-text_value">{{winner | transloco}}</span>
+      </li>
+    </ul>
+    <img class="auction-img" [src]="gameCell?.nameCell | imgAssets" alt="nameInfo">
+  </div>
+  @if (infoAuction?.action === 'startAuction') {
+    <div class="auction-button"
+      >
+      @switch (infoAuction.statePlayer) {
+        @case (active) {
+          @for (button of buttonsAuction; track button) {
+            <app-button-standart [button]="button"></app-button-standart>
+          }
+        }
+        @case (wait) {
+          <p>{{'waitAuction' | transloco}}</p>
+        }
+        @case (inactive) {
+          <p>{{'inactiveAuction' | transloco}}</p>
+        }
+      }
     </div>
-    <div *ngIf="infoAuction?.action === 'startAuction'; else auctionElse" class="auction-button"
-        [ngSwitch]="infoAuction.statePlayer">
-        <ng-template ngSwitchCase="active">
-            <app-button-standart *ngFor="let button of buttonsAuction" [button]="button"></app-button-standart>
-        </ng-template>
-        <ng-template ngSwitchCase="wait">
-            <p>{{'waitAuction' | transloco}}</p>
-        </ng-template>
-        <ng-template ngSwitchCase="inactive">
-            <p>{{'inactiveAuction' | transloco}}</p>
-        </ng-template>
-    </div>
-    <ng-template #auctionElse>
-        <p class="auction-info-text auction-info-text_value">{{'endAuction' | transloco}}</p>
-        <app-loader-time [typeLoading]="'auction'"></app-loader-time>
-    </ng-template>
+  } @else {
+    <p class="auction-info-text auction-info-text_value">{{'endAuction' | transloco}}</p>
+    <app-loader-time [typeLoading]="'auction'"></app-loader-time>
+  }
 </div>

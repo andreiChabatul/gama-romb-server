@@ -1,13 +1,19 @@
-<div class="game-board-container" *ngIf="gamePlayer$ | async as gamePlayer">
-    <app-game-cell *ngFor="let cell of gameRoom.board;trackBy:trackByFunction"
+@if (gamePlayer$ | async; as gamePlayer) {
+  <div class="game-board-container">
+    @for (cell of gameRoom.board; track trackByFunction($index, cell)) {
+      <app-game-cell
         [style.grid-area]="cell.location.gridArea" [gameCell]="cell" [controlCompany]="gameRoom.controlCompany"
-        [gamePlayer]="gamePlayer"></app-game-cell>
-    <app-piece-player *ngFor="let player of players$ | async; index as i;trackBy:trackByPlayer"
+      [gamePlayer]="gamePlayer"></app-game-cell>
+    }
+    @for (player of players$ | async; track trackByPlayer(i, player); let i = $index) {
+      <app-piece-player
         [cellPosition]="player.cellPosition" [index]="i" [prisonPlayer]="player.prison"
-        [color]="player.color"></app-piece-player>
+      [color]="player.color"></app-piece-player>
+    }
     <div class="game-board_inside-container">
-        <app-game-board-turn [gameRoom]="gameRoom" [gamePlayer]="gamePlayer"
-            class="game-board-inside-player"></app-game-board-turn>
-        <app-chat-game [gameRoom]="gameRoom" class="game-board-chat"></app-chat-game>
+      <app-game-board-turn [gameRoom]="gameRoom" [gamePlayer]="gamePlayer"
+      class="game-board-inside-player"></app-game-board-turn>
+      <app-chat-game [gameRoom]="gameRoom" class="game-board-chat"></app-chat-game>
     </div>
-</div>
+  </div>
+}

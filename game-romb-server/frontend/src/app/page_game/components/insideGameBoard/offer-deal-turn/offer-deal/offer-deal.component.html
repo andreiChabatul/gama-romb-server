@@ -1,38 +1,46 @@
-<div class="offer-deal-container" *ngIf="_isAwaitSoluton; else awaitSolution">
-    <div *ngIf="_userIdReceiver; else elseBlock">
+@if (_isAwaitSoluton) {
+  <div class="offer-deal-container">
+    @if (_userIdReceiver) {
+      <div>
         <div class="offer-deal-item-container">
-            <app-offer-deal-item (offerEvent)="setOffer($event)" [dealPerson]="'offerPerson'" [idUser]="gameRoom.turnId"
-                [gameRoom]="gameRoom"></app-offer-deal-item>
-            <div class="line-offer-deal-item-container"></div>
-            <app-offer-deal-item (offerEvent)="setOffer($event)" [dealPerson]="'receivePerson'"
-                [idUser]="_userIdReceiver" [gameRoom]="gameRoom"></app-offer-deal-item>
+          <app-offer-deal-item (offerEvent)="setOffer($event)" [dealPerson]="'offerPerson'" [idUser]="gameRoom.turnId"
+          [gameRoom]="gameRoom"></app-offer-deal-item>
+          <div class="line-offer-deal-item-container"></div>
+          <app-offer-deal-item (offerEvent)="setOffer($event)" [dealPerson]="'receivePerson'"
+          [idUser]="_userIdReceiver" [gameRoom]="gameRoom"></app-offer-deal-item>
         </div>
         <div class="balanse-offer-container">
-            <p class="balanse-offer-title">{{'balanseTitle' | transloco }}</p>
-            <input min="0" max="2" step="0.000001" class="balanse-line" type="range" [value]="calcBalanse()">
-            <p class="balanse-offer-text">{{textBalanse() | transloco}}</p>
+          <p class="balanse-offer-title">{{'balanseTitle' | transloco }}</p>
+          <input min="0" max="2" step="0.000001" class="balanse-line" type="range" [value]="calcBalanse()">
+          <p class="balanse-offer-text">{{textBalanse() | transloco}}</p>
         </div>
-    </div>
-    <ng-template #elseBlock>
-        <div class="info-player-offer-container">
-            <p class="balanse-offer-title">{{'choisePlayerTitle' | transloco}}</p>
-            <div class="info-player-container">
-                <div *ngFor="let player of players">
-                    <div class="info-player_img-offer" *ngIf="player.id !== gameRoom.turnId"
-                        (click)="selectPlayer(player.id)">
-                        <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
-                        <p class="info-player-name" [ngStyle]="{'color': player.color }">{{player.nickName}}</p>
-                    </div>
+      </div>
+    } @else {
+      <div class="info-player-offer-container">
+        <p class="balanse-offer-title">{{'choisePlayerTitle' | transloco}}</p>
+        <div class="info-player-container">
+          @for (player of players; track player) {
+            <div>
+              @if (player.id !== gameRoom.turnId) {
+                <div class="info-player_img-offer"
+                  (click)="selectPlayer(player.id)">
+                  <app-foto-player [player]="player" [size]="'4vw'"></app-foto-player>
+                  <p class="info-player-name" [ngStyle]="{'color': player.color }">{{player.nickName}}</p>
                 </div>
+              }
             </div>
+          }
         </div>
-    </ng-template>
+      </div>
+    }
     <div class="offer-deal-buttons">
-        <app-button-standart (click)="clickButton(button.action)" [ngClass]="{'button__disable': (button.action === 'sendDealButton' && (textBalanse() === 'noBalanseDeal' ||
-            !_offerDealInfo.offerPerson || !_offerDealInfo.receivePerson))}" *ngFor="let button of buttonOffer"
-            [button]="button"></app-button-standart>
+      @for (button of buttonOffer; track button) {
+<app-button-standart (click)="clickButton(button.action)" [ngClass]="{'button__disable': (button.action === 'sendDealButton' && (textBalanse() === 'noBalanseDeal' ||
+            !_offerDealInfo.offerPerson || !_offerDealInfo.receivePerson))}"
+        [button]="button"></app-button-standart>
+      }
     </div>
-</div>
-<ng-template #awaitSolution>
-    <p class="balanse-offer-title">{{'awaitSolution' | transloco}}</p>
-</ng-template>
+  </div>
+} @else {
+  <p class="balanse-offer-title">{{'awaitSolution' | transloco}}</p>
+}

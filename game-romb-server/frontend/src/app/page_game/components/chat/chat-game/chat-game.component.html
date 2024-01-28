@@ -1,10 +1,12 @@
 <div class="chat-container">
-    <p class="chat-title">{{'chatTitle' | transloco}}</p>
-    <div class="chat-area">
-        <div class="chat-area_message" #messageBlock [scrollTop]="scrolltop">
-            <app-chat-message *ngFor="let message of gameRoom.chat" [message]="message"
-                [players]="gameRoom.players"></app-chat-message>
-        </div>
-        <app-chat-input class="chat-input"></app-chat-input>
+  <p class="chat-title">{{'chatTitle' | transloco}}</p>
+  <div class="chat-area">
+    <div class="chat-area_message" #messageBlock [scrollTop]="scrolltop">
+      @for (message of gameRoom.chat; track message) {
+        <app-chat-message [message]="message"
+        [players]="gameRoom.players"></app-chat-message>
+      }
     </div>
+    <app-chat-input class="chat-input"></app-chat-input>
+  </div>
 </div>

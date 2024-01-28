@@ -1,8 +1,9 @@
 <div class="game-cell-container" (click)="clickCellInfo()">
-        <app-game-cell-company *ngIf="gameCell.company; else elseBlock" [gameCell]="gameCell"
-                [controlCompany]="controlCompany" [gamePlayer]="gamePlayer">
-        </app-game-cell-company>
-        <ng-template #elseBlock>
-                <app-game-cell-square [gameCell]="gameCell"> </app-game-cell-square>
-        </ng-template>
+  @if (gameCell.company) {
+    <app-game-cell-company [gameCell]="gameCell"
+      [controlCompany]="controlCompany" [gamePlayer]="gamePlayer">
+    </app-game-cell-company>
+  } @else {
+    <app-game-cell-square [gameCell]="gameCell"> </app-game-cell-square>
+  }
 </div>
