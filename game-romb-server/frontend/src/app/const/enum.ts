@@ -29,6 +29,7 @@ export enum ACTIONS_BUTTON {
     EDIT_PROFILE = 'editProfile',
     DELETE_PROFILE = 'deleteProfile',
     GO_MAIN = 'goMainButton',
+    GO_DEMO = 'goDemoButton',
 }
 
 export enum EACTION_WEBSOCKET {

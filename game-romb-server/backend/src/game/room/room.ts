@@ -40,6 +40,7 @@ export class RoomGame implements RoomI {
       this.idRoom,
       this.cellsService,
       this.userService,
+      this.infoRoom.maxPlayers === 1
     );
     this.offerService = new OfferService(this.idRoom, this.cellsService);
   }
@@ -59,7 +60,6 @@ export class RoomGame implements RoomI {
     const playersGame = storage_players.getPlayersRoom(this.idRoom);
 
     if (playersGame.length === this.infoRoom.maxPlayers) {
-      //убрать труе потом, временно чтобы тестть
       setTimeout(() => (this.isStart = true), 5000);
       storage_WS.sendAllPlayersGame(
         this.idRoom,

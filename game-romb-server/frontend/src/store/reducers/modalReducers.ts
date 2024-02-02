@@ -10,6 +10,7 @@ const initalState: modalStore = {
 
 export const modalReducers = createReducer(initalState,
     on(modalActions.closeModal, (_) => ({ modalState: 'none' as modalState })),
+    on(modalActions.closeModal, (_) => ({ modalState: 'none' as modalState })),
     on(modalActions.ClearModalInfo, (state) => ({ ...state, modalError: '' })),
     on(modalActions.OpenModal, (_, { payload }) => ({ ...payload })),
     on(modalActions.AddModalInfo, (state, { modalError }) => ({ ...state, modalError }))

@@ -50,5 +50,12 @@ export class AuthService {
             this.users.getUser(accessToken);
         }
     }
+
+    anonimRegister(): void {
+        this.register({
+            nickName: 'anonim_' + Date.now(),
+            password: '12345678'
+        });
+    }
 }
 

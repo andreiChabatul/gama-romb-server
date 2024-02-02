@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RANDOM_COLOR } from 'src/app/const';
 import { InputTextFormOption } from 'src/app/types/components';
 
 @Component({
@@ -17,7 +18,7 @@ export class InputMaterialComponent implements OnChanges {
   constructor(private fb: FormBuilder) { }
 
   private createForm(): void {
-    const value = this.type === 'color' ? this.randomColor() : ''
+    const value = this.type === 'color' ? RANDOM_COLOR : ''
     this.inputForm = this.fb.group({
       value: [this.optionForm.defaultValue ? this.optionForm.defaultValue : value, [Validators.required]],
     });
@@ -35,10 +36,6 @@ export class InputMaterialComponent implements OnChanges {
 
   hidePasword() {
     this.type === 'password' ? this.type = 'text' : this.type = 'password';
-  }
-
-  randomColor(): string {
-    return '#' + (Math.random() * 0x1000000 | 0x1000000).toString(16).slice(1);
   }
 
 }

@@ -219,5 +219,6 @@
     "sellStock": "Sell a stock for $",
     "pledgeCompany": "Pledge company for $",
     "buyOutCompany": "Buy out company for $",
-    "errorInput": "Field from is required"
+    "errorInput": "Field from is required",
+    "demoVersion": "Demo version"
 }

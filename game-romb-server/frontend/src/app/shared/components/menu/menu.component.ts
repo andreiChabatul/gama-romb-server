@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -7,6 +7,7 @@ import { OpenModal } from 'src/store/actions/modalActions';
 import { selectIdRoom, selectInfoUser } from 'src/store/selectors';
 import { AudioServices } from '../../services/audio.services';
 import { Router } from '@angular/router';
+import { DemoVersionServices } from '../../services/demo-service';
 
 @Component({
   selector: 'app-menu',
@@ -20,6 +21,7 @@ export class MenuComponent implements OnInit {
   activeLang: string;
   infoUser$ = this.store.select(selectInfoUser);
   idRoom$ = this.store.select(selectIdRoom);
+  demoServices = inject(DemoVersionServices);
 
   constructor(
     private store: Store<AppStore>,
@@ -55,6 +57,7 @@ export class MenuComponent implements OnInit {
   }
 
   exitGame(): void {
+    console.log('exit')
     this.store.dispatch(OpenModal({ payload: { modalState: 'leaveGame' } }));
   }
 

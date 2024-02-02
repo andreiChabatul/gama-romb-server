@@ -16,7 +16,8 @@ export class TurnService {
     private idRoom: string,
     private cellsService: CellsServiceI,
     private userService: UserService,
-  ) {}
+    private demoVersion?: boolean,
+  ) { }
 
   firstTurn(): void {
     this.indexActive = Math.floor(Math.random() * this.playersActive.length);
@@ -78,23 +79,22 @@ export class TurnService {
 
   endTurn(bankrupt = false): void {
     this.indexActive -= Number(bankrupt);
-    this.checkWinner();
-    // this.nextTurn();
+    this.demoVersion ? this.nextTurn() : this.checkWinner();
   }
 
   updateTurn(idUser?: string): void {
     idUser
       ? storage_WS.sendOnePlayerGame(
-          this.idRoom,
-          idUser,
-          EACTION_WEBSOCKET.UPDATE_TURN,
-          this.activePlayer,
-        )
+        this.idRoom,
+        idUser,
+        EACTION_WEBSOCKET.UPDATE_TURN,
+        this.activePlayer,
+      )
       : storage_WS.sendAllPlayersGame(
-          this.idRoom,
-          EACTION_WEBSOCKET.UPDATE_TURN,
-          this.activePlayer,
-        );
+        this.idRoom,
+        EACTION_WEBSOCKET.UPDATE_TURN,
+        this.activePlayer,
+      );
   }
 
   private calcIndexActive(): number {

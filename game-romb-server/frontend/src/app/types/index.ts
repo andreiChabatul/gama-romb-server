@@ -1,4 +1,4 @@
-export type modalState = 'none' | 'logInProfile' | 'register' | 'infoCell' | 'leaveGame' | 'createGame' | 'joinGame' | 'reconnectGame' | 'editProfile' | 'deleteProfile';
+export type modalState = 'none' | 'logInProfile' | 'register' | 'infoCell' | 'leaveGame' | 'createGame' | 'joinGame' | 'reconnectGame' | 'editProfile' | 'deleteProfile' | 'demoVersion';
 export type cellDirections = 'top' | 'bottom' | 'left' | 'right';
 export type infoCellButtons = 'pay' | 'buy' | 'none' | 'bankrupt' | 'auction';
 export type controlAuction = 'startAuction' | 'leaveAuction' | 'stepAuction' | 'endAuction';

@@ -13,9 +13,6 @@ export class AnonimAuthComponent {
   constructor(private authService: AuthService) { }
 
   authAnonim(): void {
-    this.authService.register({
-      nickName: 'anonim_' + Date.now(),
-      password: '12345678'
-    });
+    this.authService.anonimRegister();
   }
 }

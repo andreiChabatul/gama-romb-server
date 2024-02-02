@@ -1,50 +1,53 @@
 @if (modal$ | async; as modal) {
-  <div>
-    @if (modal.modalState !== 'none') {
-      <div class="wrapper-modal" (click)="closeModal()">
-        <div class="modal-container" (click)="$event.stopPropagation()">
-          <div class="modal-gradient">
-            <p class="title-modal">{{modal.modalState | transloco}}</p>
-            @if (modal.modalError) {
-              <p class="modal-error">{{modal.modalError}}</p>
-            }
-            <span class="material-symbols-outlined close-modal" (click)="closeModal()">
-              cancel
-            </span>
-            <div class="modal-container-inside">
-              @switch (modal.modalState) {
-                @case ('register') {
-                  <app-modal-register></app-modal-register>
-                }
-                @case ('logInProfile') {
-                  <app-modal-login></app-modal-login>
-                }
-                @case ('infoCell') {
-                  <app-modal-info-cell></app-modal-info-cell>
-                }
-                @case ('leaveGame') {
-                  <app-modal-exit-game></app-modal-exit-game>
-                }
-                @case ('createGame') {
-                  <app-create-game-form></app-create-game-form>
-                }
-                @case ('joinGame') {
-                  <app-modal-join-game></app-modal-join-game>
-                }
-                @case ('reconnectGame') {
-                  <app-reconnect-modal></app-reconnect-modal>
-                }
-                @case ('editProfile') {
-                  <app-modal-edit-profile></app-modal-edit-profile>
-                }
-                @case ('deleteProfile') {
-                  <app-modal-delete-profile></app-modal-delete-profile>
-                }
-              }
-            </div>
-          </div>
+<div>
+  @if (modal.modalState !== 'none') {
+  <div class="wrapper-modal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-gradient">
+        <p class="title-modal">{{modal.modalState | transloco}}</p>
+        @if (modal.modalError) {
+        <p class="modal-error">{{modal.modalError}}</p>
+        }
+        <span class="material-symbols-outlined close-modal" (click)="closeModal()">
+          cancel
+        </span>
+        <div class="modal-container-inside">
+          @switch (modal.modalState) {
+          @case ('register') {
+          <app-modal-register></app-modal-register>
+          }
+          @case ('logInProfile') {
+          <app-modal-login></app-modal-login>
+          }
+          @case ('infoCell') {
+          <app-modal-info-cell></app-modal-info-cell>
+          }
+          @case ('leaveGame') {
+          <app-modal-exit-game></app-modal-exit-game>
+          }
+          @case ('createGame') {
+          <app-create-game-form></app-create-game-form>
+          }
+          @case ('joinGame') {
+          <app-modal-join-game></app-modal-join-game>
+          }
+          @case ('reconnectGame') {
+          <app-reconnect-modal></app-reconnect-modal>
+          }
+          @case ('demoVersion') {
+          <app-modal-demo></app-modal-demo>
+          }
+          @case ('editProfile') {
+          <app-modal-edit-profile></app-modal-edit-profile>
+          }
+          @case ('deleteProfile') {
+          <app-modal-delete-profile></app-modal-delete-profile>
+          }
+          }
         </div>
       </div>
-    }
+    </div>
   </div>
+  }
+</div>
 }

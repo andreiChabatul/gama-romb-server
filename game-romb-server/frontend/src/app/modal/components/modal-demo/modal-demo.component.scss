@@ -1,0 +1,23 @@
+@import "./../../../../scss/default-styles";
+@import "./../../../../scss/color-styles";
+
+.modal-demo-container {
+    padding-top: 5%;
+    @include flex_c_c;
+    flex-direction: column;
+    gap: 1vw;
+}
+
+.modal-demo_test {
+    @include font-default;
+    font-size: 1.2vw;
+    font-weight: 500;
+}
+
+.modal-exit_img {
+    width: 10vw;
+}
+
+.modal-demo-desc{
+@include flex-c_s;
+}

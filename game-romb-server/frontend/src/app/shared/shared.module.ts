@@ -21,6 +21,7 @@ import { AvatarImagePipe } from './pipe/avatar.pipe';
 import { AudioServices } from './services/audio.services';
 import { VolumeImagePipe } from './pipe/volume.pipe';
 import { HeaderComponent } from './components/header/header.component';
+import { DemoVersionServices } from './services/demo-service';
 
 @NgModule({
     declarations: [
@@ -65,7 +66,7 @@ import { HeaderComponent } from './components/header/header.component';
         AvatarImagePipe,
         HeaderComponent
     ],
-    providers: [ButtonControllerService, AudioServices],
+    providers: [ButtonControllerService, AudioServices, DemoVersionServices],
     bootstrap: []
 })
 export class SharedModule { }

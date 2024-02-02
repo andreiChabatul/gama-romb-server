@@ -2,13 +2,13 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription, map } from 'rxjs';
-import { EMPTY_GAME_ROOM } from 'src/app/const';
+import { DEMO_ROOM, EMPTY_GAME_ROOM, RANDOM_COLOR } from 'src/app/const';
 import { ACTIONS_BUTTON, EACTION_WEBSOCKET } from 'src/app/const/enum';
 import { RoomsService } from 'src/app/rooms/rooms.services';
 import { AppStore } from 'src/app/types/state';
 import { WebSocketController } from 'src/app/webSocket/webSocket.controller';
 import { ControlCompany, ControlInsideBoard, StartGame } from 'src/store/actions/gameActions';
-import { closeModal, OpenModal } from 'src/store/actions/modalActions';
+import { OpenModal } from 'src/store/actions/modalActions';
 import { selectUser } from 'src/store/selectors';
 import { AudioServices } from './audio.services';
 
@@ -115,15 +115,31 @@ export class ButtonControllerService implements OnDestroy {
         break;
 
       case ACTIONS_BUTTON.LEAVE_GAME: {
+        console.log('exit')
         this.webSocketController.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'leave' });
         this.store.dispatch(StartGame({ gameRoom: EMPTY_GAME_ROOM }));
-        this.store.dispatch(closeModal());
         this.router.navigate(['rooms']);
         break;
       }
 
       case ACTIONS_BUTTON.STAY_GAME: {
         this.webSocketController.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'stay' });
+        break;
+      }
+
+      case ACTIONS_BUTTON.GO_DEMO: {
+        this.router.navigate(['rooms']);
+        this.roomsService.createRoom(DEMO_ROOM).subscribe({
+          next: (idRoom: string) => {
+            if (idRoom) {
+              this.webSocketController.sendMessage(EACTION_WEBSOCKET.CONTROL_ROOM, {
+                action: 'join',
+                colorPlayer: RANDOM_COLOR,
+                idRoom,
+              });
+            }
+          }
+        });
         break;
       }
 

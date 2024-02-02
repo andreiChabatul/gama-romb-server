@@ -12,4 +12,5 @@ export class CreateRoomDto {
   @IsNotEmpty()
   @IsNumber()
   readonly timeTurn: number;
+
 }
