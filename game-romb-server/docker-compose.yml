@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   postgres:
     image: yobasystems/alpine-postgres:16.1
@@ -13,9 +13,7 @@ services:
       - '5432:5432'
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: andrey121992/monopoly-backend:latest
     container_name: backend-monopoly
     restart: unless-stopped
     ports:
@@ -28,15 +26,13 @@ services:
 
   frontend:
     container_name: frontend-monopoly
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: andrey121992/monopoly-frontend:latest
     restart: unless-stopped
     ports:
       - '80:80'
     depends_on:
-    - postgres
-    - backend
+      - postgres
+      - backend
 
 volumes:
   postgres:

@@ -29,7 +29,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly httpService: HttpService,
-  ) {}
+  ) { }
 
   @Post('/login')
   async login(
@@ -146,10 +146,11 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
+      domain: "5.35.99.249",
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: 'lax',
       expires: new Date(tokens.refreshToken.exp),
-      secure: true,
+      secure: false,
       path: '/',
     });
     isSend

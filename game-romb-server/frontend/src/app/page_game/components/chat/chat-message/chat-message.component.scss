@@ -14,7 +14,7 @@
 
 .message-container {
     @include flex_c_c;
-    justify-content: start;
+    justify-content: flex-start;
     gap: 0.3vw;
     background: #c5d1da;
     border-radius: 10px;

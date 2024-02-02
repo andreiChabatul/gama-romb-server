@@ -14,7 +14,7 @@ import * as gameActions from '../../store/actions/gameActions';
 })
 export class WebSocketController {
 
-  private wsSocket = io("127.0.0.1:3001");
+  private wsSocket = io("5.35.99.249:3001");
   private infoUser$ = this.store.select(selectInfoUser);
   private idRoom$ = this.store.select(selectIdRoom);
   private idUser: string | undefined;

@@ -26,7 +26,7 @@
             ? (companyInfo.rentCompany | rentPipe: companyInfo.countryCompany)
           : companyInfo.priceCompany}}</p>
         </div>
-        @if (companyInfo?.shares) {
+        @if (companyInfo.shares) {
           <div class="game-cell-company_stock"
             [ngClass]="{'game-cell-company_stock__gorizontal': ['left','right'].includes(cellDirections)}">
             @for (i of [].constructor(companyInfo.shares); track i) {

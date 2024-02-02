@@ -20,19 +20,19 @@
     </ul>
     <img class="auction-img" [src]="gameCell?.nameCell | imgAssets" alt="nameInfo">
   </div>
-  @if (infoAuction?.action === 'startAuction') {
+  @if (infoAuction.action === 'startAuction') {
     <div class="auction-button"
       >
       @switch (infoAuction.statePlayer) {
-        @case (active) {
+        @case ('active') {
           @for (button of buttonsAuction; track button) {
             <app-button-standart [button]="button"></app-button-standart>
           }
         }
-        @case (wait) {
+        @case ('wait') {
           <p>{{'waitAuction' | transloco}}</p>
         }
-        @case (inactive) {
+        @case ('inactive') {
           <p>{{'inactiveAuction' | transloco}}</p>
         }
       }
