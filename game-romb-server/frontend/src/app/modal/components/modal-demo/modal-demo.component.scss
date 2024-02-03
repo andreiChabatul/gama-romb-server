@@ -8,16 +8,20 @@
     gap: 1vw;
 }
 
-.modal-demo_test {
+.modal-demo_text {
+    width: 20vw;
     @include font-default;
     font-size: 1.2vw;
     font-weight: 500;
+    text-align: justify;
 }
 
 .modal-exit_img {
     width: 10vw;
 }
 
-.modal-demo-desc{
-@include flex-c_s;
+.modal-demo-desc {
+    @include flex-c_s;
+    gap: 2vw;
+    margin-bottom: 2vw;
 }

@@ -4,7 +4,7 @@
   <div class="wrapper-modal" (click)="closeModal()">
     <div class="modal-container" (click)="$event.stopPropagation()">
       <div class="modal-gradient">
-        <p class="title-modal">{{modal.modalState | transloco}}</p>
+        <h3 class="title-modal">{{modal.modalState | transloco}}</h3>
         @if (modal.modalError) {
         <p class="modal-error">{{modal.modalError}}</p>
         }

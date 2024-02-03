@@ -9,6 +9,6 @@ import { Button } from 'src/app/types/components';
 })
 export class ModalDemoComponent {
 
-  demoGameButton: Button = { action: ACTIONS_BUTTON.GO_DEMO, width: '17vw' };
+  demoGameButton: Button = { action: ACTIONS_BUTTON.GO_DEMO, width: '20vw' };
 
 }

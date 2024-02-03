@@ -220,5 +220,7 @@
     "pledgeCompany": "Pledge company for $",
     "buyOutCompany": "Buy out company for $",
     "errorInput": "Field from is required",
-    "demoVersion": "Demo version"
+    "demoVersion": "Demo version",
+    "demoVersionDesk": "In the demo version you can get acquainted with the main functionality of the game.",
+    "goDemoButton": "Open demo version"
 }

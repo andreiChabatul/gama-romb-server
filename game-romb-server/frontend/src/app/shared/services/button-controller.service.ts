@@ -115,7 +115,6 @@ export class ButtonControllerService implements OnDestroy {
         break;
 
       case ACTIONS_BUTTON.LEAVE_GAME: {
-        console.log('exit')
         this.webSocketController.sendMessage(EACTION_WEBSOCKET.END_GAME, { action: 'leave' });
         this.store.dispatch(StartGame({ gameRoom: EMPTY_GAME_ROOM }));
         this.router.navigate(['rooms']);
@@ -128,7 +127,6 @@ export class ButtonControllerService implements OnDestroy {
       }
 
       case ACTIONS_BUTTON.GO_DEMO: {
-        this.router.navigate(['rooms']);
         this.roomsService.createRoom(DEMO_ROOM).subscribe({
           next: (idRoom: string) => {
             if (idRoom) {

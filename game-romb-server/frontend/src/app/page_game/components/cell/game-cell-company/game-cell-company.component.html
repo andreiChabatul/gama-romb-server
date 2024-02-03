@@ -22,7 +22,7 @@
       <div class="company-info-container">
         <img class="game-cell-company_logo" [src]="gameCell.nameCell | imgAssets" alt='name assets'
           [ngClass]="{'game-cell-company_logo__gorizontal': ['left','right'].includes(cellDirections)}">
-          <p class="game-cell-company_price">{{companyInfo.owned
+          <p class="game-cell-company_price">${{companyInfo.owned
             ? (companyInfo.rentCompany | rentPipe: companyInfo.countryCompany)
           : companyInfo.priceCompany}}</p>
         </div>

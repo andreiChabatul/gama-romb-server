@@ -33,6 +33,8 @@ $romb_game-theme: mat.define-light-theme((color: (primary: $romb_game-primary,
 @import "./scss/default-styles";
 
 div,
+h3,
+h1,
 ul,
 li,
 ol,
@@ -309,18 +311,18 @@ body {
 
 @media (max-width:800px) {
   .form-container {
-      width: 40vw;
+    width: 40vw;
   }
 }
 
 @media (max-width:600px) {
   .form-container {
-      width: 60vw;
+    width: 60vw;
   }
 }
 
 @media (max-width:400px) {
   .form-container {
-      width: 80vw;
+    width: 80vw;
   }
 }
