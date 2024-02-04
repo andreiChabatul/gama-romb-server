@@ -94,6 +94,14 @@ export class AuthController {
   }
 
   @UseGuards(GoogleGuard)
+  @Get('google')
+  authGoogle() { }
+
+  @UseGuards(YandexGuard)
+  @Get('yandex')
+  yandexAuth() { }
+
+  @UseGuards(GoogleGuard)
   @Get('google/callback')
   googleAuthCallback(
     @Req() req: Request,
@@ -146,7 +154,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
-      domain: "5.35.99.249",
+      domain: "www.game-monopoly.ru",
       httpOnly: true,
       sameSite: 'lax',
       expires: new Date(tokens.refreshToken.exp),

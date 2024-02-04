@@ -11,6 +11,6 @@ export class YandexAuthComponent {
 
 
   authYandex(): void {
-    window.location.href = 'http://localhost:3000/auth/yandex'
+    window.location.href = 'http://5.35.99.249:3000/auth/yandex'
   }
 }

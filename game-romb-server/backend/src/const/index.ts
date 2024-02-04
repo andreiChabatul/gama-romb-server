@@ -12,4 +12,4 @@ export const GOOGLE_AUTH_INFO =
   'https://www.googleapis.com/oauth2/v3/userinfo?access_token=';
 export const YANDEX_AUTH_INFO =
   'https://login.yandex.ru/info?format=json&oauth_token=';
-export const FRONT_ACCESS = 'http://localhost:4200/auth/?accessToken=';
+export const FRONT_ACCESS = 'http://game-monopoly.ru/?accessToken=';
