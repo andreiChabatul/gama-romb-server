@@ -10,7 +10,7 @@ export class GoogleAuthComponent {
   @Input() size: string;
 
   authGoogle(): void {
-    window.location.href = 'http://5.35.99.249:3000/auth/google'
+    window.location.href = 'https://api.game-monopoly.ru/auth/google'
   }
 
 }

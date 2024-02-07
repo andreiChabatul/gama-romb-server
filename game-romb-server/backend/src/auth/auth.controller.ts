@@ -154,11 +154,10 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
-      domain: "www.game-monopoly.ru",
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       expires: new Date(tokens.refreshToken.exp),
-      secure: false,
+      secure: true,
       path: '/',
     });
     isSend
